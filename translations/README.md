@@ -1,6 +1,6 @@
 # Translation File Reports
 
-This file is a report of all errors and missing keys in the translation files of this game. Last generated Sat, 15 Mar 2025 00:34:35 GMT
+This file is a report of all errors and missing keys in the translation files of this game. Last generated Tue, 18 Mar 2025 13:43:09 GMT
 
 ## 🇦🇱 Shqip (77% Complete) - ab.hjson
 
@@ -1027,11 +1027,12 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `km_suicide_finished_off` is not defined
 - Key `region_oc` is not defined
 
-## 🇨🇳 中文（简体） (94% Complete) - zh.hjson
+## 🇨🇳 中文（简体） (100% Complete) - zh.hjson
 
 ### Invalid Keys
 
 - Key `developr_vest` is not a valid key
+- Key `feral_claws` is not a valid key
 - Key `destroyer_of_worlds` is not a valid key
 - Key `deathray` is not a valid key
 - Key `12g` is not a valid key
@@ -1158,7 +1159,6 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `confetti_grenade_explosion` is not a valid key
 - Key `frag_grenade_explosion` is not a valid key
 - Key `pumpkin_explosion` is not a valid key
-- Key `feral_claws` is not a valid key
 - Key `1st_birthday` is not a valid key
 - Key `algae` is not a valid key
 - Key `aquatic` is not a valid key
@@ -1246,50 +1246,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `time_minute` is not a valid key
 - Key `time_second` is not a valid key
 - Key `username_input_placeholder` is not a valid key
-- Key `32x_scope` is not a valid key
-- Key `barrett_m95` is not a valid key
-- Key `bdg_bot` is not a valid key
-- Key `bdg_translatr` is not a valid key
-- Key `blueberry_smoothie` is not a valid key
-- Key `fireball` is not a valid key
-- Key `news_1731245400000_content` is not a valid key
-- Key `news_pinned` is not a valid key
-- Key `region_hk` is not a valid key
-- Key `settings_brightness` is not a valid key
-- Key `settings_chicken_dinner_picture` is not a valid key
-- Key `settings_colorful_bullets` is not a valid key
-- Key `settings_menu_music` is not a valid key
-- Key `settings_menu_music_follow_the_mode` is not a valid key
-- Key `settings_menu_music_halloween` is not a valid key
-- Key `settings_menu_music_main` is not a valid key
-- Key `settings_menu_music_main_full` is not a valid key
-- Key `settings_menu_music_old` is not a valid key
-- Key `settings_menu_music_random` is not a valid key
-- Key `settings_menu_music_speaker` is not a valid key
-- Key `settings_menu_music_survivio` is not a valid key
-- Key `settings_menu_music_survivio_halloween` is not a valid key
-- Key `settings_menu_music_winter` is not a valid key
-- Key `settings_saturate` is not a valid key
-- Key `settings_self_deception_ping` is not a valid key
-- Key `watermelon` is not a valid key
 
 ### Undefined Keys
 
-- Key `settings_alt_texture_loading` is not defined
-- Key `final_gas_waiting` is not defined
-- Key `final_gas_advancing` is not defined
-- Key `kf_suicide_finished_off` is not defined
-- Key `kf_impact_of` is not defined
-- Key `km_finally_ended_yourself` is not defined
-- Key `km_finally_killed` is not defined
-- Key `km_gas_kill_you` is not defined
-- Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
-- Key `km_knocked_you` is not defined
-- Key `km_finished_off_you` is not defined
-- Key `km_killed_you` is not defined
-- Key `km_suicide_down` is not defined
-- Key `km_suicide_finished_off` is not defined
 - Key `m16a4` is not defined
 
