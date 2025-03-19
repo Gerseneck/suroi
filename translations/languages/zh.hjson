@@ -244,7 +244,7 @@
 "kf_kl_dead": "击杀领袖死了！"
 "kf_kl_suicide": "击杀领袖自杀了！"
 "kf_suicide_finished_off": "<player>最终解决了自己"
-"kf_impact_of": "的冲击" // maybe fix word order?
+"kf_impact_of": ""
 "finally": "最终"
 "with": "用"
 "you": "你"
@@ -321,8 +321,8 @@
 "falchion": "弯刀"
 "fire_hatchet": "消防斧"
 "chainsaw": "电锯"
-"feral_claws": "猛爪"
 "pan": "平底锅"
+"kukri": "库克力弯刀"
 
 "mosin_nagant": "莫辛纳甘"
 "radio": "无线电"

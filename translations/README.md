@@ -1,6 +1,6 @@
 # Translation File Reports
 
-This file is a report of all errors and missing keys in the translation files of this game. Last generated Tue, 18 Mar 2025 13:43:09 GMT
+This file is a report of all errors and missing keys in the translation files of this game. Last generated Tue, 18 Mar 2025 15:09:01 GMT
 
 ## 🇦🇱 Shqip (77% Complete) - ab.hjson
 
@@ -1032,7 +1032,6 @@ This file is a report of all errors and missing keys in the translation files of
 ### Invalid Keys
 
 - Key `developr_vest` is not a valid key
-- Key `feral_claws` is not a valid key
 - Key `destroyer_of_worlds` is not a valid key
 - Key `deathray` is not a valid key
 - Key `12g` is not a valid key
