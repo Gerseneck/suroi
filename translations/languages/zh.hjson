@@ -23,6 +23,7 @@
 "msg_punishment_vpn": "检测到VPN/代理！"
 "msg_punishment_vpn_reason": "为了防止绕过封禁，不允许使用VPN和代理。请禁用你的VPN/代理后再进行游戏。如果你认为此消息有误，或者希望申请豁免，请联系Discord服务器（https://discord.suroi.io）上的管理员，或发送电子邮件至support@suroi.io。"
 "msg_no_reason": "未提供原因。"
+"msg_error_kicked_team": "你被踢出队伍。"
 
 "warning_hw_accel_1": "图形加速被此浏览器关闭或者此浏览器无法使用。"
 "warning_hw_accel_2": "Suroi表现可能会差。"
@@ -276,6 +277,9 @@
 "create_team_ready": "准备"
 "create_team_waiting": "等待中……"
 "create_team_play": "开始游戏"
+"create_team_force_start": "强行开始"
+"create_team_not_ready": "未准备"
+
 "report_reporting": "举报"
 "report_id": "举报ID："
 "report_instructions": "\n    <p><strong>请按照以下说明操作！</strong>否则，你的举报将被忽略。</p>\n    <h4>如何提交举报</h4>\n    <ol>\n      <li>加入<a href=\"https://discord.suroi.io\">Discord服务器。</a></li>\n      <li>前往<a href=\"https://discord.com/channels/1077043833621184563/1135288369526607973\">#cheatr-reports\n          频道。</a></li>\n      <li>阅读置顶帖中的举报方针。</li>\n      <li>以帖子的形式提交你的举报。</li>\n    </ol>"
