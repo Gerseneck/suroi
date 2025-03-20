@@ -1,6 +1,6 @@
 # Translation File Reports
 
-This file is a report of all errors and missing keys in the translation files of this game. Last generated Wed, 19 Mar 2025 00:41:44 GMT
+This file is a report of all errors and missing keys in the translation files of this game. Last generated Thu, 20 Mar 2025 20:21:10 GMT
 
 ## 🇦🇱 Shqip (77% Complete) - ab.hjson
 
@@ -988,6 +988,11 @@ This file is a report of all errors and missing keys in the translation files of
 
 ### Invalid Keys
 
+- Key `msg_lost_connection` is not a valid key
+- Key `msg_error_kicked_team` is not a valid key
+- Key `username_input_placeholder` is not a valid key
+- Key `create_team_force_start` is not a valid key
+- Key `create_team_not_ready` is not a valid key
 - Key `developr_vest` is not a valid key
 - Key `destroyer_of_worlds` is not a valid key
 - Key `deathray` is not a valid key
@@ -1187,7 +1192,6 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `werewolf` is not a valid key
 - Key `zebra` is not a valid key
 - Key `fps` is not a valid key
-- Key `msg_lost_connection` is not a valid key
 - Key `ping` is not a valid key
 - Key `special_developer_cheats` is not a valid key
 - Key `special_login` is not a valid key
@@ -1201,7 +1205,6 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `special_weapon_preset_title` is not a valid key
 - Key `time_minute` is not a valid key
 - Key `time_second` is not a valid key
-- Key `username_input_placeholder` is not a valid key
 
 ### Undefined Keys
 
