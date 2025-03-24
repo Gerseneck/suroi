@@ -26,6 +26,7 @@
 "msg_enter_team_code": "Введите код группы:"
 "msg_lost_team_connection": "Потеряно соединение с группой."
 "msg_error_joining_team": "Ошибка при заходе в группу.<br>Скорее всего ее не существует либо она уже полная."
+"msg_error_kicked_team": "Вас выгнали из команды."
 "msg_not_enough_space": "Недостаточно места"
 "msg_item_already_equipped": "Предмет уже экипирован"
 "msg_better_item_equipped": "Уже экипирован предмет лучше"
@@ -93,6 +94,7 @@
 "settings_render_resolution": "Разрешение рендера"
 "settings_render_resolution_auto": "Авто"
 "settings_hires_textures": "Текстуры высокого разрешения"
+"settings_alt_texture_loading": "Альтернативный метод загрузки текстур"
 "settings_cooler_graphics": "Улучшенные эффекты"
 "settings_antialias": "Сглаживание"
 "settings_movement_smoothing": "Сглаживание ходьбы в игре"
@@ -258,6 +260,19 @@
 "kf_kl_killed": "<player> убил лидера по убийствам"
 "kf_kl_dead": "Лидер по убийствам умер, какая досада!"
 "kf_kl_suicide": "Лидер по убийствам покончил с собой!"
+"kf_suicide_finished_off": "<player> покончил с собой"
+"kf_impact_of": "удара от " // space is a must
+"km_finally_ended_yourself": "Вы наконец-то поквитались с жизнью"
+"km_finally_killed": "Вас наконец-то убили"
+"km_gas_kill_you": "Вы умерли от газа"
+"km_gas_down_you": "Вы упали с ног в газе"
+"km_airdrop_kill_you": "Вас раздавило воздушным грузом"
+"km_airdrop_down_you": "Вас сбил с ног воздушный груз"
+"km_knocked_you": "сбил вас с ног"
+"km_finished_off_you": "покончил с вами"
+"km_killed_you": "убил вас"
+"km_suicide_down": "сбили себя с ног"
+"km_suicide_finished_off": "покончили с собой"
 
 
 "finally": "наконец-то"
@@ -294,6 +309,8 @@
 "create_team_waiting": "Ожидание..."
 "create_team_play": "Начать игру"
 "create_team_ready": "Готов"
+"create_team_force_start": "Начинать без готовности"
+"create_team_not_ready": "Не готов"
 
 
 "report_reporting": "Оформление жалобы на"

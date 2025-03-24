@@ -18,8 +18,8 @@ import { ItemType, type ReferenceTo } from "@common/utils/objectDefinitions";
 import { Vec, type Vector } from "@common/utils/vector";
 import $ from "jquery";
 import { Color } from "pixi.js";
-import { getTranslatedString, TRANSLATIONS } from "../../translations";
-import { type TranslationKeys } from "../../typings/translations";
+import { getTranslatedString, TRANSLATIONS } from "../utils/translations/translations";
+import { type TranslationKeys } from "../utils/translations/typings";
 import { Game } from "../game";
 import { type GameObject } from "../objects/gameObject";
 import { Player } from "../objects/player";
@@ -283,6 +283,7 @@ export const UIManager = new (class UIManager {
         createTeamUrl: $<HTMLInputElement>("#create-team-url-field"),
         createTeamAutoFill: $<HTMLInputElement>("#create-team-toggle-auto-fill"),
         createTeamLock: $<HTMLInputElement>("#create-team-toggle-lock"),
+        createTeamForceStart: $<HTMLInputElement>("#create-team-toggle-force-start"),
         createTeamPlayers: $<HTMLDivElement>("#create-team-players"),
         closeCreateTeam: $<HTMLButtonElement>("#close-create-team"),
 
