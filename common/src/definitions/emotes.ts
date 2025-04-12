@@ -103,7 +103,8 @@ export const Emotes = new ObjectDefinitions<EmoteDefinition>([
             "awhhmahgawd",
             "emoji_50",
             "Boykisser",
-            "Grr"
+            "Grr",
+            "are you sure"
         ],
         [EmoteCategory.Text]: [
             "Question Mark",
@@ -120,15 +121,17 @@ export const Emotes = new ObjectDefinitions<EmoteDefinition>([
         ],
         [EmoteCategory.Misc]: [
             "Fire",
-            "Carrot",
-            "Egg",
             "Penguin",
             "Squid",
-            "Tomato",
+            "Eagle",
+            "Whale",
+            "Carrot",
+            "Egg",
             "Plumpkin",
             "Leek",
-            "Eagle",
-            "Logged"
+            "Tomato",
+            "Logged",
+            "Sun and Moon"
         ]
     }).flatMap(([category, names]) =>
         names.map(name => ({
