@@ -2310,6 +2310,9 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `firework_rocket` is not a valid key
 - Key `power_cell` is not a valid key
 - Key `bb` is not a valid key
+- Key `seed` is not a valid key
+- Key `needle` is not a valid key
+- Key `plumpkin_ammo` is not a valid key
 - Key `bdg_developr` is not a valid key
 - Key `bdg_dev_managr` is not a valid key
 - Key `bdg_designr` is not a valid key
@@ -2441,7 +2444,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `candy_cane` is not a valid key
 - Key `celestial` is not a valid key
 - Key `coal` is not a valid key
-- Key `composr_swag` is not a valid key
+- Key `sound_designr_swag` is not a valid key
 - Key `deep_sea` is not a valid key
 - Key `deer_season` is not a valid key
 - Key `desert_camo` is not a valid key
@@ -2514,6 +2517,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `special_weapon_preset_title` is not a valid key
 - Key `time_minute` is not a valid key
 - Key `time_second` is not a valid key
+- Key `baby_plumpkin_pie_desc` is not a valid key
 
 ### Undefined Keys
 
