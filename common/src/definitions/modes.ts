@@ -46,6 +46,7 @@ export const Modes: Record<ModeName, ModeDefinition> = {
             void: "hsl(25, 80%, 6%)"
         },
         sounds: {
+            ambience: "wind_ambience",
             foldersToLoad: ["shared", "normal"]
         },
         spriteSheets: ["shared", "normal"]

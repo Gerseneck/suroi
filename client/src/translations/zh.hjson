@@ -616,6 +616,8 @@
 "time_minute": "分"
 "time_second": "秒"
 
+"berserker": "狂人"
+"berserker_desc": "当装备近战武器时，提升移动速度和伤害"
 "second_wind": "二手风"
 "second_wind_desc": "当血量低于一半时，提升移动速度"
 "flechettes": "破片弹"
