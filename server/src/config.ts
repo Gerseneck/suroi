@@ -2,6 +2,7 @@ import { TeamSize } from "@common/constants";
 import { type Maps, SpawnMode, SpawnOptions } from "./data/maps";
 import { type Game } from "./game";
 import { type GamePlugin } from "./pluginManager";
+import { SpeedTogglePlugin } from "./defaultPlugins/speedTogglePlugin";
 
 export const Config = {
     host: "127.0.0.1",
@@ -20,7 +21,7 @@ export const Config = {
 
     tps: 40,
 
-    plugins: [],
+    plugins: [SpeedTogglePlugin],
 
     //  disableLobbyClearing: true,
 
