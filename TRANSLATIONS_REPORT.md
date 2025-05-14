@@ -2464,9 +2464,9 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `blue_blood` is not a valid key
 - Key `bubblegum` is not a valid key
 - Key `candy_cane` is not a valid key
+- Key `cargo_wave` is not a valid key
 - Key `celestial` is not a valid key
 - Key `coal` is not a valid key
-- Key `sound_designr_swag` is not a valid key
 - Key `deep_sea` is not a valid key
 - Key `deer_season` is not a valid key
 - Key `desert_camo` is not a valid key
@@ -2491,6 +2491,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `light_choco` is not a valid key
 - Key `lumberjack` is not a valid key
 - Key `mango` is not a valid key
+- Key `military_camo` is not a valid key
 - Key `nebula` is not a valid key
 - Key `no_kil_pls` is not a valid key
 - Key `nsd_uniform` is not a valid key
@@ -2506,6 +2507,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `sky` is not a valid key
 - Key `snow_cone` is not a valid key
 - Key `solar_flare` is not a valid key
+- Key `sound_designr_swag` is not a valid key
 - Key `spearmint` is not a valid key
 - Key `stardust` is not a valid key
 - Key `stratosphere` is not a valid key
