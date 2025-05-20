@@ -2449,6 +2449,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `confetti_grenade_explosion` is not a valid key
 - Key `frag_grenade_explosion` is not a valid key
 - Key `pumpkin_explosion` is not a valid key
+- Key `seed_explosion` is not a valid key
 - Key `1st_birthday` is not a valid key
 - Key `algae` is not a valid key
 - Key `ancestral_garb` is not a valid key
