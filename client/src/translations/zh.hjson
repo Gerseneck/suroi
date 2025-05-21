@@ -228,7 +228,7 @@
 
 "kf_suicide_kill": "<player>自杀了"
 "kf_suicide_down": "<player>击倒了自己"
-"kf_bleed_out_kill": "<player>失血而亡"
+"kf_bleed_out_kill": "<player>因失血过多而死"
 "kf_bleed_out_down": "<player>因失血过多而倒下"
 "kf_finished_off_kill": "<player>解决了<victim>"
 "kf_finished_off_down": "<player>温柔地解决了<victim>"
