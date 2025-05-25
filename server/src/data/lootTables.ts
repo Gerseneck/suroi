@@ -122,6 +122,7 @@ export const LootTables: Record<ModeName, Record<string, LootTable>> = {
             ]
         },
         lighthouse_crate: [{ item: "flare", weight: 1 }],
+        lighthouse_crate_winter: [{ item: "flare", weight: 1 }],
         tango_crate: [
             { item: "tango_51", weight: 60 },
             { item: "tango_51", spawnSeparately: true, count: 2, weight: 30 },
