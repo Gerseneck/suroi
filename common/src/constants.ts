@@ -7,7 +7,7 @@ const inventorySlotTypings = Object.freeze([ItemType.Gun, ItemType.Gun, ItemType
 export const GameConstants = {
     // !!!!! NOTE: Increase this every time a byte stream change is made between latest release and master
     // or a new item is added to a definition list
-    protocolVersion: 56,
+    protocolVersion: 57,
     gridSize: 32,
     maxPosition: 1924,
     objectMinScale: 0.15,
@@ -69,8 +69,7 @@ export const GameConstants = {
     airdrop: {
         fallTime: 8000,
         flyTime: 30000,
-        damage: 300,
-        callerLimit: 3
+        damage: 300
     },
     projectiles: {
         maxHeight: 5,
@@ -280,6 +279,5 @@ export enum InventoryMessages {
     NotEnoughSpace,
     ItemAlreadyEquipped,
     BetterItemEquipped,
-    CannotUseRadio,
-    RadioOverused
+    CannotUseFlare
 }

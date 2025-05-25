@@ -1,7 +1,6 @@
-import { AnimationType, FireMode, GameConstants, InventoryMessages } from "@common/constants";
+import { AnimationType, FireMode } from "@common/constants";
 import { type GunDefinition } from "@common/definitions/items/guns";
 import { PerkData, PerkIds } from "@common/definitions/items/perks";
-import { PickupPacket } from "@common/packets/pickupPacket";
 import { Orientation } from "@common/typings";
 import { type BulletOptions } from "@common/utils/baseBullet";
 import { CircleHitbox, RectangleHitbox } from "@common/utils/hitbox";
@@ -80,12 +79,6 @@ export class GunItem extends InventoryItemBase.derive(ItemType.Gun) {
             || owner.disconnected
             || this !== owner.activeItem
         ) {
-            this._consecutiveShots = 0;
-            return;
-        }
-
-        if (definition.summonAirdrop && owner.isInsideBuilding) {
-            owner.sendPacket(PickupPacket.create({ message: InventoryMessages.CannotUseRadio }));
             this._consecutiveShots = 0;
             return;
         }
@@ -327,16 +320,6 @@ export class GunItem extends InventoryItemBase.derive(ItemType.Gun) {
         owner.recoil.active = true;
         owner.recoil.time = owner.game.now + definition.recoilDuration;
         owner.recoil.multiplier = definition.recoilMultiplier;
-
-        if (definition.summonAirdrop) {
-            owner.game.summonAirdrop(owner.position);
-
-            if (this._shots >= GameConstants.airdrop.callerLimit) {
-                owner.sendPacket(PickupPacket.create({ message: InventoryMessages.RadioOverused }));
-                this.owner.inventory.destroyWeapon(this.owner.inventory.activeWeaponIndex);
-                return;
-            }
-        }
 
         if (!definition.infiniteAmmo) {
             --this.ammo;

@@ -34,8 +34,6 @@
 "msg_not_enough_space": "空间不足！"
 "msg_item_already_equipped": "已装备此物品！"
 "msg_better_item_equipped": "已装备更好的物品！"
-"msg_cannot_use_radio": "无法在室内使用无线电！"
-"msg_radio_overused": "无线电因过度使用而损坏了！"
 "msg_your_team_eliminated": "你的队伍被淘汰了。"
 "msg_the_team_eliminated": "队伍被淘汰了。"
 "msg_punishment_warn_agreement": "我承认这次警告，并且不会再犯。"
@@ -149,7 +147,6 @@
 "btn_spectate": "观战"
 "btn_play_again": "再玩一局"
 "btn_menu": "菜单"
-"username_input_placeholder": "输入昵称"
 
 "gas_waiting": "毒气将在<time>后扩散"
 "gas_advancing": "毒气正在扩散！向安全区撤离"
@@ -337,7 +334,6 @@
 "kukri": "库克力弯刀"
 
 "mosin_nagant": "莫辛纳甘"
-"radio": "无线电"
 "lewis_gun": "刘易斯机枪"
 "hp18": "HP-18"
 "acr": "ACR"
@@ -383,6 +379,7 @@
 "rsh12": "RSh-12"
 "seedshot": "种子枪"
 "vaccinator": "疫苗枪"
+"flare": "信号弹"
 
 "frag_grenade": "破片手榴弹"
 "smoke_grenade": "烟雾弹"
@@ -402,7 +399,6 @@
 "9mm": "9毫米"
 "50cal": ".50口径"
 "338lap": ".338拉普马格南"
-"curadell": "霸金王电池"
 "firework_rocket": "烟花火箭"
 "power_cell": "能量电池"
 "bb": "6毫米BB"

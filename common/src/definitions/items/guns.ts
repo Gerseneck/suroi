@@ -878,6 +878,49 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         }
     },
     {
+        idString: "svu",
+        name: "SVU-A",
+        defType: DefinitionType.Gun,
+        itemType: ItemType.Gun,
+        tier: Tier.A,
+        ammoType: "762mm",
+        ammoSpawnAmount: 90,
+        capacity: 30,
+        extendedCapacity: 40,
+        reloadTime: 3.2,
+        fireDelay: 120,
+        switchDelay: 400,
+        speedMultiplier: 1,
+        recoilMultiplier: 0.725,
+        recoilDuration: 150,
+        fireMode: FireMode.Auto,
+        shotSpread: 3,
+        moveSpread: 8,
+        length: 8.4,
+        fists: {
+            left: Vec.create(100, -8),
+            right: Vec.create(40, 0),
+            rightZIndex: 4,
+            animationDuration: 100
+        },
+        image: { position: Vec.create(90, 1.5) },
+        casingParticles: [{
+            frame: "casing_762x54mmR",
+            position: Vec.create(4, 0.4)
+        }],
+        noMuzzleFlash: true,
+        ballistics: {
+            damage: 21,
+            obstacleMultiplier: 1.5,
+            speed: 0.3,
+            range: 180,
+            tracer: {
+                length: 1.4,
+                opacity: 0.15
+            }
+        }
+    },
+    {
         idString: "m16a2",
         name: "M16A2",
         defType: DefinitionType.Gun,
@@ -1042,7 +1085,7 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         name: "ShAK-12",
         defType: DefinitionType.Gun,
         ammoType: "50cal",
-        ammoSpawnAmount: 30,
+        ammoSpawnAmount: 50,
         speedMultiplier: 1,
         tier: Tier.A,
         itemType: ItemType.Gun,
@@ -2480,58 +2523,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
     },
 
     //
-    // Radio
-    //
-    {
-        idString: "radio",
-        name: "Radio",
-        defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
-        tier: Tier.S,
-        summonAirdrop: true,
-        ammoType: "curadell",
-        ammoSpawnAmount: 1,
-        fireDelay: 500,
-        switchDelay: 250,
-        speedMultiplier: 1,
-        recoilMultiplier: 1,
-        recoilDuration: 0,
-        fireMode: FireMode.Single,
-        shotSpread: 7,
-        moveSpread: 14,
-        bulletOffset: 1.5,
-        length: 4.7,
-        fists: {
-            left: Vec.create(38, -35),
-            right: Vec.create(38, 35),
-            leftZIndex: 4,
-            rightZIndex: 4,
-            animationDuration: 100
-        },
-        image: { position: Vec.create(65, 35) },
-        casingParticles: [{
-            position: Vec.create(3.5, 1),
-            ejectionDelay: 500
-        }],
-        noMuzzleFlash: true,
-        capacity: 1,
-        reloadTime: 1.4,
-        ballistics: {
-            tracer: {
-                image: "radio_wave",
-                opacity: 0.8,
-                particle: true,
-                zIndex: Number.MAX_SAFE_INTEGER - 2
-            },
-            damage: 0,
-            obstacleMultiplier: 1,
-            speed: 0.01,
-            range: 50,
-            noCollision: true
-        }
-    },
-
-    //
     // Fictional weapons
     //
     {
@@ -2718,7 +2709,7 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         fireMode: FireMode.Auto,
         shotSpread: 0.5,
         moveSpread: 5,
-        length: 6.2,
+        length: 6.7,
         fists: {
             left: Vec.create(40, 0),
             right: Vec.create(40, 0),
@@ -2727,7 +2718,7 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
             animationDuration: 80
         },
         noMuzzleFlash: true,
-        image: { position: Vec.create(64, 1) },
+        image: { position: Vec.create(80, 1) },
         capacity: 100,
         extendedCapacity: 250,
         reloadTime: 1.5,

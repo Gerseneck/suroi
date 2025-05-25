@@ -517,11 +517,7 @@ export const Game = new (class Game {
 
                 if (message !== undefined) {
                     const inventoryMsg = UIManager.ui.inventoryMsg;
-
                     inventoryMsg.text(getTranslatedString(this._inventoryMessageMap[message])).fadeIn(250);
-                    if (message === InventoryMessages.RadioOverused) {
-                        SoundManager.play("metal_light_destroyed");
-                    }
 
                     clearTimeout(this.inventoryMsgTimeout);
                     this.inventoryMsgTimeout = window.setTimeout(() => inventoryMsg.fadeOut(250), 2500);
@@ -568,8 +564,7 @@ export const Game = new (class Game {
         [InventoryMessages.NotEnoughSpace]: "msg_not_enough_space",
         [InventoryMessages.ItemAlreadyEquipped]: "msg_item_already_equipped",
         [InventoryMessages.BetterItemEquipped]: "msg_better_item_equipped",
-        [InventoryMessages.CannotUseRadio]: "msg_cannot_use_radio",
-        [InventoryMessages.RadioOverused]: "msg_radio_overused"
+        [InventoryMessages.CannotUseFlare]: "msg_cannot_use_flare"
     };
 
     startGame(packet: JoinedData): void {
@@ -1006,6 +1001,18 @@ export const Game = new (class Game {
                     ) {
                         hideSecondFloor = true;
                     }
+
+                // tree leaves
+                } else if (isObstacle && object.definition.isTree && object.leavesSprite && !object.dead) {
+                    const {
+                        minDist = 32,
+                        maxDist = 729,
+                        trunkMinAlpha = 0.8,
+                        leavesMinAlpha = 0.35
+                    } = object.definition.tree ?? {};
+                    const dist = Geometry.distanceSquared(object.position, player.position);
+                    object.image.alpha = Numeric.remap(dist, minDist, maxDist, trunkMinAlpha, 1);
+                    object.leavesSprite.alpha = Numeric.remap(dist, minDist, maxDist, leavesMinAlpha, 1);
 
                 // metal detectors
                 } else if (isObstacle && object.definition.detector && object.notOnCoolDown) {
