@@ -16,7 +16,7 @@ import { type PlayerPing } from "@common/definitions/mapPings";
 import { Obstacles, type ObstacleDefinition } from "@common/definitions/obstacles";
 import { type SyncedParticleDefinition } from "@common/definitions/syncedParticles";
 import { GameOverPacket, TeammateGameOverData } from "@common/packets/gameOverPacket";
-import { type InputData, type NoMobile } from "@common/packets/inputPacket";
+import { type InputData } from "@common/packets/inputPacket";
 import { DamageSources, KillPacket } from "@common/packets/killPacket";
 import { MutablePacketDataIn } from "@common/packets/packet";
 import { PacketStream } from "@common/packets/packetStream";
@@ -511,6 +511,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 Emotes.fromStringSafe("suroi_logo"),
                 Emotes.fromStringSafe("sad_face"),
                 undefined,
+                undefined,
+                undefined,
                 undefined
             ]
         };
@@ -703,8 +705,6 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
         const spawnable = modeRestricted ? this.game.spawnableLoots : allWeapons;
 
-        console.log(allWeapons);
-
         const { inventory } = this;
         const { items, backpack: { maxCapacity }, throwableItemMap } = inventory;
         const type = GameConstants.player.inventorySlotTypings[slot];
@@ -841,11 +841,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         this.spawnPosition = position;
     }
 
-    // --------------------------------------------------------------------------------
-    // Rate Limiting: Team Pings & Emotes.
-    // --------------------------------------------------------------------------------
-    rateLimitCheck(): boolean {
-        if (this.blockEmoting) return false;
+    emoteRateLimit(): boolean {
+        if (this.blockEmoting) return true;
 
         this.emoteCount++;
 
@@ -858,23 +855,17 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 this.setDirty();
                 this.emoteCount = 0;
             }, GameConstants.player.emotePunishmentTime);
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
-    // --------------------------------------------------------------------------------
 
     /**
      * @param isFromServer If the emoji should skip checking if the player has that emoji in their emoji wheel
      */
     sendEmote(source?: EmoteDefinition, isFromServer = false): void {
-        // -------------------------------------
-        // Rate Limiting: Team Pings & Emotes.
-        // -------------------------------------
-        if (!this.rateLimitCheck()) return;
-        // -------------------------------------
-        if (!source) return;
+        if (this.emoteRateLimit() || !source) return;
 
         let isValid = false;
         for (const definitionList of [Emotes, Ammos, HealingItems, Guns, Melees, Throwables]) {
@@ -883,15 +874,16 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 break;
             }
         }
-
         if (!isValid) return;
 
-        if (("itemType" in source)
+        if (
+            "itemType" in source
             && (source.itemType === ItemType.Ammo || source.itemType === ItemType.Healing)
-            && !this.game.teamMode) return;
+            && !this.game.teamMode
+        ) return;
 
         const indexOf = this.loadout.emotes.indexOf(source);
-        if (!isFromServer && (indexOf < 0 || indexOf > 3)) return;
+        if (!isFromServer && (indexOf < 0 || indexOf > 5)) return;
 
         if (this.game.pluginManager.emit("player_will_emote", { player: this, emote: source })) return;
 
@@ -904,13 +896,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
     }
 
     sendMapPing(ping: PlayerPing, position: Vector): void {
-        // -------------------------------------
-        // Rate Limiting: Team Pings & Emotes.
-        // -------------------------------------
-        if (!this.rateLimitCheck()) return;
-        // -------------------------------------
-
-        if (!ping.isPlayerPing) return;
+        if (this.emoteRateLimit() || !ping.isPlayerPing) return;
 
         if (
             this.game.pluginManager.emit("player_will_map_ping", {
@@ -1431,9 +1417,6 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         const packet = UpdatePacket.create();
 
         const player = this.spectating ?? this;
-        if (this.spectating) {
-            this.layer = this.spectating.layer;
-        }
         const game = this.game;
 
         const fullObjects = new Set<BaseGameObject>();
@@ -2333,7 +2316,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         this.adrenaline = 0;
         this.dirty.items = true;
         this.action?.cancel();
-        this.sendEmote(this.loadout.emotes[5], true);
+        this.sendEmote(this.loadout.emotes[7], true);
 
         this.game.livingPlayers.delete(this);
         this.game.updateGameData({ aliveCount: this.game.aliveCount });
@@ -2572,15 +2555,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
         if (this.turning = packet.turning) {
             this.rotation = packet.rotation;
-            if (!this.isMobile) {
-                this.distanceToMouse = (packet as typeof packet & NoMobile).distanceToMouse ?? 0;
-                /*
-                    we put ?? cause even though the packet's isMobile should match the server's, it might
-                    be possible—whether accidentally or maliciously—that it doesn't; however, the server is
-                    not to honor any change to isMobile. however, the packet will still be announcing itself
-                    as a mobile packet, and will thus lack the distanceToMouse field
-                */
-            }
+            this.distanceToMouse = packet.distanceToMouse;
         }
 
         const inventory = this.inventory;

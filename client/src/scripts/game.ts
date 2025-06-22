@@ -23,12 +23,13 @@ import { Vec, type Vector } from "@common/utils/vector";
 import { sound, type Sound } from "@pixi/sound";
 import FontFaceObserver from "fontfaceobserver";
 import $ from "jquery";
-import { Application, Color, Container } from "pixi.js";
+import { Application, Color, Container, loadTextures } from "pixi.js";
 import "pixi.js/prepare";
 import { setUpCommands } from "./console/commands";
 import { GameConsole } from "./console/gameConsole";
 import { defaultClientCVars } from "./console/variables";
 import { CameraManager } from "./managers/cameraManager";
+import { EmoteWheelManager, MapPingWheelManager } from "./managers/emoteWheelManager";
 import { GasManager, GasRender } from "./managers/gasManager";
 import { InputManager } from "./managers/inputManager";
 import { MapManager } from "./managers/mapManager";
@@ -53,7 +54,7 @@ import { autoPickup, fetchServerData, finalizeUI, resetPlayButtons, setUpUI, tea
 import { EMOTE_SLOTS, LAYER_TRANSITION_DELAY, PIXI_SCALE, UI_DEBUG_MODE } from "./utils/constants";
 import { DebugRenderer } from "./utils/debugRenderer";
 import { setUpNetGraph } from "./utils/graph/netGraph";
-import { loadTextures, SuroiSprite } from "./utils/pixi";
+import { loadSpritesheets, SuroiSprite } from "./utils/pixi";
 import { getTranslatedString, initTranslation } from "./utils/translations/translations";
 import { type TranslationKeys } from "./utils/translations/typings";
 import { Tween, type TweenOptions } from "./utils/tween";
@@ -94,6 +95,8 @@ type Colors = Record<ColorKeys | "ghillie", Color>;
 
 export const Game = new (class Game {
     private _socket?: WebSocket;
+
+    socketCloseCallback?: (value: unknown) => void;
 
     readonly objects = new ObjectPool<ObjectMapping>();
     readonly bullets = new Set<Bullet>();
@@ -214,7 +217,8 @@ export const Game = new (class Game {
             const renderMode = GameConsole.getBuiltInCVar("cv_renderer");
             const renderRes = GameConsole.getBuiltInCVar("cv_renderer_res");
 
-            await this.pixi.init({
+            const pixi = this.pixi;
+            await pixi.init({
                 resizeTo: window,
                 background: this.colors.grass,
                 antialias: InputManager.isMobile
@@ -225,6 +229,7 @@ export const Game = new (class Game {
                 preference: renderMode === "webgpu" ? "webgpu" : "webgl",
                 resolution: renderRes === "auto" ? (window.devicePixelRatio || 1) : parseFloat(renderRes),
                 hello: true,
+                autoStart: false,
                 canvas: document.getElementById("game-canvas") as HTMLCanvasElement,
                 // we only use pixi click events (to spectate players on click)
                 // so other events can be disabled for performance
@@ -236,15 +241,22 @@ export const Game = new (class Game {
                 }
             });
 
-            const pixi = this.pixi;
-            pixi.stop();
-            void loadTextures(
+            // Setting preferCreateImageBitmap to false reduces RAM usage in most browsers
+            if (!GameConsole.getBuiltInCVar("cv_alt_texture_loading") && loadTextures.config) {
+                loadTextures.config.preferCreateImageBitmap = false;
+            }
+
+            void loadSpritesheets(
                 this.modeName,
                 pixi.renderer,
                 InputManager.isMobile
                     ? GameConsole.getBuiltInCVar("mb_high_res_textures")
                     : GameConsole.getBuiltInCVar("cv_high_res_textures")
-            );
+            ).then(() => {
+                EmoteWheelManager.init();
+                MapPingWheelManager.init();
+                MapPingWheelManager.setupSlots();
+            });
 
             // HACK: the game ui covers the canvas
             // so send pointer events manually to make clicking to spectate players work
@@ -259,20 +271,15 @@ export const Game = new (class Game {
                 }));
             });
 
-            pixi.ticker.add(() => {
-                this.render();
-
-                if (GameConsole.getBuiltInCVar("pf_show_fps")) {
-                    const fps = Math.round(this.pixi.ticker.FPS);
-                    this.netGraph.fps.addEntry(fps);
-                }
-            });
+            pixi.ticker.add(this.render.bind(this));
 
             pixi.stage.addChild(
                 CameraManager.container,
                 DebugRenderer.graphics,
                 MapManager.container,
                 MapManager.mask,
+                EmoteWheelManager.container,
+                MapPingWheelManager.container,
                 ...Object.values(this.netGraph).map(g => g.container)
             );
 
@@ -370,10 +377,6 @@ export const Game = new (class Game {
                 ui.killFeed.html("");
                 ui.spectatingContainer.hide();
                 ui.joystickContainer.show();
-
-                InputManager.emoteWheelActive = false;
-                InputManager.pingWheelMinimap = false;
-                UIManager.ui.emoteWheel.hide();
             }
 
             let skin: typeof defaultClientCVars["cv_loadout_skin"];
@@ -467,6 +470,7 @@ export const Game = new (class Game {
         this._socket.onclose = (e: CloseEvent): void => {
             this.pixi.stop();
             this.connecting = false;
+            this.socketCloseCallback?.(undefined);
             resetPlayButtons();
 
             const reason = e.reason || "Connection lost";
@@ -583,8 +587,14 @@ export const Game = new (class Game {
         this.oceanAmbience = SoundManager.play("ocean_ambience", { loop: true, ambient: true });
         this.oceanAmbience.volume = 0;
 
-        UIManager.emotes = packet.emotes;
-        UIManager.updateEmoteWheel();
+        const emotes = EmoteWheelManager.emotes = packet.emotes
+            .slice(0, 6)
+            .filter(e => e !== undefined)
+            .map(({ idString }) => idString);
+        const len = emotes.length;
+        emotes.push(...emotes.splice(0, (1 % len + len) % len)); // rotates the array so emotes appear in the correct order
+        EmoteWheelManager.setupSlots();
+        UIManager.updateRequestableItems();
 
         const ui = UIManager.ui;
 
@@ -611,10 +621,11 @@ export const Game = new (class Game {
             ui.loaderText.text("");
 
             SoundManager.stopAll();
+            this.gameOver = true;
+            this._socket?.close();
 
-            ui.splashUi.fadeIn(400, () => {
-                this.gameStarted = false;
-                this._socket?.close();
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            ui.splashUi.fadeIn(400, async() => {
                 this.pixi.stop();
                 void this.music?.play();
 
@@ -633,8 +644,15 @@ export const Game = new (class Game {
                 ScreenRecordManager.reset();
                 UIManager.reset();
 
+                // Wait for the socket to close if it hasn't already
+                if (this._socket?.readyState !== WebSocket.CLOSED) {
+                    await new Promise(resolve => this.socketCloseCallback = resolve);
+                }
+
                 updateDisconnectTime();
                 resetPlayButtons();
+
+                this.gameStarted = false;
 
                 if (teamSocket) ui.createTeamMenu.fadeIn(250, resolve);
                 else resolve();
@@ -710,9 +728,20 @@ export const Game = new (class Game {
         for (const plane of this.planes) plane.update();
 
         CameraManager.update();
-        DebugRenderer.graphics.position = CameraManager.container.position;
-        DebugRenderer.graphics.scale = CameraManager.container.scale;
-        DebugRenderer.render();
+
+        EmoteWheelManager.update();
+        MapPingWheelManager.update();
+
+        if (DEBUG_CLIENT) {
+            DebugRenderer.graphics.position = CameraManager.container.position;
+            DebugRenderer.graphics.scale = CameraManager.container.scale;
+            DebugRenderer.render();
+        }
+
+        if (GameConsole.getBuiltInCVar("pf_show_fps")) {
+            const fps = Math.round(this.pixi.ticker.FPS);
+            this.netGraph.fps.addEntry(fps);
+        }
     }
 
     private _lastUpdateTime = 0;
