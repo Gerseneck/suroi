@@ -237,6 +237,7 @@
 "kf_finally_died": "<player>はようやく死にました"
 "kf_finally_ended_themselves": "<player>はようやく自ら命を絶ちました"
 "kf_finally_killed": "<player>はようやく殺されました"
+"kf_were_finally_killed": "<player>はようやく殺されました"
 "kf_finally_down": "<player>はようやく気絶しました"
 "kf_gas_kill": "<player>はガスで死亡しました"
 "kf_gas_down": "<player>はガスで気絶しました"
@@ -335,7 +336,6 @@
 "kukri": "ククリ"
 
 "mosin_nagant": "モシン・ナガン"
-"lewis_gun": "ルイス軽機関銃"
 "hp18": "HP-18"
 "acr": "ACR"
 "saf200": "SAF-200"

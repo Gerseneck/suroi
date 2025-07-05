@@ -1,26 +1,26 @@
-import { TeamSize } from "@common/constants";
+import { TeamMode } from "@common/constants";
 import { pickRandomInArray } from "@common/utils/random";
 import Cluster, { type Worker } from "node:cluster";
 import { App, WebSocket } from "uWebSockets.js";
-import { Config, MapWithParams } from "./config";
+import { Config } from "./utils/config";
 import { Game } from "./game";
 import { PlayerSocketData } from "./objects/player";
 import { getPunishment, forbidden, getIP, parseRole, RateLimiter, serverLog, serverWarn } from "./utils/serverHelpers";
 
 export enum WorkerMessages {
-    UpdateTeamSize,
+    UpdateTeamMode,
     UpdateMap,
     NewGame
 }
 
 export type WorkerMessage =
     | {
-        readonly type: WorkerMessages.UpdateTeamSize
-        readonly teamSize: TeamSize
+        readonly type: WorkerMessages.UpdateTeamMode
+        readonly teamMode: TeamMode
     }
     | {
         readonly type: WorkerMessages.UpdateMap
-        readonly map: MapWithParams
+        readonly map: string
     }
     | {
         readonly type: WorkerMessages.NewGame
@@ -55,12 +55,12 @@ export class GameContainer {
 
     constructor(
         readonly id: number,
-        teamSize: TeamSize,
-        map: MapWithParams,
+        teamMode: TeamMode,
+        map: string,
         resolve: (game: GameContainer) => void
     ) {
         this.promiseCallbacks.push(resolve);
-        this.worker = Cluster.fork({ id, teamSize, map }).on("message", (data: Partial<GameData>): void => {
+        this.worker = Cluster.fork({ id, teamMode, map }).on("message", (data: Partial<GameData>): void => {
             this._data = { ...this._data, ...data };
 
             if (data.allowJoin === true) { // This means the game was just created
@@ -79,23 +79,23 @@ export class GameContainer {
 export const games: Array<GameContainer | undefined> = [];
 let creating: GameContainer | undefined;
 
-export async function findGame(teamSize: TeamSize, map: MapWithParams): Promise<number | undefined> {
+export async function findGame(teamMode: TeamMode, map: string): Promise<number | undefined> {
     if (creating) return creating.id;
 
     const eligibleGames = games.filter((g?: GameContainer): g is GameContainer =>
         g !== undefined
         && g.allowJoin
-        && g.aliveCount < Config.maxPlayersPerGame
+        && g.aliveCount < (Config.maxPlayersPerGame ?? Infinity)
     );
 
     return (
         eligibleGames.length
             ? pickRandomInArray(eligibleGames)
-            : await newGame(undefined, teamSize, map)
+            : await newGame(undefined, teamMode, map)
     )?.id;
 }
 
-export async function newGame(id: number | undefined, teamSize: TeamSize, map: MapWithParams): Promise<GameContainer | undefined> {
+export async function newGame(id: number | undefined, teamMode: TeamMode, map: string): Promise<GameContainer | undefined> {
     return new Promise<GameContainer | undefined>(resolve => {
         if (creating) {
             creating.promiseCallbacks.push(resolve);
@@ -103,7 +103,7 @@ export async function newGame(id: number | undefined, teamSize: TeamSize, map: M
             serverLog(`Creating new game with ID ${id}`);
             const game = games[id];
             if (!game) {
-                creating = games[id] = new GameContainer(id, teamSize, map, resolve);
+                creating = games[id] = new GameContainer(id, teamMode, map, resolve);
             } else if (game.stopped) {
                 game.promiseCallbacks.push(resolve);
                 game.sendMessage({ type: WorkerMessages.NewGame });
@@ -118,7 +118,7 @@ export async function newGame(id: number | undefined, teamSize: TeamSize, map: M
                 const game = games[i];
                 serverLog("Game", i, "exists:", !!game, "stopped:", game?.stopped);
                 if (!game || game.stopped) {
-                    void newGame(i, teamSize, map).then(resolve);
+                    void newGame(i, teamMode, map).then(resolve);
                     return;
                 }
             }
@@ -131,30 +131,30 @@ export async function newGame(id: number | undefined, teamSize: TeamSize, map: M
 if (!Cluster.isPrimary) {
     const data = process.env as {
         readonly id: string
-        readonly teamSize: string
-        readonly map: MapWithParams
+        readonly teamMode: string
+        readonly map: string
     };
     const id = parseInt(data.id);
-    let teamSize = parseInt(data.teamSize);
+    let teamMode = parseInt(data.teamMode);
     let map = data.map;
 
-    let game = new Game(id, teamSize, map);
+    let game: Game | undefined;
 
-    process.on("uncaughtException", e => game.error("An unhandled error occurred. Details:", e));
+    process.on("uncaughtException", e => game?.error("An unhandled error occurred. Details:", e));
 
     process.on("message", (message: WorkerMessage) => {
         switch (message.type) {
-            case WorkerMessages.UpdateTeamSize: {
-                teamSize = message.teamSize;
+            case WorkerMessages.UpdateTeamMode: {
+                teamMode = message.teamMode;
                 break;
             }
             case WorkerMessages.UpdateMap: {
                 map = message.map;
-                game.kill();
+                game?.kill();
                 break;
             }
             case WorkerMessages.NewGame: {
-                game = new Game(id, teamSize, map);
+                game = new Game(id, teamMode, map);
                 break;
             }
         }
@@ -162,7 +162,7 @@ if (!Cluster.isPrimary) {
 
     setInterval(() => {
         const memoryUsage = process.memoryUsage().rss;
-        game.log(`RAM usage: ${Math.round(memoryUsage / 1024 / 1024 * 100) / 100} MB`);
+        game?.log(`RAM usage: ${Math.round(memoryUsage / 1024 / 1024 * 100) / 100} MB`);
     }, 60000);
 
     const { maxSimultaneousConnections, maxJoinAttempts } = Config;
@@ -177,7 +177,7 @@ if (!Cluster.isPrimary) {
         async upgrade(res, req, context) {
             res.onAborted(() => { /* no-op */ });
 
-            if (!game.allowJoin) {
+            if (!game?.allowJoin) {
                 forbidden(res);
                 return;
             }
@@ -191,12 +191,12 @@ if (!Cluster.isPrimary) {
             const webSocketExtensions = req.getHeader("sec-websocket-extensions");
 
             if (simultaneousConnections?.isLimited(ip)) {
-                game.warn(ip, "exceeded maximum simultaneous connections");
+                game?.warn(ip, "exceeded maximum simultaneous connections");
                 forbidden(res);
                 return;
             }
             if (joinAttempts?.isLimited(ip)) {
-                game.warn(ip, "exceeded maximum join attempts");
+                game?.warn(ip, "exceeded maximum join attempts");
                 forbidden(res);
                 return;
             }
@@ -228,7 +228,7 @@ if (!Cluster.isPrimary) {
 
         open(socket: WebSocket<PlayerSocketData>) {
             const data = socket.getUserData();
-            data.player = game.addPlayer(socket);
+            data.player = game?.addPlayer(socket);
             if (data.player === undefined) return;
 
             simultaneousConnections?.increment(data.ip);
@@ -237,7 +237,7 @@ if (!Cluster.isPrimary) {
 
         message(socket: WebSocket<PlayerSocketData>, message: ArrayBuffer) {
             try {
-                game.onMessage(socket.getUserData().player, message);
+                game?.onMessage(socket.getUserData().player, message);
             } catch (e) {
                 console.warn("Error parsing message:", e);
             }
@@ -246,10 +246,11 @@ if (!Cluster.isPrimary) {
         close(socket: WebSocket<PlayerSocketData>) {
             const { player, ip } = socket.getUserData();
 
-            if (player) game.removePlayer(player);
+            if (player) game?.removePlayer(player);
             if (ip) simultaneousConnections?.decrement(ip);
         }
-    }).listen(Config.host, Config.port + id + 1, () => {
-        game.log(`Listening on ${Config.host}:${Config.port + id + 1}`);
+    }).listen(Config.hostname, Config.port + id + 1, () => {
+        game = new Game(id, teamMode, map);
+        game.log(`Listening on ${Config.hostname}:${Config.port + id + 1}`);
     });
 }

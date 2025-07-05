@@ -15,13 +15,13 @@ import { CircleHitbox } from "@common/utils/hitbox";
 import { adjacentOrEquivLayer } from "@common/utils/layer";
 import { Angle, EaseFunctions, Geometry, Numeric } from "@common/utils/math";
 import { removeFrom, type Timeout } from "@common/utils/misc";
-import { ItemType, type ReferenceTo } from "@common/utils/objectDefinitions";
+import { DefinitionType, type ReferenceTo } from "@common/utils/objectDefinitions";
 import { type ObjectsNetData } from "@common/utils/objectsSerializations";
 import { random, randomBoolean, randomFloat, randomPointInsideCircle, randomRotation, randomSign, randomVector } from "@common/utils/random";
 import { FloorNames, FloorTypes } from "@common/utils/terrain";
 import { Vec, type Vector } from "@common/utils/vector";
 import $ from "jquery";
-import { Container, Graphics, ObservablePoint, Text, type ColorSource } from "pixi.js";
+import { Container, Graphics, GraphicsContext, ObservablePoint, Text, type ColorSource } from "pixi.js";
 import { GameConsole } from "../console/gameConsole";
 import { Game } from "../game";
 import { CameraManager } from "../managers/cameraManager";
@@ -106,6 +106,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
 
     readonly images: {
         aimTrail?: Graphics
+        altAimTrail?: Graphics
         readonly vest: SuroiSprite
         readonly body: SuroiSprite
         readonly leftFist: SuroiSprite
@@ -182,25 +183,31 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
             helmet: new SuroiSprite().setVisible(false).setPos(-8, 0).setZIndex(6),
             weapon: new SuroiSprite().setZIndex(3),
             altWeapon: new SuroiSprite().setZIndex(3),
-            muzzleFlash: new SuroiSprite("muzzle_flash").setVisible(false).setZIndex(7).setAnchor(Vec.create(0, 0.5)),
+            muzzleFlash: new SuroiSprite("muzzle_flash").setVisible(false).setZIndex(7).setAnchor(Vec(0, 0.5)),
             waterOverlay: new SuroiSprite("water_overlay").setVisible(false).setTint(Game.colors.water),
             blood: new Container(),
             backMeleeSprite: new SuroiSprite()
         };
 
-        if (Game.teamMode) {
+        if (Game.isTeamMode) {
             const createLegImage = (): SuroiSprite => new SuroiSprite().setPos(-35, 26).setZIndex(-1).setScale(1.5, 0.8);
             this.images.leftLeg = createLegImage();
             this.images.rightLeg = createLegImage();
         }
 
-        if (InputManager.isMobile && this.isActivePlayer) {
-            const aimTrail = this.images.aimTrail = new Graphics();
+        if (InputManager.isMobile && this.isActivePlayer && !Game.spectating) {
+            const ctx = new GraphicsContext();
             for (let i = 0; i < 100; i++) {
-                aimTrail.circle((i * 50) + 20, 0, 8).fill({ color: 0xffffff, alpha: 0.35 });
+                ctx.circle((i * 50) + 20, 0, 8).fill({ color: 0xffffff, alpha: 0.35 });
             }
-            aimTrail.alpha = 0;
-            this.container.addChild(aimTrail);
+
+            const aimTrail = this.images.aimTrail = new Graphics(ctx);
+            const altAimTrail = this.images.altAimTrail = new Graphics(ctx);
+
+            aimTrail.visible = false;
+            altAimTrail.visible = false;
+
+            this.container.addChild(aimTrail, altAimTrail);
         }
 
         this.container.addChild(
@@ -208,7 +215,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
             this.images.body,
             this.images.leftFist,
             this.images.rightFist,
-            ...(Game.teamMode ? [this.images.leftLeg, this.images.rightLeg] as readonly SuroiSprite[] : []),
+            ...(Game.isTeamMode ? [this.images.leftLeg, this.images.rightLeg] as readonly SuroiSprite[] : []),
             this.images.backpack,
             this.images.helmet,
             this.images.weapon,
@@ -240,7 +247,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
             active: false,
             spawnOptions: () => {
                 let frame = "";
-                if (this.action.item?.itemType === ItemType.Healing) {
+                if (this.action.item?.defType === DefinitionType.HealingItem) {
                     if (this.action.item.healType === HealType.Special) {
                         frame = this.action.item.idString.toLowerCase();
                     } else { frame = HealType[this.action.item.healType].toLowerCase(); }
@@ -261,7 +268,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                         start: 1,
                         end: 1.5
                     },
-                    speed: Vec.create(randomFloat(-1, 1), -3)
+                    speed: Vec(randomFloat(-1, 1), -3)
                 };
             }
         });
@@ -402,7 +409,14 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
 
         const noMovementSmoothing = !GameConsole.getBuiltInCVar("cv_movement_smoothing");
 
-        if (noMovementSmoothing || isNew) this.container.rotation = this.rotation;
+        if (
+            (
+                noMovementSmoothing
+                && !(this.isActivePlayer && GameConsole.getBuiltInCVar("cv_responsive_rotation"))
+            ) || isNew
+        ) {
+            this.container.rotation = this.rotation;
+        }
 
         if (this.isActivePlayer) {
             SoundManager.position = this.position;
@@ -461,14 +475,14 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
 
                 this.distSinceLastFootstep = 0;
 
-                if (FloorTypes[floorType].particles && this.layer >= Layer.Ground) {
+                if (FloorTypes[floorType].particles) {
                     const options = {
                         frames: "ripple_particle",
-                        zIndex: ZIndexes.Ground + 0.9,
+                        zIndex: ZIndexes.BuildingsFloor + 0.9,
                         position: this._hitbox.randomPoint(),
                         lifetime: 1000,
                         layer: this.layer,
-                        speed: Vec.create(0, 0)
+                        speed: Vec(0, 0)
                     };
 
                     // outer
@@ -552,7 +566,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
             const hadSkin = this.halloweenThrowableSkin;
             if (
                 hadSkin !== (this.halloweenThrowableSkin = halloweenThrowableSkin)
-                && this.activeItem.itemType === ItemType.Throwable
+                && this.activeItem.defType === DefinitionType.Throwable
                 && !this.activeItem.noSkin
             ) {
                 this.images.weapon.setFrame(`${this.activeItem.idString}${this.halloweenThrowableSkin ? "_halloween" : ""}`);
@@ -578,7 +592,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                         start: randomFloat(0.8, 1.6),
                         end: 0
                     },
-                    speed: randomPointInsideCircle(Vec.create(0, 0), 4),
+                    speed: randomPointInsideCircle(Vec(0, 0), 4),
                     zIndex: ZIndexes.Players + 1
                 }));
             }
@@ -860,13 +874,13 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
             DebugRenderer.addLine(start, lineEnd, HITBOX_COLORS.playerWeapon, alpha);
         };
 
-        switch (this.activeItem.itemType) {
-            case ItemType.Gun: {
+        switch (this.activeItem.defType) {
+            case DefinitionType.Gun: {
                 const offset = this.activeItem.bulletOffset ?? 0;
 
                 const start = Vec.add(this.position,
                     Vec.scale(
-                        Vec.rotate(Vec.create(0, offset), this.rotation),
+                        Vec.rotate(Vec(0, offset), this.rotation),
                         this.sizeMod
                     ));
 
@@ -879,7 +893,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                 );
                 break;
             }
-            case ItemType.Melee: {
+            case DefinitionType.Melee: {
                 DebugRenderer.addCircle(
                     this.activeItem.radius * this.sizeMod,
                     Vec.add(
@@ -922,7 +936,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
     private _getItemReference(): SingleGunNarrowing | Exclude<WeaponDefinition, GunDefinition> {
         const weaponDef = this.activeItem;
 
-        return weaponDef.itemType === ItemType.Gun && weaponDef.isDual
+        return weaponDef.defType === DefinitionType.Gun && weaponDef.isDual
             ? Loots.fromString<SingleGunNarrowing>(weaponDef.singleVariant)
             : weaponDef as SingleGunNarrowing | Exclude<WeaponDefinition, GunDefinition>;
     }
@@ -930,14 +944,14 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
     private _getOffset(): number {
         const weaponDef = this.activeItem;
 
-        return weaponDef.itemType === ItemType.Gun && weaponDef.isDual
+        return weaponDef.defType === DefinitionType.Gun && weaponDef.isDual
             ? weaponDef.leftRightOffset * PIXI_SCALE
             : 0;
     }
 
     updateTeammateName(): void {
         if (
-            Game.teamMode
+            Game.isTeamMode
             && (
                 !this.isActivePlayer
                 && !this.teammateName
@@ -972,7 +986,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                 const oldWidth = badge.width;
                 badge.width = text.height / 1.25;
                 badge.height *= badge.width / oldWidth;
-                badge.position = Vec.create(
+                badge.position = Vec(
                     text.width / 2 + 20,
                     0
                 );
@@ -1051,7 +1065,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
         if (reference.image) {
             const { image: { position, angle } } = reference;
 
-            if (reference.itemType === ItemType.Throwable && !reference.noSkin) {
+            if (reference.defType === DefinitionType.Throwable && !reference.noSkin) {
                 this.images.weapon.setFrame(`${reference.idString}${this.halloweenThrowableSkin ? "_halloween" : ""}`);
             }
 
@@ -1079,27 +1093,41 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
         const { fists } = weaponDef;
 
         const imagePresent = image !== undefined;
+        const isDualGun = imagePresent && weaponDef.defType === DefinitionType.Gun && weaponDef.isDual;
         if (imagePresent) {
-            let frame = `${reference.idString}${weaponDef.itemType === ItemType.Gun || (image as NonNullable<MeleeDefinition["image"]>).separateWorldImage
+            let frame = `${reference.idString}${weaponDef.defType === DefinitionType.Gun || (image as NonNullable<MeleeDefinition["image"]>).separateWorldImage
                 ? "_world"
                 : ""
             }`;
 
-            if (weaponDef.itemType === ItemType.Throwable && this.halloweenThrowableSkin && !weaponDef.noSkin) {
+            if (weaponDef.defType === DefinitionType.Throwable && this.halloweenThrowableSkin && !weaponDef.noSkin) {
                 frame += "_halloween";
             }
 
             const { angle, position: { x: pX, y: pY } } = image;
-
-            this.images.weapon.setFrame(frame);
-            this.images.altWeapon.setFrame(frame);
-            this.images.weapon.setAngle(angle);
-            this.images.altWeapon.setAngle(angle); // there's an ambiguity here as to whether the angle should be inverted or the same
-            this.images.weapon.setPivot(reference.image && "pivot" in reference.image && reference.image.pivot ? reference.image.pivot : Vec.create(0, 0));
-
             const offset = this._getOffset();
-            this.images.weapon.setPos(pX, pY + offset);
-            this.images.altWeapon.setPos(pX, pY - offset);
+
+            this.images.weapon
+                .setFrame(frame)
+                .setPos(pX, pY + offset)
+                .setAngle(angle)
+                .setPivot(reference.image && "pivot" in reference.image && reference.image.pivot ? reference.image.pivot : Vec(0, 0));
+
+            if (isDualGun) {
+                this.images.altWeapon
+                    .setFrame(frame)
+                    .setPos(pX, pY - offset)
+                    .setAngle(angle) // there's an ambiguity here as to whether the angle should be inverted or the same
+                    .setVisible(true);
+
+                this.images.aimTrail?.position.set(pX, pY + offset);
+                this.images.altAimTrail?.position.set(pX, pY - offset);
+            }
+        }
+
+        if (!isDualGun) {
+            this.images.altWeapon.setVisible(false);
+            this.images.aimTrail?.position.set(0, 0);
         }
 
         if (this.activeItem !== this._oldItem) {
@@ -1108,9 +1136,9 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
             this.images.muzzleFlash.alpha = 0;
             if (this.isActivePlayer && !isNew) {
                 let soundID: string;
-                if (reference.itemType === ItemType.Throwable) {
+                if (reference.defType === DefinitionType.Throwable) {
                     soundID = "throwable";
-                } else if (reference.itemType === ItemType.Gun && reference.isDual) {
+                } else if (reference.defType === DefinitionType.Gun && reference.isDual) {
                     soundID = reference.idString.slice("dual_".length);
                 } else if (SoundManager.has(`${reference.idString}_switch`)) {
                     soundID = reference.idString;
@@ -1124,10 +1152,8 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
         this.images.weapon.setVisible(imagePresent);
         this.images.muzzleFlash.setVisible(imagePresent);
 
-        this.images.altWeapon.setVisible(weaponDef.itemType === ItemType.Gun && (weaponDef.isDual ?? false));
-
-        switch (weaponDef.itemType) {
-            case ItemType.Gun: {
+        switch (weaponDef.defType) {
+            case DefinitionType.Gun: {
                 this.images.rightFist.setZIndex((fists as SingleGunNarrowing["fists"]).rightZIndex ?? 1);
                 this.images.leftFist.setZIndex((fists as SingleGunNarrowing["fists"]).leftZIndex ?? 1);
                 this.images.weapon.setZIndex(image?.zIndex ?? 2);
@@ -1135,14 +1161,14 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                 this.images.body.setZIndex(3);
                 break;
             }
-            case ItemType.Melee: {
+            case DefinitionType.Melee: {
                 this.images.leftFist.setZIndex(4);
                 this.images.rightFist.setZIndex(4);
                 this.images.body.setZIndex(2);
                 this.images.weapon.setZIndex(reference.image?.zIndex ?? 1);
                 break;
             }
-            case ItemType.Throwable: {
+            case DefinitionType.Throwable: {
                 this.images.leftFist.setZIndex(4);
                 this.images.rightFist.setZIndex(4);
                 this.images.body.setZIndex(2);
@@ -1206,7 +1232,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
             container.children(".item-image").attr("src", `./img/game/shared/loot/${def.idString}.svg`);
 
             let itemTooltip = getTranslatedString(def.idString as TranslationKeys);
-            if (def.itemType === ItemType.Armor) {
+            if (def.defType === DefinitionType.Armor) {
                 itemTooltip = getTranslatedString("tt_reduces", {
                     item: `<b>${getTranslatedString(def.idString as TranslationKeys)}</b><br>`,
                     percent: (def.damageReduction * 100).toString()
@@ -1222,7 +1248,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
             "pointerdown",
             e => {
                 e.stopImmediatePropagation();
-                if (e.button === 2 && def && Game.teamMode) {
+                if (e.button === 2 && def && Game.isTeamMode) {
                     InputManager.addAction({
                         type: InputActions.DropItem,
                         item: def
@@ -1252,7 +1278,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
     }
 
     canInteract(player: Player): boolean {
-        return Game.teamMode
+        return Game.isTeamMode
             && !player.downed
             && this.downed
             && !this.beingRevived
@@ -1311,7 +1337,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
     playAnimation(anim: AnimationType): void {
         switch (anim) {
             case AnimationType.Melee: {
-                if (this.activeItem.itemType !== ItemType.Melee) {
+                if (this.activeItem.defType !== DefinitionType.Melee) {
                     console.warn(`Attempted to play melee animation with non-melee item '${this.activeItem.idString}'`);
                     return;
                 }
@@ -1434,8 +1460,8 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                     }
 
                     targets.sort((a, b) => {
-                        if (Game.teamMode && a.isPlayer && a.teamID === this.teamID) return Infinity;
-                        if (Game.teamMode && b.isPlayer && b.teamID === this.teamID) return -Infinity;
+                        if (Game.isTeamMode && a.isPlayer && a.teamID === this.teamID) return Infinity;
+                        if (Game.isTeamMode && b.isPlayer && b.teamID === this.teamID) return -Infinity;
 
                         return (a.hitbox?.distanceTo(this.hitbox).distance ?? 0) - (b.hitbox?.distanceTo(this.hitbox).distance ?? 0);
                     });
@@ -1512,7 +1538,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
             case AnimationType.GunFire:
             case AnimationType.GunFireAlt:
             case AnimationType.LastShot: {
-                if (this.activeItem.itemType !== ItemType.Gun) {
+                if (this.activeItem.defType !== DefinitionType.Gun) {
                     const name = ({
                         [AnimationType.GunFire]: "GunFire",
                         [AnimationType.GunFireAlt]: "GunFireAlt",
@@ -1570,7 +1596,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
 
                     const position = Vec.add(
                         this.position,
-                        Vec.scale(Vec.rotate(Vec.create(weaponDef.length, offset), this.rotation), this.sizeMod)
+                        Vec.scale(Vec.rotate(Vec(weaponDef.length, offset), this.rotation), this.sizeMod)
                     );
 
                     const gas = weaponDef.gasParticles;
@@ -1606,7 +1632,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                     muzzleFlash.y = (isAltFire ? -1 : 1) * this._getOffset();
                     muzzleFlash.setVisible(true);
                     muzzleFlash.alpha = 0.95;
-                    muzzleFlash.scale = Vec.create(
+                    muzzleFlash.scale = Vec(
                         randomFloat(0.75, 1.25),
                         randomFloat(0.5, 1.5) * (randomBoolean() ? 1 : -1)
                     );
@@ -1672,7 +1698,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                 break;
             }
             case AnimationType.ThrowableCook: {
-                if (this.activeItem.itemType !== ItemType.Throwable) {
+                if (this.activeItem.defType !== DefinitionType.Throwable) {
                     console.warn(`Attempted to play throwable cooking animation with non-throwable item '${this.activeItem.idString}'`);
                     return;
                 }
@@ -1719,7 +1745,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                                 target: pinImage,
                                 duration: def.cookTime / 2,
                                 to: {
-                                    ...Vec.add(Vec.scale(def.animation.cook.leftFist, PIXI_SCALE), Vec.create(15, 0))
+                                    ...Vec.add(Vec.scale(def.animation.cook.leftFist, PIXI_SCALE), Vec(15, 0))
                                 },
                                 onComplete: () => {
                                     this.anims.pin = undefined;
@@ -1739,7 +1765,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                         ),
                         layer: this.layer,
                         zIndex: ZIndexes.Players + 1,
-                        speed: Vec.rotate(Vec.create(8, 8), this.rotation),
+                        speed: Vec.rotate(Vec(8, 8), this.rotation),
                         rotation: this.rotation,
                         alpha: {
                             start: 1,
@@ -1789,7 +1815,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                 break;
             }
             case AnimationType.ThrowableThrow: {
-                if (this.activeItem.itemType !== ItemType.Throwable) {
+                if (this.activeItem.defType !== DefinitionType.Throwable) {
                     console.warn(`Attempted to play throwable throwing animation with non-throwable item '${this.activeItem.idString}'`);
                     return;
                 }
@@ -1813,7 +1839,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                             Vec.scale(def.animation.cook.rightFist, this.sizeMod)
                         ),
                         zIndex: ZIndexes.Players + 1,
-                        speed: Vec.rotate(Vec.create(8, 8), this.rotation),
+                        speed: Vec.rotate(Vec(8, 8), this.rotation),
                         rotation: this.rotation,
                         alpha: {
                             start: 1,
@@ -1861,7 +1887,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                 this.images.rightFist.setZIndex(4);
                 this.anims.leftFist = Game.addTween({
                     target: this.images.leftFist,
-                    to: Vec.create(28, -45),
+                    to: Vec(28, -45),
                     duration: 100,
                     onComplete: () => {
                         this.anims.leftFist = undefined;
@@ -1869,7 +1895,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                 });
                 this.anims.rightFist = Game.addTween({
                     target: this.images.rightFist,
-                    to: Vec.create(58, 48),
+                    to: Vec(58, 48),
                     duration: 100,
                     onComplete: () => {
                         this.anims.rightFist = undefined;
@@ -1936,7 +1962,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
                         end: 0,
                         ease: EaseFunctions.expoIn
                     },
-                    speed: Vec.create(0, 0),
+                    speed: Vec(0, 0),
                     tint: isOnWater ? 0xaaffff : 0xeeeeee,
                     onDeath: self => {
                         this._bloodDecals.delete(self);
@@ -1948,7 +1974,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
 
             const bodyBlood = new SuroiSprite("blood_particle");
 
-            bodyBlood.position = randomPointInsideCircle(Vec.create(0, 0), 45);
+            bodyBlood.position = randomPointInsideCircle(Vec(0, 0), 45);
             bodyBlood.rotation = randomRotation();
             bodyBlood.scale = randomFloat(0.4, 0.8);
 
@@ -1965,6 +1991,7 @@ export class Player extends GameObject.derive(ObjectCategory.Player) {
         const { images, emote, teammateName, anims } = this;
 
         images.aimTrail?.destroy();
+        images.altAimTrail?.destroy();
         images.vest.destroy();
         images.body.destroy();
         images.leftFist.destroy();

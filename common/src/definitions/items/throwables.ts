@@ -1,4 +1,4 @@
-import { DefinitionType, ItemType, type InventoryItemDefinition, type ReferenceTo } from "../../utils/objectDefinitions";
+import { DefinitionType, type InventoryItemDefinition, type ReferenceTo } from "../../utils/objectDefinitions";
 import { Vec, type Vector } from "../../utils/vector";
 import { DecalDefinition } from "../decals";
 import { type ExplosionDefinition } from "../explosions";
@@ -8,7 +8,7 @@ import { InventoryItemDefinitions } from "./items";
 
 export type ThrowableDefinition = InventoryItemDefinition & {
     readonly defType: DefinitionType.Throwable
-    readonly itemType: ItemType.Throwable
+
     readonly tier: Tier
     /**
      * Specified in *milliseconds*
@@ -98,7 +98,6 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
         idString: "frag_grenade",
         name: "Frag Grenade",
         defType: DefinitionType.Throwable,
-        itemType: ItemType.Throwable,
         tier: Tier.C,
         cookable: true,
         fuseTime: 4000,
@@ -117,10 +116,10 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
             initialHeight: 0.5
         },
         image: {
-            position: Vec.create(60, 43),
+            position: Vec(60, 43),
             angle: 60,
             zIndex: 5,
-            anchor: Vec.create(0.5, 0.68)
+            anchor: Vec(0.5, 0.68)
         },
         detonation: {
             explosion: "frag_grenade_explosion"
@@ -131,12 +130,12 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
             leverImage: "proj_frag_lever",
             cook: {
                 cookingImage: "proj_frag_nopin",
-                leftFist: Vec.create(2.5, 0),
-                rightFist: Vec.create(-0.5, 2.15)
+                leftFist: Vec(2.5, 0),
+                rightFist: Vec(-0.5, 2.15)
             },
             throw: {
-                leftFist: Vec.create(1.9, -1.75),
-                rightFist: Vec.create(4, 2.15)
+                leftFist: Vec(1.9, -1.75),
+                rightFist: Vec(4, 2.15)
             }
         }
     },
@@ -144,7 +143,6 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
         idString: "smoke_grenade",
         name: "Smoke Grenade",
         defType: DefinitionType.Throwable,
-        itemType: ItemType.Throwable,
         tier: Tier.D,
         cookable: false,
         fuseTime: 2000,
@@ -163,7 +161,7 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
             initialHeight: 0.5
         },
         image: {
-            position: Vec.create(60, 43),
+            position: Vec(60, 43),
             angle: 60,
             zIndex: 5
         },
@@ -178,12 +176,12 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
             leverImage: "proj_smoke_lever",
             cook: {
                 cookingImage: "proj_smoke_nopin",
-                leftFist: Vec.create(2.5, 0),
-                rightFist: Vec.create(-0.5, 2.15)
+                leftFist: Vec(2.5, 0),
+                rightFist: Vec(-0.5, 2.15)
             },
             throw: {
-                leftFist: Vec.create(1.9, -1.75),
-                rightFist: Vec.create(4, 2.15)
+                leftFist: Vec(1.9, -1.75),
+                rightFist: Vec(4, 2.15)
             }
         }
     },
@@ -191,7 +189,6 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
         idString: "confetti_grenade",
         name: "Confetti Grenade",
         defType: DefinitionType.Throwable,
-        itemType: ItemType.Throwable,
         tier: Tier.S,
         fuseTime: 4000,
         cookTime: 150,
@@ -211,7 +208,7 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
             initialHeight: 0.5
         },
         image: {
-            position: Vec.create(60, 43),
+            position: Vec(60, 43),
             angle: 60,
             zIndex: 5
         },
@@ -224,12 +221,12 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
             leverImage: "proj_frag_lever",
             cook: {
                 cookingImage: "proj_confetti_nopin",
-                leftFist: Vec.create(2.5, 0),
-                rightFist: Vec.create(-0.5, 2.15)
+                leftFist: Vec(2.5, 0),
+                rightFist: Vec(-0.5, 2.15)
             },
             throw: {
-                leftFist: Vec.create(1.9, -1.75),
-                rightFist: Vec.create(4, 2.15)
+                leftFist: Vec(1.9, -1.75),
+                rightFist: Vec(4, 2.15)
             }
         }
     },
@@ -237,7 +234,6 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
         idString: "c4",
         name: "C4",
         defType: DefinitionType.Throwable,
-        itemType: ItemType.Throwable,
         tier: Tier.S,
         c4: true,
         cookable: false,
@@ -261,7 +257,7 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
             }
         },
         image: {
-            position: Vec.create(60, 43),
+            position: Vec(60, 43),
             angle: 60,
             zIndex: 5
         },
@@ -272,12 +268,12 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
             liveImage: "proj_c4",
             activatedImage: "proj_c4_activated",
             cook: {
-                leftFist: Vec.create(2, -1),
-                rightFist: Vec.create(3, 0)
+                leftFist: Vec(2, -1),
+                rightFist: Vec(3, 0)
             },
             throw: {
-                leftFist: Vec.create(1.9, -1.75),
-                rightFist: Vec.create(4, 2.15)
+                leftFist: Vec(1.9, -1.75),
+                rightFist: Vec(4, 2.15)
             }
         }
     },
@@ -285,7 +281,6 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
         idString: "flare",
         name: "Flare",
         defType: DefinitionType.Throwable,
-        itemType: ItemType.Throwable,
         tier: Tier.S,
         cookable: false,
         summonAirdrop: true,
@@ -311,7 +306,7 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
             decal: "used_flare_decal"
         },
         image: {
-            position: Vec.create(60, 43),
+            position: Vec(60, 43),
             angle: 60,
             zIndex: 5
         },
@@ -319,17 +314,17 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
             liveImage: "proj_flare",
             pinImage: "proj_flare_pin",
             cook: {
-                leftFist: Vec.create(2.5, 0),
-                rightFist: Vec.create(-0.5, 2.15)
+                leftFist: Vec(2.5, 0),
+                rightFist: Vec(-0.5, 2.15)
             },
             throw: {
-                leftFist: Vec.create(1.9, -1.75),
-                rightFist: Vec.create(4, 2.15)
+                leftFist: Vec(1.9, -1.75),
+                rightFist: Vec(4, 2.15)
             }
         },
         flicker: {
             image: "proj_flare_flicker",
-            offset: Vec.create(0, -1.5)
+            offset: Vec(0, -1.5)
         },
         activeSound: "flare"
     },
@@ -337,7 +332,6 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
         idString: "proj_seed",
         name: "Seed",
         defType: DefinitionType.Throwable,
-        itemType: ItemType.Throwable,
         tier: Tier.S,
         cookable: true,
         fuseTime: 1500,
@@ -365,10 +359,10 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
             }
         },
         image: {
-            position: Vec.create(60, 43),
+            position: Vec(60, 43),
             angle: 60,
             zIndex: 5,
-            anchor: Vec.create(0.5, 0.68)
+            anchor: Vec(0.5, 0.68)
         },
         detonation: {
             explosion: "seed_explosion"
@@ -376,12 +370,12 @@ export const Throwables = new InventoryItemDefinitions<ThrowableDefinition>([
         animation: {
             liveImage: "proj_seed",
             cook: {
-                leftFist: Vec.create(2.5, 0),
-                rightFist: Vec.create(-0.5, 2.15)
+                leftFist: Vec(2.5, 0),
+                rightFist: Vec(-0.5, 2.15)
             },
             throw: {
-                leftFist: Vec.create(1.9, -1.75),
-                rightFist: Vec.create(4, 2.15)
+                leftFist: Vec(1.9, -1.75),
+                rightFist: Vec(4, 2.15)
             }
         }
     }

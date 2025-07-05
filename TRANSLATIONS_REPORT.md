@@ -44,12 +44,14 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
 - Key `retry` is not defined
 - Key `bindings_explode_c4` is not defined
 - Key `bindings_screen_record` is not defined
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `finally` is not defined
 - Key `with` is not defined
@@ -142,7 +144,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇧🇷 Português (Brasil) (96% Complete) - br.hjson
+## 🇧🇷 Português (Brasil) (95% Complete) - br.hjson
 
 ### Invalid Keys
 
@@ -162,7 +164,9 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_switched_joystick_info` is not defined
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `bindings_screen_record` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `tt_desc` is not defined
 - Key `region_oc` is not defined
 - Key `vaccine_syringe` is not defined
@@ -212,12 +216,14 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
 - Key `retry` is not defined
 - Key `bindings_explode_c4` is not defined
 - Key `bindings_screen_record` is not defined
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
@@ -327,10 +333,12 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
 - Key `retry` is not defined
 - Key `bindings_screen_record` is not defined
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `tt_desc` is not defined
 - Key `region_oc` is not defined
 - Key `vaccine_syringe` is not defined
@@ -401,7 +409,7 @@ This file is a report of all errors and missing keys in the translation files of
 
 ### (No Undefined Keys)
 
-## 🇪🇸 Español (71% Complete) - es.hjson
+## 🇪🇸 Español (70% Complete) - es.hjson
 
 ### Invalid Keys
 
@@ -431,11 +439,13 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
 - Key `retry` is not defined
 - Key `bindings_screen_record` is not defined
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
@@ -675,7 +685,9 @@ This file is a report of all errors and missing keys in the translation files of
 
 ### Undefined Keys
 
+- Key `interact_recorder_interactable` is not defined
 - Key `kf_suicide_finished_off` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `m16a4` is not defined
 
 ## 🇫🇮 suomi (69% Complete) - fi.hjson
@@ -713,11 +725,13 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
 - Key `retry` is not defined
 - Key `bindings_screen_record` is not defined
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
@@ -809,6 +823,7 @@ This file is a report of all errors and missing keys in the translation files of
 ### Undefined Keys
 
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `tt_desc` is not defined
 - Key `vaccine_syringe` is not defined
 - Key `vaccine_syringe_desc` is not defined
@@ -840,7 +855,9 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `bindings_screen_record` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `tt_desc` is not defined
 - Key `create_team_force_start` is not defined
 - Key `create_team_not_ready` is not defined
@@ -953,6 +970,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
 - Key `retry` is not defined
 - Key `bindings_explode_c4` is not defined
@@ -961,6 +979,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_finished_off_kill` is not defined
 - Key `kf_finished_off_down` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
@@ -1047,10 +1066,12 @@ This file is a report of all errors and missing keys in the translation files of
 ### Undefined Keys
 
 - Key `msg_cannot_use_flare` is not defined
+- Key `interact_recorder_interactable` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇮🇹 Italiano (64% Complete) - it.hjson
+## 🇮🇹 Italiano (63% Complete) - it.hjson
 
 ### Invalid Keys
 
@@ -1110,6 +1131,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `interact_headquarters_security_desk` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
 - Key `retry` is not defined
 - Key `bindings_explode_c4` is not defined
@@ -1118,6 +1140,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_finished_off_kill` is not defined
 - Key `kf_finished_off_down` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
@@ -1432,7 +1455,9 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `werewolf` is not a valid key
 - Key `zebra` is not a valid key
 
-### (No Undefined Keys)
+### Undefined Keys
+
+- Key `interact_recorder_interactable` is not defined
 
 ## 🇱🇹 Lietuvių (66% Complete) - lt.hjson
 
@@ -1478,12 +1503,14 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
 - Key `retry` is not defined
 - Key `bindings_explode_c4` is not defined
 - Key `bindings_screen_record` is not defined
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
@@ -1607,12 +1634,14 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
 - Key `retry` is not defined
 - Key `bindings_explode_c4` is not defined
 - Key `bindings_screen_record` is not defined
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
@@ -1699,6 +1728,7 @@ This file is a report of all errors and missing keys in the translation files of
 ### Undefined Keys
 
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `tt_desc` is not defined
 - Key `vaccine_syringe` is not defined
 - Key `vaccine_syringe_desc` is not defined
@@ -1738,11 +1768,13 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
 - Key `retry` is not defined
 - Key `bindings_screen_record` is not defined
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
@@ -1821,7 +1853,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🎀 Cute Engwish (74% Complete) - qen.hjson
+## 🎀 Cute Engwish (73% Complete) - qen.hjson
 
 ### Invalid Keys
 
@@ -1843,9 +1875,11 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `msg_cannot_use_flare` is not defined
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_monument` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `bindings_explode_c4` is not defined
 - Key `bindings_screen_record` is not defined
 - Key `kf_suicide_finished_off` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
@@ -1933,6 +1967,7 @@ This file is a report of all errors and missing keys in the translation files of
 ### Undefined Keys
 
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `tt_desc` is not defined
 - Key `vaccine_syringe` is not defined
 - Key `vaccine_syringe_desc` is not defined
@@ -1947,6 +1982,7 @@ This file is a report of all errors and missing keys in the translation files of
 
 - Key `settings_show_inout` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `tt_desc` is not defined
 - Key `m16a4` is not defined
 - Key `vaccine_syringe` is not defined
@@ -1964,7 +2000,9 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_alt_texture_loading` is not defined
 - Key `msg_cannot_use_flare` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `kf_suicide_finished_off` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
@@ -2054,6 +2092,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `msg_error_kicked_team` is not defined
 - Key `msg_cannot_use_flare` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_recorder_interactable` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `tt_desc` is not defined
 - Key `create_team_force_start` is not defined
 - Key `create_team_not_ready` is not defined
@@ -2131,7 +2171,9 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_alt_texture_loading` is not defined
 - Key `msg_cannot_use_flare` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_recorder_interactable` is not defined
 - Key `kf_suicide_finished_off` is not defined
+- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
@@ -2209,7 +2251,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇻🇳 Tiếng Việt (82% Complete) - vi.hjson
+## 🇻🇳 Tiếng Việt (99% Complete) - vi.hjson
 
 ### Invalid Keys
 
@@ -2217,72 +2259,10 @@ This file is a report of all errors and missing keys in the translation files of
 
 ### Undefined Keys
 
-- Key `msg_cannot_use_flare` is not defined
-- Key `action_vaccine_syringe_use` is not defined
-- Key `tt_desc` is not defined
-- Key `vaccine_syringe` is not defined
-- Key `vaccine_syringe_desc` is not defined
-- Key `second_wind` is not defined
-- Key `second_wind_desc` is not defined
-- Key `flechettes` is not defined
-- Key `flechettes_desc` is not defined
-- Key `sabot_rounds` is not defined
-- Key `sabot_rounds_desc` is not defined
-- Key `extended_mags` is not defined
-- Key `extended_mags_desc` is not defined
-- Key `demo_expert` is not defined
-- Key `demo_expert_desc` is not defined
-- Key `advanced_athletics` is not defined
-- Key `advanced_athletics_desc` is not defined
-- Key `toploaded` is not defined
-- Key `toploaded_desc` is not defined
-- Key `infinite_ammo` is not defined
-- Key `infinite_ammo_desc` is not defined
-- Key `field_medic` is not defined
-- Key `field_medic_desc` is not defined
-- Key `berserker` is not defined
-- Key `berserker_desc` is not defined
-- Key `close_quarters_combat` is not defined
-- Key `close_quarters_combat_desc` is not defined
-- Key `low_profile` is not defined
-- Key `low_profile_desc` is not defined
-- Key `combat_expert` is not defined
-- Key `combat_expert_desc` is not defined
-- Key `precision_recycling` is not defined
-- Key `precision_recycling_desc` is not defined
-- Key `plumpkin_gamble` is not defined
-- Key `plumpkin_gamble_desc` is not defined
-- Key `lycanthropy` is not defined
-- Key `lycanthropy_desc` is not defined
-- Key `bloodthirst` is not defined
-- Key `bloodthirst_desc` is not defined
-- Key `plumpkin_bomb` is not defined
-- Key `plumpkin_bomb_desc` is not defined
-- Key `shrouded` is not defined
-- Key `shrouded_desc` is not defined
-- Key `experimental_treatment` is not defined
-- Key `experimental_treatment_desc` is not defined
-- Key `engorged` is not defined
-- Key `engorged_desc` is not defined
-- Key `baby_plumpkin_pie` is not defined
-- Key `costumed` is not defined
-- Key `costumed_desc` is not defined
-- Key `torn_pockets` is not defined
-- Key `torn_pockets_desc` is not defined
-- Key `claustrophobic` is not defined
-- Key `claustrophobic_desc` is not defined
-- Key `laced_stimulants` is not defined
-- Key `laced_stimulants_desc` is not defined
-- Key `rotten_plumpkin` is not defined
-- Key `rotten_plumpkin_desc` is not defined
-- Key `infected` is not defined
-- Key `infected_desc` is not defined
-- Key `immunity` is not defined
-- Key `immunity_desc` is not defined
-- Key `partners` is not defined
-- Key `username_placeholder` is not defined
+- Key `interact_recorder_interactable` is not defined
+- Key `kf_were_finally_killed` is not defined
 
-## 🇨🇳 中文（简体） (100% Complete) - zh.hjson
+## 🇨🇳 中文（简体） (99% Complete) - zh.hjson
 
 ### Invalid Keys
 
@@ -2535,5 +2515,6 @@ This file is a report of all errors and missing keys in the translation files of
 
 ### Undefined Keys
 
+- Key `interact_recorder_interactable` is not defined
 - Key `m16a4` is not defined
 

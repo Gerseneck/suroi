@@ -3,7 +3,7 @@ import { CircleHitbox } from "@common/utils/hitbox";
 import { Geometry, Numeric } from "@common/utils/math";
 import { randomPointInsideCircle } from "@common/utils/random";
 import { Vec, type Vector } from "@common/utils/vector";
-import { Config, GasMode } from "./config";
+import { Config } from "./utils/config";
 import { GasStage, GasStages } from "./data/gasStages";
 import { type Game } from "./game";
 
@@ -13,6 +13,7 @@ export class Gas {
     currentDuration = 0;
     countdownStart = 0;
     completionRatio = 0;
+    finalStage = false;
 
     oldPosition: Vector;
     newPosition: Vector;
@@ -43,7 +44,7 @@ export class Gas {
         this.newRadius = firstStage.newRadius * this.mapSize;
         this.currentRadius = firstStage.oldRadius * this.mapSize;
 
-        this.oldPosition = Vec.create(game.map.width / 2, game.map.height / 2);
+        this.oldPosition = Vec(game.map.width / 2, game.map.height / 2);
         this.newPosition = Vec.clone(this.oldPosition);
         this.currentPosition = Vec.clone(this.oldPosition);
         this._lastDamageTimestamp = this.game.now;
@@ -74,15 +75,14 @@ export class Gas {
     }
 
     advanceGasStage(): void {
-        const { gas } = Config;
-        if (gas.mode === GasMode.Disabled) return;
+        const gas = Config.gas;
+        if (gas?.disabled) return;
 
         const currentStage = GasStages[this.stage + 1];
         if (currentStage === undefined) return;
 
-        const isDebug = gas.mode === GasMode.Debug;
-        const duration = isDebug && gas.overrideDuration !== undefined && currentStage.duration !== 0
-            ? gas.overrideDuration
+        const duration = gas?.forceDuration !== undefined && currentStage.duration !== 0
+            ? gas.forceDuration
             : currentStage.duration;
 
         this.stage++;
@@ -90,13 +90,15 @@ export class Gas {
         this.currentDuration = duration;
         this.completionRatio = 1;
         this.countdownStart = this.game.now;
+        this.finalStage = currentStage.finalStage ?? false;
 
         if (currentStage.state === GasState.Waiting) {
             this.oldPosition = Vec.clone(this.newPosition);
             if (currentStage.newRadius !== 0) {
                 const { width, height } = this.game.map;
-                if (isDebug && gas.overridePosition) {
-                    this.newPosition = Vec.create(width / 2, height / 2);
+                if (gas?.forcePosition) {
+                    const [x, y] = typeof gas.forcePosition === "boolean" ? [width / 2, height / 2] : gas.forcePosition;
+                    this.newPosition = Vec(x, y);
                 } else {
                     const { oldRadius, newRadius } = currentStage;
                     const { x, y } = randomPointInsideCircle(
@@ -104,7 +106,7 @@ export class Gas {
                         (oldRadius - newRadius) * this.mapSize
                     );
                     const radius = newRadius * 0.75; // ensure at least 75% of the safe zone will be inside map bounds
-                    this.newPosition = Vec.create(
+                    this.newPosition = Vec(
                         Numeric.clamp(x, radius, width - radius),
                         Numeric.clamp(y, radius, height - radius)
                     );

@@ -1,7 +1,7 @@
 import { GunDefinition, Guns } from "@common/definitions/items/guns";
 import { MeleeDefinition, Melees } from "@common/definitions/items/melees";
 import { ThrowableDefinition, Throwables } from "@common/definitions/items/throwables";
-import { ItemType } from "@common/utils/objectDefinitions";
+import { DefinitionType } from "@common/utils/objectDefinitions";
 import { pickRandomInArray } from "@common/utils/random";
 
 import { Numeric } from "../../../common/src/utils/math";
@@ -15,7 +15,7 @@ const selectableThrowables = Throwables.definitions.filter(g => !g.killstreak &&
 /**
  * Plugin that swaps the player weapon when the player gets a kill
  */
-export class WeaponSwapPlugin extends GamePlugin {
+export default class WeaponSwapPlugin extends GamePlugin {
     protected override initListeners(): void {
         this.on("player_will_die", ({ source }) => {
             if (!(source instanceof Player)) return;
@@ -24,9 +24,9 @@ export class WeaponSwapPlugin extends GamePlugin {
             const index = source.activeItemIndex;
 
             let item: GunDefinition | MeleeDefinition | ThrowableDefinition;
-            const itemType = source.activeItemDefinition.itemType;
-            switch (itemType) {
-                case ItemType.Gun: {
+            const defType = source.activeItemDefinition.defType;
+            switch (defType) {
+                case DefinitionType.Gun: {
                     const gun = pickRandomInArray(selectableGuns);
                     item = gun;
                     const { ammoType } = gun;
@@ -40,11 +40,11 @@ export class WeaponSwapPlugin extends GamePlugin {
                     }
                     break;
                 }
-                case ItemType.Melee: {
+                case DefinitionType.Melee: {
                     item = pickRandomInArray(selectableMelees);
                     break;
                 }
-                case ItemType.Throwable: {
+                case DefinitionType.Throwable: {
                     item = pickRandomInArray(selectableThrowables);
                     inventory.items.setItem(item.idString, source.inventory.backpack.maxCapacity[item.idString]);
                 }

@@ -1,7 +1,7 @@
 import { FireMode } from "../../constants";
 import { BaseBulletDefinition } from "../../utils/baseBullet";
 import { mergeDeep } from "../../utils/misc";
-import { DefinitionType, ItemType, type InventoryItemDefinition, type ReferenceTo } from "../../utils/objectDefinitions";
+import { DefinitionType, type InventoryItemDefinition, type ReferenceTo } from "../../utils/objectDefinitions";
 import { Vec, type Vector } from "../../utils/vector";
 import { type AmmoDefinition } from "./ammos";
 import { InventoryItemDefinitions } from "./items";
@@ -12,7 +12,6 @@ export enum Tier { S, A, B, C, D }
 
 type BaseGunDefinition = InventoryItemDefinition & {
     readonly defType: DefinitionType.Gun
-    readonly itemType: ItemType.Gun
 
     readonly ammoType: ReferenceTo<AmmoDefinition>
     readonly ammoSpawnAmount: number
@@ -227,7 +226,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "g19",
         name: "G19",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.D,
         ammoType: "9mm",
         ammoSpawnAmount: 60,
@@ -241,16 +239,16 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 8,
         length: 4.8,
         fists: {
-            left: Vec.create(40, 0),
-            right: Vec.create(40, 0),
+            left: Vec(40, 0),
+            right: Vec(40, 0),
             leftZIndex: 4,
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(65, 0) },
+        image: { position: Vec(65, 0) },
         inventoryScale: 0.8,
         casingParticles: [{
-            position: Vec.create(3.5, 0.5),
+            position: Vec(3.5, 0.5),
             velocity: {
                 y: {
                     min: -6,
@@ -283,7 +281,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "cz75a",
         name: "CZ-75A",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.D,
         ammoType: "9mm",
         ammoSpawnAmount: 64,
@@ -297,16 +294,16 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 14,
         length: 5.3,
         fists: {
-            left: Vec.create(40, 0),
-            right: Vec.create(40, 0),
+            left: Vec(40, 0),
+            right: Vec(40, 0),
             leftZIndex: 4,
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(70, -1) },
+        image: { position: Vec(70, -1) },
         inventoryScale: 0.8,
         casingParticles: [{
-            position: Vec.create(3.5, 0.45),
+            position: Vec(3.5, 0.45),
             velocity: {
                 y: {
                     min: 2,
@@ -339,7 +336,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "m1895",
         name: "M1895",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.D,
         ammoType: "762mm",
         ammoSpawnAmount: 28,
@@ -353,17 +349,17 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 5,
         length: 5.35,
         fists: {
-            left: Vec.create(40, 0),
-            right: Vec.create(40, 0),
+            left: Vec(40, 0),
+            right: Vec(40, 0),
             leftZIndex: 4,
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(70, 0) },
+        image: { position: Vec(70, 0) },
         inventoryScale: 0.85,
         casingParticles: [{
             frame: "casing_762x38mmR",
-            position: Vec.create(3.5, 0.5),
+            position: Vec(3.5, 0.5),
             count: 7,
             velocity: {
                 x: {
@@ -402,7 +398,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "deagle",
         name: "DEagle",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.B,
         ammoType: "50cal",
         ammoSpawnAmount: 42,
@@ -416,17 +411,17 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 7,
         length: 5.4,
         fists: {
-            left: Vec.create(40, 0),
-            right: Vec.create(40, 0),
+            left: Vec(40, 0),
+            right: Vec(40, 0),
             leftZIndex: 4,
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(75, 0) },
+        image: { position: Vec(75, 0) },
         inventoryScale: 0.85,
         casingParticles: [{
             frame: "casing_50ae",
-            position: Vec.create(3.5, 0.3),
+            position: Vec(3.5, 0.3),
             velocity: {
                 y: {
                     min: -6,
@@ -464,7 +459,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "rsh12",
         name: "RSh-12",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "50cal",
         ammoSpawnAmount: 30,
@@ -480,14 +474,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         length: 6.6,
         noMuzzleFlash: true,
         fists: {
-            left: Vec.create(40, 0),
-            right: Vec.create(40, 0),
+            left: Vec(40, 0),
+            right: Vec(40, 0),
             leftZIndex: 4,
             rightZIndex: 4,
             animationDuration: 100
         },
         casingParticles: [{
-            position: Vec.create(3.5, 0.3),
+            position: Vec(3.5, 0.3),
             frame: "casing_127x55mm",
             on: "reload",
             count: 5,
@@ -503,7 +497,7 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
                 }
             }
         }],
-        image: { position: Vec.create(87, 0) },
+        image: { position: Vec(87, 0) },
         inventoryScale: 0.85,
         gasParticles: gasParticlePresets.pistol,
         capacity: 5,
@@ -533,7 +527,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "mp5k",
         name: "MP5k",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.D,
         ammoType: "9mm",
         ammoSpawnAmount: 80,
@@ -554,15 +547,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 7.5,
         length: 5.6,
         fists: {
-            left: Vec.create(85, -2),
-            right: Vec.create(40, 0),
+            left: Vec(85, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(71, 0) },
+        image: { position: Vec(71, 0) },
         inventoryScale: 0.85,
         casingParticles: [{
-            position: Vec.create(4, 0.35)
+            position: Vec(4, 0.35)
         }],
         gasParticles: gasParticlePresets.automatic,
         ballistics: {
@@ -576,8 +569,8 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
             leftRightOffset: 1.3,
             ammoSpawnAmount: 80,
             fists: {
-                left: Vec.create(40, -1.3),
-                right: Vec.create(40, 1.3),
+                left: Vec(40, -1.3),
+                right: Vec(40, 1.3),
                 rightZIndex: 4,
                 leftZIndex: 4,
                 animationDuration: 100
@@ -601,7 +594,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "saf200",
         name: "SAF-200",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "9mm",
         ammoSpawnAmount: 90,
@@ -622,14 +614,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 4,
         length: 6.25,
         fists: {
-            left: Vec.create(95, -3),
-            right: Vec.create(40, 0),
+            left: Vec(95, -3),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(71, 0) },
+        image: { position: Vec(71, 0) },
         casingParticles: [{
-            position: Vec.create(4, 0.35)
+            position: Vec(4, 0.35)
         }],
         gasParticles: gasParticlePresets.automatic,
         ballistics: {
@@ -643,7 +635,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "micro_uzi",
         name: "Micro Uzi",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "9mm",
         ammoSpawnAmount: 96,
@@ -660,16 +651,16 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 19,
         length: 5.07,
         fists: {
-            left: Vec.create(70, -3),
-            right: Vec.create(40, 0),
+            left: Vec(70, -3),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
         casingParticles: [{
-            position: Vec.create(3.2, 0.4)
+            position: Vec(3.2, 0.4)
         }],
         gasParticles: gasParticlePresets.automatic,
-        image: { position: Vec.create(68, 0) },
+        image: { position: Vec(68, 0) },
         inventoryScale: 0.85,
         ballistics: {
             damage: 7.75,
@@ -682,7 +673,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "mpx",
         name: "MPX",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "9mm",
         ammoSpawnAmount: 96,
@@ -699,14 +689,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 4,
         length: 6.65,
         fists: {
-            left: Vec.create(103, -2),
-            right: Vec.create(40, 0),
+            left: Vec(103, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(75, 1) },
+        image: { position: Vec(75, 1) },
         casingParticles: [{
-            position: Vec.create(3.5, 0.4),
+            position: Vec(3.5, 0.4),
             velocity: {
                 y: {
                     min: 5,
@@ -726,7 +716,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "vector",
         name: "Vector",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "9mm",
         ammoSpawnAmount: 99,
@@ -743,16 +732,16 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 7,
         length: 6.1,
         fists: {
-            left: Vec.create(100, -4),
-            right: Vec.create(40, 0),
+            left: Vec(100, -4),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
         casingParticles: [{
-            position: Vec.create(4.7, 0.3)
+            position: Vec(4.7, 0.3)
         }],
         gasParticles: gasParticlePresets.automatic,
-        image: { position: Vec.create(70, -1) },
+        image: { position: Vec(70, -1) },
         ballistics: {
             damage: 9,
             obstacleMultiplier: 1,
@@ -764,7 +753,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "pp19",
         name: "PP-19 Vityaz",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "9mm",
         ammoSpawnAmount: 90,
@@ -782,15 +770,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         length: 7.3,
         noMuzzleFlash: true,
         fists: {
-            left: Vec.create(88, -5),
-            right: Vec.create(40, 0),
+            left: Vec(88, -5),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
         casingParticles: [{
-            position: Vec.create(3.5, 0.4)
+            position: Vec(3.5, 0.4)
         }],
-        image: { position: Vec.create(80, 1.3) },
+        image: { position: Vec(80, 1.3) },
         ballistics: {
             damage: 10.5,
             obstacleMultiplier: 1,
@@ -809,7 +797,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "ak47",
         name: "AK-47",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "762mm",
         ammoSpawnAmount: 90,
@@ -826,15 +813,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 6,
         length: 7.75,
         fists: {
-            left: Vec.create(115, -2),
-            right: Vec.create(45, 0),
+            left: Vec(115, -2),
+            right: Vec(45, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(85, 1) },
+        image: { position: Vec(85, 1) },
         casingParticles: [{
             frame: "casing_762x39mm",
-            position: Vec.create(4.2, 0.4)
+            position: Vec(4.2, 0.4)
         }],
         gasParticles: gasParticlePresets.automatic,
         ballistics: {
@@ -848,7 +835,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "mcx_spear",
         name: "MCX Spear",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "762mm",
         ammoSpawnAmount: 80,
@@ -865,14 +851,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 4,
         length: 7.9,
         fists: {
-            left: Vec.create(115, -6),
-            right: Vec.create(40, 0),
+            left: Vec(115, -6),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(87, 1.5) },
+        image: { position: Vec(87, 1.5) },
         casingParticles: [{
-            position: Vec.create(4, 0.4)
+            position: Vec(4, 0.4)
         }],
         gasParticles: gasParticlePresets.automatic,
         ballistics: {
@@ -889,7 +875,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "svu",
         name: "SVU-A",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "762mm",
         ammoSpawnAmount: 90,
@@ -906,15 +891,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 8,
         length: 8.4,
         fists: {
-            left: Vec.create(100, -8),
-            right: Vec.create(40, 0),
+            left: Vec(100, -8),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(90, 1.5) },
+        image: { position: Vec(90, 1.5) },
         casingParticles: [{
             frame: "casing_762x54mmR",
-            position: Vec.create(4, 0.4)
+            position: Vec(4, 0.4)
         }],
         noMuzzleFlash: true,
         ballistics: {
@@ -932,7 +917,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "m16a2",
         name: "M16A2",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.B,
         ammoType: "556mm",
         ammoSpawnAmount: 80,
@@ -953,14 +937,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 4,
         length: 8.68,
         fists: {
-            left: Vec.create(110, -3),
-            right: Vec.create(40, 0),
+            left: Vec(110, -3),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(92, 1.5) },
+        image: { position: Vec(92, 1.5) },
         casingParticles: [{
-            position: Vec.create(4, 0.4)
+            position: Vec(4, 0.4)
         }],
         gasParticles: gasParticlePresets.automatic,
         ballistics: {
@@ -974,7 +958,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "aug",
         name: "AUG",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "556mm",
         ammoSpawnAmount: 90,
@@ -988,14 +971,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 11,
         length: 6.8,
         fists: {
-            left: Vec.create(100, -2),
-            right: Vec.create(40, 0),
+            left: Vec(100, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(75, -1) },
+        image: { position: Vec(75, -1) },
         casingParticles: [{
-            position: Vec.create(2.5, 0.4)
+            position: Vec(2.5, 0.4)
         }],
         gasParticles: gasParticlePresets.automatic,
         capacity: 30,
@@ -1012,7 +995,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "arx160",
         name: "ARX-160",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "762mm",
         ammoSpawnAmount: 90,
@@ -1029,15 +1011,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 10,
         length: 7.3,
         fists: {
-            left: Vec.create(103, -2),
-            right: Vec.create(40, 0),
+            left: Vec(103, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(80, 0) },
+        image: { position: Vec(80, 0) },
         casingParticles: [{
             frame: "casing_762x39mm",
-            position: Vec.create(3.7, 0.4)
+            position: Vec(3.7, 0.4)
         }],
         gasParticles: gasParticlePresets.automatic,
         ballistics: {
@@ -1051,7 +1033,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "acr",
         name: "ACR",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "556mm",
         ammoSpawnAmount: 90,
@@ -1066,14 +1047,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         noMuzzleFlash: true,
         length: 7.5,
         fists: {
-            left: Vec.create(100, -2),
-            right: Vec.create(40, 0),
+            left: Vec(100, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(78, 0) },
+        image: { position: Vec(78, 0) },
         casingParticles: [{
-            position: Vec.create(3.5, 0.4)
+            position: Vec(3.5, 0.4)
         }],
         capacity: 30,
         extendedCapacity: 45,
@@ -1096,7 +1077,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         ammoSpawnAmount: 50,
         speedMultiplier: 1,
         tier: Tier.A,
-        itemType: ItemType.Gun,
         capacity: 10,
         extendedCapacity: 15,
         reloadTime: 3,
@@ -1110,14 +1090,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         bulletCount: 2,
         length: 7.2,
         fists: {
-            left: Vec.create(85, -2),
-            right: Vec.create(40, 0),
+            left: Vec(85, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(70, 0) },
+        image: { position: Vec(70, 0) },
         casingParticles: [{
-            position: Vec.create(3.53, 0.4)
+            position: Vec(3.53, 0.4)
         }],
         gasParticles: gasParticlePresets.rifle,
         ballistics: {
@@ -1134,35 +1114,34 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
     // Light machine guns (LMGs)
     //
     {
-        idString: "lewis_gun",
-        name: "Lewis Gun",
+        idString: "fn_fal",
+        name: "FN FAL",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "762mm",
-        ammoSpawnAmount: 94,
-        capacity: 47,
-        extendedCapacity: 97,
+        ammoSpawnAmount: 100,
+        capacity: 50,
+        extendedCapacity: 100,
         reloadTime: 3.4,
         fireDelay: 115,
         switchDelay: 400,
         speedMultiplier: 0.897,
-        recoilMultiplier: 0.7, // also test out 6.75
+        recoilMultiplier: 0.7, // also test out 0.75
         recoilDuration: 200,
         fireMode: FireMode.Auto,
         shotSpread: 3.5,
         moveSpread: 7.5, // also test out 6.5, 7, 8
         length: 9.47,
         fists: {
-            left: Vec.create(120, -8),
-            right: Vec.create(40, 0),
+            left: Vec(120, -8),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(100, 0) },
+        image: { position: Vec(100, 3) },
         casingParticles: [{
-            frame: "casing_30-06",
-            position: Vec.create(3.3, 0.6)
+            frame: "casing_762x51mm",
+            position: Vec(3.5, 0.6)
         }],
         gasParticles: gasParticlePresets.automatic,
         ballistics: {
@@ -1180,7 +1159,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "stoner_63",
         name: "Stoner 63",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "556mm",
         ammoSpawnAmount: 150,
@@ -1197,15 +1175,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 4.5,
         length: 8,
         fists: {
-            left: Vec.create(100, -3),
-            right: Vec.create(40, 0),
+            left: Vec(100, -3),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(82, 0) },
+        image: { position: Vec(82, 0) },
         casingParticles: [
             {
-                position: Vec.create(3.7, -0.6),
+                position: Vec(3.7, -0.6),
                 velocity: {
                     y: {
                         min: -15,
@@ -1214,7 +1192,7 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
                 }
             },
             {
-                position: Vec.create(3.9, -0.6),
+                position: Vec(3.9, -0.6),
                 frame: "m13_link",
                 velocity: {
                     x: {
@@ -1244,7 +1222,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "mg5",
         name: "MG5",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "762mm",
         ammoSpawnAmount: 240,
@@ -1261,18 +1238,18 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 4.5,
         length: 8.6,
         fists: {
-            left: Vec.create(110, -3),
-            right: Vec.create(40, 0),
+            left: Vec(110, -3),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(90, 1) },
+        image: { position: Vec(90, 1) },
         casingParticles: [
             {
-                position: Vec.create(4, 0.6)
+                position: Vec(4, 0.6)
             },
             {
-                position: Vec.create(4.2, 0.6),
+                position: Vec(4.2, 0.6),
                 frame: "m13_link",
                 velocity: {
                     x: {
@@ -1302,7 +1279,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "negev",
         name: "Negev SF",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "556mm",
         ammoSpawnAmount: 200,
@@ -1319,18 +1295,18 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 8,
         length: 7.15,
         fists: {
-            left: Vec.create(109, -18),
-            right: Vec.create(40, 0),
+            left: Vec(109, -18),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(80, -3.6) },
+        image: { position: Vec(80, -3.6) },
         casingParticles: [
             {
-                position: Vec.create(4, 0.6)
+                position: Vec(4, 0.6)
             },
             {
-                position: Vec.create(4.2, 0.6),
+                position: Vec(4.2, 0.6),
                 frame: "m13_link",
                 velocity: {
                     x: {
@@ -1360,7 +1336,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "mg36",
         name: "MG36",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.B,
         ammoType: "556mm",
         ammoSpawnAmount: 100,
@@ -1377,14 +1352,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 8,
         length: 7.8,
         fists: {
-            left: Vec.create(100, -4),
-            right: Vec.create(40, 0),
+            left: Vec(100, -4),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(83, 0) },
+        image: { position: Vec(83, 0) },
         casingParticles: [{
-            position: Vec.create(3.75, 0.45)
+            position: Vec(3.75, 0.45)
         }],
         gasParticles: gasParticlePresets.automatic,
         ballistics: {
@@ -1398,7 +1373,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "pk61",
         name: "PK-61",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "762mm",
         ammoSpawnAmount: 200,
@@ -1415,15 +1389,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 4,
         length: 9.45,
         fists: {
-            left: Vec.create(120, -4),
-            right: Vec.create(40, 0),
+            left: Vec(120, -4),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(100, 0) },
+        image: { position: Vec(100, 0) },
         casingParticles: [{
             frame: "casing_762x54mmR",
-            position: Vec.create(4.6, -0.8),
+            position: Vec(4.6, -0.8),
             velocity: {
                 y: {
                     min: -15,
@@ -1451,7 +1425,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "m3k",
         name: "M3K",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "12g",
         ammoSpawnAmount: 18,
@@ -1470,15 +1443,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         bulletCount: 9,
         length: 8.5,
         fists: {
-            left: Vec.create(95, -3),
-            right: Vec.create(40, 0),
+            left: Vec(95, -3),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(85, 2) },
+        image: { position: Vec(85, 2) },
         casingParticles: [{
             frame: "casing_12ga_flechette",
-            position: Vec.create(4, 0.6)
+            position: Vec(4, 0.6)
         }],
         gasParticles: gasParticlePresets.shotgun,
         shotsPerReload: 1,
@@ -1493,7 +1466,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "model_37",
         name: "Model 37",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "12g",
         ammoSpawnAmount: 15,
@@ -1512,14 +1484,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         bulletCount: 10,
         length: 8.15,
         fists: {
-            left: Vec.create(116, -3),
-            right: Vec.create(45, 0),
+            left: Vec(116, -3),
+            right: Vec(45, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(89, 0.5) },
+        image: { position: Vec(89, 0.5) },
         casingParticles: [{
-            position: Vec.create(4, 0.6),
+            position: Vec(4, 0.6),
             ejectionDelay: 450,
             velocity: {
                 y: {
@@ -1545,7 +1517,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "hp18",
         name: "HP-18",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "12g",
         ammoSpawnAmount: 15,
@@ -1565,15 +1536,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         jitterRadius: 1.75,
         length: 7.4,
         fists: {
-            left: Vec.create(95, -1),
-            right: Vec.create(40, 0),
+            left: Vec(95, -1),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(75, 2) },
+        image: { position: Vec(75, 2) },
         casingParticles: [{
             frame: "casing_12ga_bird",
-            position: Vec.create(4, 0.6)
+            position: Vec(4, 0.6)
         }],
         gasParticles: gasParticlePresets.shotgun,
         ballistics: {
@@ -1590,7 +1561,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "badlander",
         name: "Badlander",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "12g",
         ammoSpawnAmount: 10,
@@ -1608,14 +1578,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         jitterRadius: 1.5,
         length: 6,
         fists: {
-            left: Vec.create(95, -2),
-            right: Vec.create(40, 0),
+            left: Vec(95, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(75, 0) },
+        image: { position: Vec(75, 0) },
         casingParticles: [{
-            position: Vec.create(4, 0.6),
+            position: Vec(4, 0.6),
             count: 2,
             velocity: {
                 y: {
@@ -1641,7 +1611,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "usas12",
         name: "USAS-12",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "12g",
         ammoSpawnAmount: 30,
@@ -1658,15 +1627,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 5,
         length: 7.35,
         fists: {
-            left: Vec.create(105, -1),
-            right: Vec.create(40, 0),
+            left: Vec(105, -1),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(80, -1.5) },
+        image: { position: Vec(80, -1.5) },
         casingParticles: [{
             frame: "casing_12ga_he",
-            position: Vec.create(4.5, 0.6)
+            position: Vec(4.5, 0.6)
         }],
         ballistics: {
             damage: 5,
@@ -1687,7 +1656,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "vepr12",
         name: "Vepr-12",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.B,
         ammoType: "12g",
         ammoSpawnAmount: 20,
@@ -1706,14 +1674,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         length: 7.3,
         bulletCount: 10,
         fists: {
-            left: Vec.create(99, -2),
-            right: Vec.create(40, 0),
+            left: Vec(99, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(79, 2) },
+        image: { position: Vec(79, 2) },
         casingParticles: [{
-            position: Vec.create(3.9, 0.6)
+            position: Vec(3.9, 0.6)
         }],
         gasParticles: gasParticlePresets.shotgun,
         ballistics: {
@@ -1730,7 +1698,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "stevens_555",
         name: "Stevens 555",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "12g",
         ammoSpawnAmount: 10,
@@ -1748,15 +1715,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         jitterRadius: 0.5,
         bulletCount: 9,
         fists: {
-            left: Vec.create(84, -3),
-            right: Vec.create(45, 0),
+            left: Vec(84, -3),
+            right: Vec(45, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(83, 0) },
+        image: { position: Vec(83, 0) },
         casingParticles: [{
             frame: "casing_12ga_flechette",
-            position: Vec.create(4, 0.6),
+            position: Vec(4, 0.6),
             count: 2,
             velocity: {
                 y: {
@@ -1779,7 +1746,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "m590m",
         name: "M590M",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "12g",
         ammoSpawnAmount: 15,
@@ -1796,14 +1762,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 5,
         length: 8,
         fists: {
-            left: Vec.create(100, -3),
-            right: Vec.create(45, 0),
+            left: Vec(100, -3),
+            right: Vec(45, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(82, 0) },
+        image: { position: Vec(82, 0) },
         casingParticles: [{
-            position: Vec.create(4.2, 0.6),
+            position: Vec(4.2, 0.6),
             ejectionDelay: 400,
             frame: "casing_12ga_he"
         }],
@@ -1830,7 +1796,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         ammoType: "12g",
         speedMultiplier: 1,
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         ammoSpawnAmount: 16,
         capacity: 8,
         reloadTime: 0.45,
@@ -1845,14 +1810,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         fsaReset: 600,
         length: 8.45,
         fists: {
-            left: Vec.create(108, -3),
-            right: Vec.create(45, 0),
+            left: Vec(108, -3),
+            right: Vec(45, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(98, 0) },
+        image: { position: Vec(98, 0) },
         casingParticles: [{
-            position: Vec.create(4.5, 0.6),
+            position: Vec(4.5, 0.6),
             frame: "casing_12ga_slug"
         }],
         gasParticles: gasParticlePresets.shotgun,
@@ -1874,7 +1839,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "mosin_nagant",
         name: "Mosin-Nagant",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "762mm",
         ammoSpawnAmount: 20,
@@ -1895,15 +1859,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         length: 8.5,
         shootOnRelease: true,
         fists: {
-            left: Vec.create(100, 0),
-            right: Vec.create(40, 0),
+            left: Vec(100, 0),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(86.5, 2.7) },
+        image: { position: Vec(86.5, 2.7) },
         casingParticles: [{
             frame: "casing_762x54mmR",
-            position: Vec.create(4, 0.6),
+            position: Vec(4, 0.6),
             ejectionDelay: 700
         }],
         gasParticles: gasParticlePresets.rifle,
@@ -1922,7 +1886,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "tango_51",
         name: "Tango 51",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "762mm",
         ammoSpawnAmount: 20,
@@ -1941,14 +1904,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         length: 8.85,
         shootOnRelease: true,
         fists: {
-            left: Vec.create(106, -1),
-            right: Vec.create(40, 0),
+            left: Vec(106, -1),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(87, 3) },
+        image: { position: Vec(87, 3) },
         casingParticles: [{
-            position: Vec.create(4, 0.6),
+            position: Vec(4, 0.6),
             ejectionDelay: 450
         }],
         gasParticles: gasParticlePresets.rifle,
@@ -1967,7 +1930,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "cz600",
         name: "CZ-600",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.B,
         ammoType: "556mm",
         ammoSpawnAmount: 20,
@@ -1985,14 +1947,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         length: 8.25,
         shootOnRelease: true,
         fists: {
-            left: Vec.create(105, -3),
-            right: Vec.create(40, 0),
+            left: Vec(105, -3),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(85, 3.5) },
+        image: { position: Vec(85, 3.5) },
         casingParticles: [{
-            position: Vec.create(3.7, 0.4),
+            position: Vec(3.7, 0.4),
             ejectionDelay: 250
         }],
         gasParticles: gasParticlePresets.rifle,
@@ -2011,7 +1973,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "l115a1",
         name: "L115A1",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "338lap",
         ammoSpawnAmount: 12,
@@ -2027,16 +1988,16 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         shootOnRelease: true,
         length: 10.6,
         casingParticles: [{
-            position: Vec.create(4, 0.2),
+            position: Vec(4, 0.2),
             ejectionDelay: 500
         }],
         fists: {
-            left: Vec.create(110, 0),
-            right: Vec.create(40, 0),
+            left: Vec(110, 0),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(110, 3) },
+        image: { position: Vec(110, 3) },
         gasParticles: gasParticlePresets.rifle,
         capacity: 3,
         extendedCapacity: 5,
@@ -2056,7 +2017,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "rgs",
         name: "RG Scout",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "556mm",
         ammoSpawnAmount: 30,
@@ -2075,14 +2035,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         length: 8.75,
         shootOnRelease: true,
         fists: {
-            left: Vec.create(105, -1),
-            right: Vec.create(40, 0),
+            left: Vec(105, -1),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(85, 3) },
+        image: { position: Vec(85, 3) },
         casingParticles: [{
-            position: Vec.create(4, 0.4),
+            position: Vec(4, 0.4),
             ejectionDelay: 250
         }],
         gasParticles: gasParticlePresets.rifle,
@@ -2102,7 +2062,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "vks",
         name: "VKS Vykhlop",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "50cal",
         ammoSpawnAmount: 25,
@@ -2117,14 +2076,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 3,
         length: 8.95,
         fists: {
-            left: Vec.create(90, 3),
-            right: Vec.create(40, 0),
+            left: Vec(90, 3),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(90, 2) },
+        image: { position: Vec(90, 2) },
         casingParticles: [{
-            position: Vec.create(3.5, 0.6),
+            position: Vec(3.5, 0.6),
             ejectionDelay: 400
         }],
         gasParticles: gasParticlePresets.rifle,
@@ -2152,7 +2111,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "vss",
         name: "VSS Vintorez",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.B,
         ammoType: "9mm",
         ammoSpawnAmount: 60,
@@ -2169,15 +2127,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 3.5,
         length: 7.2,
         fists: {
-            left: Vec.create(92, -2),
-            right: Vec.create(40, 0),
+            left: Vec(92, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(82, 0) },
+        image: { position: Vec(82, 0) },
         casingParticles: [{
             frame: "casing_9x39mm",
-            position: Vec.create(3.7, 0.5)
+            position: Vec(3.7, 0.5)
         }],
         noMuzzleFlash: true,
         ballistics: {
@@ -2195,7 +2153,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "sr25",
         name: "SR-25",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.B,
         ammoType: "762mm",
         ammoSpawnAmount: 80,
@@ -2212,14 +2169,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 3.5,
         length: 7.85,
         fists: {
-            left: Vec.create(110, 0),
-            right: Vec.create(40, 0),
+            left: Vec(110, 0),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(78, 3) },
+        image: { position: Vec(78, 3) },
         casingParticles: [{
-            position: Vec.create(3.6, 0.4)
+            position: Vec(3.6, 0.4)
         }],
         gasParticles: gasParticlePresets.rifle,
         ballistics: {
@@ -2236,7 +2193,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "mini14",
         name: "Mini-14",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.B,
         ammoType: "556mm",
         ammoSpawnAmount: 80,
@@ -2253,14 +2209,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 5,
         length: 7.6,
         fists: {
-            left: Vec.create(88, -2),
-            right: Vec.create(40, 0),
+            left: Vec(88, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(80, 2) },
+        image: { position: Vec(80, 2) },
         casingParticles: [{
-            position: Vec.create(5, 0.5),
+            position: Vec(5, 0.5),
             velocity: {
                 y: {
                     min: 4,
@@ -2283,7 +2239,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "m1_garand",
         name: "M1 Garand",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "762mm",
         ammoSpawnAmount: 40,
@@ -2299,16 +2254,16 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 3.5,
         length: 8.65,
         fists: {
-            left: Vec.create(105, -2),
-            right: Vec.create(40, 0),
+            left: Vec(105, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(90, 2.5) },
+        image: { position: Vec(90, 2.5) },
         casingParticles: [
             {
                 frame: "casing_30-06",
-                position: Vec.create(4, 0.5),
+                position: Vec(4, 0.5),
                 velocity: {
                     y: {
                         min: 4,
@@ -2318,7 +2273,7 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
             },
             {
                 frame: "enbloc",
-                position: Vec.create(4, 0.5),
+                position: Vec(4, 0.5),
                 velocity: {
                     x: {
                         min: 1,
@@ -2351,7 +2306,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "model_89",
         name: "Model 89",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "50cal",
         ammoSpawnAmount: 28,
@@ -2369,15 +2323,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 4,
         length: 7.3,
         fists: {
-            left: Vec.create(93, -2),
-            right: Vec.create(40, 0),
+            left: Vec(93, -2),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(77, 0) },
+        image: { position: Vec(77, 0) },
         casingParticles: [{
             frame: "casing_500sw",
-            position: Vec.create(3, 0.5),
+            position: Vec(3, 0.5),
             ejectionDelay: 175
         }],
         gasParticles: gasParticlePresets.rifle,
@@ -2396,7 +2350,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "sks",
         name: "SKS",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "762mm",
         ammoSpawnAmount: 60,
@@ -2416,14 +2369,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 5,
         length: 7.9,
         fists: {
-            left: Vec.create(95, -3),
-            right: Vec.create(40, 0),
+            left: Vec(95, -3),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(83, 0) },
+        image: { position: Vec(83, 0) },
         casingParticles: [{
-            position: Vec.create(4.2, 0.4),
+            position: Vec(4.2, 0.4),
             frame: "casing_762x39mm",
             velocity: {
                 y: {
@@ -2447,7 +2400,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "blr",
         name: "BLR 556",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         ammoType: "556mm",
         ammoSpawnAmount: 20,
@@ -2464,14 +2416,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 5,
         length: 7.55,
         fists: {
-            left: Vec.create(95, -3),
-            right: Vec.create(40, 0),
+            left: Vec(95, -3),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(75, 0) },
+        image: { position: Vec(75, 0) },
         casingParticles: [{
-            position: Vec.create(4.2, 0.4)
+            position: Vec(4.2, 0.4)
         }],
         gasParticles: gasParticlePresets.rifle,
         ballistics: {
@@ -2489,7 +2441,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "mk18",
         name: "Mk-18 Mjölnir",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "338lap",
         ammoSpawnAmount: 20,
@@ -2505,15 +2456,15 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 4,
         length: 9.65,
         casingParticles: [{
-            position: Vec.create(4, 0.3)
+            position: Vec(4, 0.3)
         }],
         fists: {
-            left: Vec.create(120, 0),
-            right: Vec.create(40, 0),
+            left: Vec(120, 0),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(100, 2) },
+        image: { position: Vec(100, 2) },
         gasParticles: gasParticlePresets.rifle,
         capacity: 5,
         extendedCapacity: 10,
@@ -2537,7 +2488,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "seedshot",
         name: "Seedshot",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "seed",
         ammoSpawnAmount: 0,
@@ -2554,14 +2504,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 6.75,
         length: 7.9,
         fists: {
-            left: Vec.create(115, -6),
-            right: Vec.create(40, 0),
+            left: Vec(115, -6),
+            right: Vec(40, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(90, 1) },
+        image: { position: Vec(90, 1) },
         casingParticles: [{
-            position: Vec.create(4, 0.4)
+            position: Vec(4, 0.4)
         }],
         gasParticles: gasParticlePresets.automatic,
         ballistics: {
@@ -2582,7 +2532,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "vaccinator",
         name: "Vaccinator",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         ammoType: "needle",
         ammoSpawnAmount: 0,
@@ -2596,13 +2545,13 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 5,
         length: 5.9,
         fists: {
-            left: Vec.create(40, 0),
-            right: Vec.create(40, 0),
+            left: Vec(40, 0),
+            right: Vec(40, 0),
             leftZIndex: 4,
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(80, 0) },
+        image: { position: Vec(80, 0) },
         inventoryScale: 0.8,
         noMuzzleFlash: true,
         capacity: 30,
@@ -2630,7 +2579,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "firework_launcher",
         name: "Firework Launcher",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "firework_rocket",
         ammoSpawnAmount: 9,
@@ -2651,16 +2599,16 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 14,
         length: 5.65,
         fists: {
-            left: Vec.create(70, 40),
-            right: Vec.create(20, 55),
+            left: Vec(70, 40),
+            right: Vec(20, 55),
             animationDuration: 100
         },
         image: {
-            position: Vec.create(29.7, 53.5),
+            position: Vec(29.7, 53.5),
             zIndex: 4
         },
         casingParticles: [{
-            position: Vec.create(0.5, 3),
+            position: Vec(0.5, 3),
             ejectionDelay: 800
         }],
         gasParticles: {
@@ -2704,7 +2652,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "g17_scoped",
         name: "G17 (scoped)",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.C,
         noSwap: true,
         devItem: true,
@@ -2720,14 +2667,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         moveSpread: 5,
         length: 6.7,
         fists: {
-            left: Vec.create(40, 0),
-            right: Vec.create(40, 0),
+            left: Vec(40, 0),
+            right: Vec(40, 0),
             leftZIndex: 4,
             rightZIndex: 4,
             animationDuration: 80
         },
         noMuzzleFlash: true,
-        image: { position: Vec.create(80, 1) },
+        image: { position: Vec(80, 1) },
         capacity: 100,
         extendedCapacity: 250,
         reloadTime: 1.5,
@@ -2758,7 +2705,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "death_ray",
         name: "Death Ray",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.S,
         ammoType: "power_cell",
         ammoSpawnAmount: 0,
@@ -2777,14 +2723,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         killstreak: true,
         length: 8.4,
         fists: {
-            left: Vec.create(130, -3),
-            right: Vec.create(60, 0),
+            left: Vec(130, -3),
+            right: Vec(60, 0),
             animationDuration: 100
         },
-        image: { position: Vec.create(87, 1) },
+        image: { position: Vec(87, 1) },
         noMuzzleFlash: true,
         casingParticles: [{
-            position: Vec.create(4.5, 0.6),
+            position: Vec(4.5, 0.6),
             on: "reload"
         }],
         ballistics: {
@@ -2802,7 +2748,6 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         idString: "revitalizer",
         name: "Revitalizer",
         defType: DefinitionType.Gun,
-        itemType: ItemType.Gun,
         tier: Tier.A,
         noSwap: true,
         devItem: true,
@@ -2824,14 +2769,14 @@ export const Guns = new InventoryItemDefinitions<GunDefinition>(([
         bulletCount: 10,
         length: 6.88,
         fists: {
-            left: Vec.create(112, -3),
-            right: Vec.create(45, 0),
+            left: Vec(112, -3),
+            right: Vec(45, 0),
             rightZIndex: 4,
             animationDuration: 100
         },
-        image: { position: Vec.create(78, 0) },
+        image: { position: Vec(78, 0) },
         casingParticles: [{
-            position: Vec.create(4, 0.6),
+            position: Vec(4, 0.6),
             ejectionDelay: 450,
             velocity: {
                 y: {

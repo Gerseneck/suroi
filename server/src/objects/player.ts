@@ -28,7 +28,7 @@ import { CircleHitbox, RectangleHitbox, type Hitbox } from "@common/utils/hitbox
 import { adjacentOrEqualLayer } from "@common/utils/layer";
 import { Angle, Collision, Geometry, Numeric } from "@common/utils/math";
 import { removeFrom, type SDeepMutable, type Timeout } from "@common/utils/misc";
-import { DefinitionType, ItemType, type EventModifiers, type ExtendedWearerAttributes, type ReferenceTo, type ReifiableDef, type WearerAttributes } from "@common/utils/objectDefinitions";
+import { DefinitionType, type EventModifiers, type ExtendedWearerAttributes, type ReferenceTo, type ReifiableDef, type WearerAttributes } from "@common/utils/objectDefinitions";
 import { type FullData } from "@common/utils/objectsSerializations";
 import { pickRandomInArray, randomPointInsideCircle, weightedRandom } from "@common/utils/random";
 import { SuroiByteStream } from "@common/utils/suroiByteStream";
@@ -36,7 +36,7 @@ import { FloorNames, FloorTypes } from "@common/utils/terrain";
 import { Vec, type Vector } from "@common/utils/vector";
 import { randomBytes } from "crypto";
 import { WebSocket } from "uWebSockets.js";
-import { Config } from "../config";
+import { Config } from "../utils/config";
 import { type Game } from "../game";
 import { HealingAction, ReloadAction, ReviveAction, type Action } from "../inventory/action";
 import { GunItem } from "../inventory/gunItem";
@@ -113,7 +113,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
     get team(): Team | undefined { return this._team; }
 
     set team(value: Team | undefined) {
-        if (!this.game.teamMode) {
+        if (!this.game.isTeamMode) {
             console.warn("Trying to set a player's team while the game isn't in team mode");
             return;
         }
@@ -451,10 +451,10 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
     baseSpeed = GameConstants.player.baseSpeed;
 
-    private _movementVector = Vec.create(0, 0);
+    private _movementVector = Vec(0, 0);
     get movementVector(): Vector { return Vec.clone(this._movementVector); }
 
-    spawnPosition: Vector = Vec.create(this.game.map.width / 2, this.game.map.height / 2);
+    spawnPosition: Vector = Vec(this.game.map.width / 2, this.game.map.height / 2);
 
     private readonly _mapPings: Game["mapPings"] = [];
 
@@ -532,7 +532,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             this.isDev
             && data.lobbyClearing
             && data.weaponPreset
-            && !Config.disableLobbyClearing
+            && Config.allowLobbyClearing
         ) {
             const [
                 weaponA, weaponB, melee,
@@ -546,12 +546,12 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 kills?: string
             ): void => {
                 const weaponDef = Loots.fromStringSafe<GunDefinition | MeleeDefinition>(weaponName);
-                let itemType: ItemType;
+                let defType: DefinitionType;
 
                 if (
                     weaponDef === undefined // no such item
-                    || ![ItemType.Gun, ItemType.Melee].includes(itemType = weaponDef.itemType) // neither gun nor melee
-                    || GameConstants.player.inventorySlotTypings[slot] !== itemType // invalid type
+                    || ![DefinitionType.Gun, DefinitionType.Melee].includes(defType = weaponDef.defType) // neither gun nor melee
+                    || GameConstants.player.inventorySlotTypings[slot] !== defType // invalid type
                 ) return;
 
                 this.inventory.addOrReplaceWeapon(slot, weaponDef);
@@ -631,33 +631,33 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         inventory.throwableItemMap.get(idString)!.count = inventory.items.getItem(idString);
     }
 
-    private static readonly _weaponSwapWeights: Partial<Record<ItemType, Partial<Record<Tier, number>>>> = {
-        [ItemType.Gun]: {
+    private static readonly _weaponSwapWeights: Partial<Record<DefinitionType, Partial<Record<Tier, number>>>> = {
+        [DefinitionType.Gun]: {
             [Tier.S]: 0.15,
             [Tier.A]: 0.2,
             [Tier.B]: 0.5,
             [Tier.C]: 0.818,
             [Tier.D]: 0.182
         },
-        [ItemType.Melee]: {
+        [DefinitionType.Melee]: {
             [Tier.S]: 0.125,
             [Tier.A]: 0.5,
             [Tier.B]: 0.4,
             [Tier.C]: 0.4,
             [Tier.D]: 0.2
         },
-        [ItemType.Throwable]: {
+        [DefinitionType.Throwable]: {
             [Tier.S]: 0.4,
             [Tier.C]: 1,
             [Tier.D]: 0.5
         }
     };
 
-    private static readonly _weaponTiersCache: Partial<Record<ItemType, Partial<Record<Tier, WeaponDefinition[]>>>> = {};
+    private static readonly _weaponTiersCache: Partial<Record<DefinitionType, Partial<Record<Tier, WeaponDefinition[]>>>> = {};
 
     tryRefund(item: InventoryItem = this.activeItem): void {
         if (
-            item.category !== ItemType.Gun
+            item.category !== DefinitionType.Gun
             || item.owner !== this
             || item.definition.bulletCount !== 1
             || !this.inventory.weapons.includes(item)
@@ -697,7 +697,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         if (slot === -1) {
             // this happens if the item to be swapped isn't currently in the inventory
             // in that case, we just take the first slot matching that item's type
-            slot = GameConstants.player.inventorySlotTypings.filter(slot => slot === item.definition.itemType)?.[0] ?? 0;
+            slot = GameConstants.player.inventorySlotTypings.filter(slot => slot === item.definition.defType)?.[0] ?? 0;
             // and if we somehow don't have any matching slots, then someone's probably messing with us… fallback to slot 0 lol
         }
 
@@ -719,7 +719,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             : spawnable.forType(type).filter(item => !item.noSwap);
 
         const chosenItem = pickRandomInArray<WeaponDefinition>(
-            type === ItemType.Throwable
+            type === DefinitionType.Throwable
                 ? potentials.filter(
                     ({ idString: thr }) => (items.hasItem(thr) ? items.getItem(thr) : 0) < maxCapacity[thr]
                 )
@@ -727,8 +727,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         );
         if (chosenItem === undefined) return;
 
-        switch (chosenItem.itemType) { // chosenItem.itemType === type, but the former helps ts narrow chosenItem's type
-            case ItemType.Gun: {
+        switch (chosenItem.defType) { // chosenItem.defType === type, but the former helps ts narrow chosenItem's type
+            case DefinitionType.Gun: {
                 this.action?.cancel();
 
                 const { capacity, ammoType, ammoSpawnAmount, summonAirdrop } = chosenItem;
@@ -747,12 +747,12 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 break;
             }
 
-            case ItemType.Melee: {
+            case DefinitionType.Melee: {
                 inventory.replaceWeapon(slot, chosenItem, force);
                 break;
             }
 
-            case ItemType.Throwable: {
+            case DefinitionType.Throwable: {
                 const { idString } = chosenItem;
 
                 const count = items.hasItem(idString) ? items.getItem(idString) : 0;
@@ -778,7 +778,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
                 item.count = newCount;
 
-                const slot = inventory.slotsByItemType[ItemType.Throwable]?.[0];
+                const slot = inventory.slotsByDefType[DefinitionType.Throwable]?.[0];
 
                 if (slot !== undefined && !inventory.hasWeapon(slot)) {
                     inventory.replaceWeapon(slot, item, force);
@@ -867,21 +867,6 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
     sendEmote(source?: EmoteDefinition, isFromServer = false): void {
         if (this.emoteRateLimit() || !source) return;
 
-        let isValid = false;
-        for (const definitionList of [Emotes, Ammos, HealingItems, Guns, Melees, Throwables]) {
-            if (definitionList.hasString(source.idString)) {
-                isValid = true;
-                break;
-            }
-        }
-        if (!isValid) return;
-
-        if (
-            "itemType" in source
-            && (source.itemType === ItemType.Ammo || source.itemType === ItemType.Healing)
-            && !this.game.teamMode
-        ) return;
-
         const indexOf = this.loadout.emotes.indexOf(source);
         if (!isFromServer && (indexOf < 0 || indexOf > 5)) return;
 
@@ -956,7 +941,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 y *= Math.SQRT1_2;
             }
 
-            movement = Vec.create(x, y);
+            movement = Vec(x, y);
         }
 
         // Rate Limiting: Team Pings & Emotes
@@ -1166,7 +1151,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         // Cancel reviving when out of range
         if (this.action instanceof ReviveAction) {
             if (
-                Vec.squaredLength(
+                Vec.squaredLen(
                     Vec.sub(
                         this.position,
                         this.action.target.position
@@ -1453,6 +1438,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             fullObjects.add(object);
         }
 
+        packet.fullObjectsCache = fullObjects;
+
         packet.partialObjectsCache = [];
         for (const object of game.partialDirtyObjects) {
             if (!this.visibleObjects.has(object as GameObject) || fullObjects.has(object)) continue;
@@ -1464,106 +1451,90 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
         if (this.startedSpectating && this.spectating) {
             forceInclude = true;
-
-            // this line probably doesn't do anything
-            // packet.fullObjectsCache.push(this.spectating);
             this.startedSpectating = false;
         }
 
-        packet.playerData = {
+        const playerData: PlayerData = packet.playerData = {
             pingSeq: this._pingSeq,
-            ...(
-                player.dirty.maxMinStats || forceInclude
-                    ? { minMax: {
-                        maxHealth: player._maxHealth,
-                        minAdrenaline: player._minAdrenaline,
-                        maxAdrenaline: player._maxAdrenaline
-                    } }
-                    : {}
-            ),
-            ...(
-                player.dirty.health || forceInclude
-                    ? { health: player._normalizedHealth }
-                    : {}
-            ),
-            ...(
-                player.dirty.adrenaline || forceInclude
-                    ? { adrenaline: player._normalizedAdrenaline }
-                    : {}
-            ),
-            ...(
-                player.dirty.zoom || forceInclude
-                    ? { zoom: player._scope.zoomLevel }
-                    : {}
-            ),
-            ...(
-                player.dirty.id || forceInclude
-                    ? { id: {
-                        id: player.id,
-                        spectating: this.spectating !== undefined
-                    } }
-                    : {}
-            ),
-            ...(
-                player.dirty.teammates || forceInclude
-                    ? { teammates: player._team?.players as Player[] ?? [] }
-                    : {}
-            ),
-            ...(
-                player.dirty.weapons || forceInclude
-                    ? { inventory: {
-                        activeWeaponIndex: inventory.activeWeaponIndex,
-                        weapons: inventory.weapons.map(slot => {
-                            const item = slot;
-
-                            return (item && {
-                                definition: item.definition,
-                                count: item.isGun
-                                    ? item.ammo
-                                    : item instanceof CountableInventoryItem
-                                        ? item.count
-                                        : undefined,
-                                stats: item.stats
-                            }) satisfies ((PlayerData["inventory"] & object)["weapons"] & object)[number];
-                        })
-                    } }
-                    : {}
-            ),
-            ...(
-                player.dirty.slotLocks || forceInclude
-                    ? { lockedSlots: player.inventory.lockedSlots }
-                    : {}
-            ),
-            ...(
-                player.dirty.items || forceInclude
-                    ? { items: {
-                        items: inventory.items.asRecord(),
-                        scope: inventory.scope
-                    } }
-                    : {}
-            ),
-            ...(
-                player.dirty.layer || forceInclude
-                    ? { layer: player.layer }
-                    : {}
-            ),
-            ...(
-                player.dirty.activeC4s || forceInclude
-                    ? { activeC4s: this.c4s.size > 0 }
-                    : {}
-            ),
-            ...(
-                player.dirty.perks || forceInclude
-                    ? { perks: player.perks }
-                    : {}
-            ),
-            ...(
-                player.dirty.teamID || forceInclude
-                    ? { teamID: player.teamID }
-                    : {}
-            ),
             blockEmoting: player.blockEmoting
         };
+
+        if (player.dirty.maxMinStats || forceInclude) {
+            playerData.minMax = {
+                maxHealth: player._maxHealth,
+                minAdrenaline: player._minAdrenaline,
+                maxAdrenaline: player._maxAdrenaline
+            };
+        }
+
+        if (player.dirty.health || forceInclude) {
+            playerData.health = player._normalizedHealth;
+        }
+
+        if (player.dirty.adrenaline || forceInclude) {
+            playerData.adrenaline = player._normalizedAdrenaline;
+        }
+
+        if (player.dirty.zoom || forceInclude) {
+            playerData.zoom = player._scope.zoomLevel;
+        }
+
+        if (player.dirty.id || forceInclude) {
+            playerData.id = {
+                id: player.id,
+                spectating: this.spectating !== undefined
+            };
+        }
+
+        if ((player.dirty.teammates || forceInclude) && player._team) {
+            playerData.teammates = player._team.players as Player[];
+        }
+
+        if (player.dirty.weapons || forceInclude) {
+            playerData.inventory = {
+                activeWeaponIndex: inventory.activeWeaponIndex,
+                weapons: inventory.weapons.map(slot => {
+                    const item = slot;
+
+                    return (item && {
+                        definition: item.definition,
+                        count: item.isGun
+                            ? item.ammo
+                            : item instanceof CountableInventoryItem
+                                ? item.count
+                                : undefined,
+                        stats: item.stats
+                    }) satisfies ((PlayerData["inventory"] & object)["weapons"] & object)[number];
+                })
+            };
+        }
+
+        if (player.dirty.slotLocks || forceInclude) {
+            playerData.lockedSlots = player.inventory.lockedSlots;
+        }
+
+        if (player.dirty.items || forceInclude) {
+            playerData.items = {
+                items: inventory.items.asRecord(),
+                scope: inventory.scope
+            };
+        }
+
+        if (player.dirty.layer || forceInclude) {
+            playerData.layer = player.layer;
+        }
+
+        if (player.dirty.activeC4s || forceInclude) {
+            playerData.activeC4s = this.c4s.size > 0;
+        }
+
+        if (player.dirty.perks || forceInclude) {
+            playerData.perks = player.perks;
+        }
+
+        if (player.dirty.teamID || forceInclude) {
+            playerData.teamID = player.teamID;
+        }
 
         // Cull bullets
         /*
@@ -1578,72 +1549,81 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
                        fixing this is therefore not worth the performance penalty
         */
-        packet.bullets = game.newBullets.filter(
-            ({ initialPosition, finalPosition }) => Collision.lineIntersectsRectTest(
-                initialPosition,
-                finalPosition,
+        packet.bullets = [];
+        for (const bullet of game.newBullets) {
+            if (!Collision.lineIntersectsRectTest(
+                bullet.initialPosition,
+                bullet.finalPosition,
                 this.screenHitbox.min,
                 this.screenHitbox.max
-            )
-        );
-
-        /**
-         * It's in times like these where `inline constexpr`
-         * would be very cool.
-         */
-        const maxDistSquared = 128 ** 2;
-
-        // Cull explosions
-        packet.explosions = game.explosions.filter(
-            ({ position }) => this.screenHitbox.isPointInside(position)
-                || Geometry.distanceSquared(position, this.position) < maxDistSquared
-        );
-
-        packet.emotes = game.emotes.filter(({ player }) => this.visibleObjects.has(player));
-
-        const gas = game.gas;
-
-        // shut up
-        // eslint-disable-next-line @typescript-eslint/no-misused-spread
-        packet.gas = gas.dirty || this._firstPacket ? { ...gas, finalStage: gas.getDef().finalStage } : undefined;
-        packet.gasProgress = gas.completionRatioDirty || this._firstPacket ? gas.completionRatio : undefined;
-
-        const newPlayers = this._firstPacket
-            ? Array.from(game.grid.pool.getCategory(ObjectCategory.Player))
-            : game.newPlayers;
-
-        // new and deleted players
-        packet.newPlayers = newPlayers.map(({ id, name, hasColor, nameColor, loadout: { badge } }) => ({
-            id,
-            name,
-            hasColor,
-            nameColor: hasColor ? nameColor : undefined,
-            badge
-        } as (UpdateDataCommon["newPlayers"] & object)[number]));
-
-        if (this.game.teamMode) {
-            for (const teammate of newPlayers.filter(({ teamID }) => teamID === player.teamID)) {
-                fullObjects.add(teammate);
-            }
+            )) continue;
+            packet.bullets.push(bullet);
         }
 
-        packet.fullObjectsCache = Array.from(fullObjects);
+        // Cull explosions
+        packet.explosions = [];
+        for (const explosion of game.explosions) {
+            if (
+                !this.screenHitbox.isPointInside(explosion.position)
+                || Geometry.distanceSquared(explosion.position, this.position) > GameConstants.explosionMaxDistSquared
+            ) continue;
+            packet.explosions.push(explosion);
+        }
 
+        // Emotes
+        packet.emotes = [];
+        for (const emote of game.emotes) {
+            if (!this.visibleObjects.has(emote.player)) continue;
+            packet.emotes.push(emote);
+        }
+
+        // Gas
+        const gas = game.gas;
+        if (gas.dirty || this._firstPacket) {
+            packet.gas = gas;
+        }
+        if (gas.completionRatioDirty || this._firstPacket) {
+            packet.gasProgress = gas.completionRatio;
+        }
+
+        const newPlayers = this._firstPacket
+            ? game.grid.pool.getCategory(ObjectCategory.Player)
+            : game.newPlayers;
+
+        // New/deleted players
+        packet.newPlayers = [];
+        for (const newPlayer of newPlayers) {
+            const { id, teamID, name, hasColor, nameColor, loadout: { badge } } = newPlayer;
+
+            packet.newPlayers.push({
+                id,
+                name,
+                hasColor,
+                nameColor: hasColor ? nameColor : undefined,
+                badge
+            } as (UpdateDataCommon["newPlayers"] & object)[number]);
+
+            // Add new teammates to full objects
+            if (!this.game.isTeamMode || teamID !== player.teamID) continue;
+            fullObjects.add(newPlayer);
+        }
         packet.deletedPlayers = game.deletedPlayers;
 
-        packet.aliveCount = game.aliveCountDirty || this._firstPacket ? game.aliveCount : undefined;
+        if (game.aliveCountDirty || this._firstPacket) {
+            packet.aliveCount = game.aliveCount;
+        }
 
         packet.planes = game.planes;
 
         packet.mapPings = [...game.mapPings, ...this._mapPings];
         this._mapPings.length = 0;
 
-        packet.killLeader = game.killLeaderDirty || this._firstPacket
-            ? {
+        if (game.killLeaderDirty || this._firstPacket) {
+            packet.killLeader = {
                 id: game.killLeader?.id ?? -1,
                 kills: game.killLeader?.kills ?? 0
-            }
-            : undefined;
+            };
+        }
 
         // serialize and send update packet
         this.sendPacket(packet as unknown as MutablePacketDataIn);
@@ -1714,7 +1694,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         const { spectatablePlayers } = game;
         switch (packet.spectateAction) {
             case SpectateActions.BeginSpectating: {
-                if (this.game.teamMode && this._team?.hasLivingPlayers()) {
+                if (this.game.isTeamMode && this._team?.hasLivingPlayers()) {
                     // Find closest teammate
                     toSpectate = this._team.getLivingPlayers()
                         .reduce((a, b) => Geometry.distanceSquared(a.position, this.position) < Geometry.distanceSquared(b.position, this.position) ? a : b);
@@ -1780,7 +1760,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 }
 
                 // Send the report to Discord
-                if (Config.apiServer?.reportWebhookURL) {
+                if (Config.apiServer?.reportWebhookUrl) {
                     const reportData = {
                         embeds: [
                             {
@@ -1805,7 +1785,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                         ]
                     };
 
-                    fetch(Config.apiServer.reportWebhookURL, {
+                    fetch(Config.apiServer.reportWebhookUrl, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(reportData)
@@ -1822,7 +1802,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             this.initializedSpecialSpectatingCase = true;
         }
 
-        if (this.game.teamMode) {
+        if (this.game.isTeamMode) {
             this.teamID = toSpectate.teamID;
             this.setDirty();
         }
@@ -1917,7 +1897,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         if (
             this.invulnerable
             || (
-                this.game.teamMode
+                this.game.isTeamMode
                 && source instanceof Player
                 && source.teamID === this.teamID
                 && source.id !== this.id
@@ -1987,13 +1967,11 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             source,
             weaponUsed
         });
+
         if (this.health <= 0 && !this.dead) {
             if (
-                this.game.teamMode
-
-                // teamMode hopefully guarantees team's existence
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                && this._team!.players.some(p => !p.dead && !p.downed && !p.disconnected && p !== this)
+                this.game.isTeamMode
+                && this._team?.players.some(p => !p.dead && !p.downed && !p.disconnected && p !== this)
                 && !this.downed
             ) {
                 this.down(source, weaponUsed);
@@ -2165,7 +2143,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         const old = this.backEquippedMelee?.idString;
         this.backEquippedMelee = this.inventory.weapons.find(w => {
             return w
-                && w.definition.itemType === ItemType.Melee
+                && w.definition.defType === DefinitionType.Melee
                 && w.definition.onBack
                 && w !== this.activeItem;
         })?.definition as MeleeDefinition | undefined;
@@ -2347,7 +2325,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             if (count > 0) {
                 if (def.noDrop || ("ephemeral" in def && def.ephemeral)) continue;
 
-                if (def.itemType === ItemType.Ammo && count !== Infinity) {
+                if (def.defType === DefinitionType.Ammo && count !== Infinity) {
                     let left = count;
                     let subtractAmount = 0;
 
@@ -2371,7 +2349,6 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 this.game.addLoot(item, position, layer);
             }
         }
-
         this.inventory.helmet = this.inventory.vest = undefined;
 
         // Drop skin
@@ -2587,7 +2564,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                     break;
                 }
                 case InputActions.DropItem: {
-                    if (!this.game.teamMode && action.item.itemType !== ItemType.Perk) break;
+                    if (!this.game.isTeamMode && action.item.defType !== DefinitionType.Perk) break;
                     this.action?.cancel();
                     inventory.dropItem(action.item);
                     break;
@@ -2640,7 +2617,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                             (isLoot || (type === InputActions.Interact && isInteractable))
                             && object.hitbox?.collidesWith(detectionHitbox)
                             && adjacentOrEqualLayer(this.layer, object.layer)
-                            && !(isLoot && [ItemType.Throwable, ItemType.Gun].includes(object.definition.itemType) && this.perks.hasItem(PerkIds.Lycanthropy))
+                            && !(isLoot && [DefinitionType.Throwable, DefinitionType.Gun].includes(object.definition.defType) && this.perks.hasItem(PerkIds.Lycanthropy))
                         ) {
                             const dist = Geometry.distanceSquared(object.position, this.position);
                             if (isInteractable) {
@@ -2692,7 +2669,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 case InputActions.Emote: {
                     let isValid = false;
                     for (const definitionList of [Emotes, Ammos, HealingItems, Guns, Melees, Throwables]) {
-                        if (this.game.teamMode && definitionList.hasString(action.emote.idString)) {
+                        if (this.game.isTeamMode && definitionList.hasString(action.emote.idString)) {
                             isValid = true;
                             break;
                         }

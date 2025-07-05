@@ -8,7 +8,7 @@ import type { CommonGameObject } from "./gameObject";
 import { type Hitbox } from "./hitbox";
 import { adjacentOrEqualLayer, equivLayer } from "./layer";
 import { Collision, Geometry, type IntersectionResponse, Numeric } from "./math";
-import { ItemType, ReferenceTo, type ReifiableDef } from "./objectDefinitions";
+import { DefinitionType, ReferenceTo, type ReifiableDef } from "./objectDefinitions";
 import type { SuroiByteStream } from "./suroiByteStream";
 import { Vec, type Vector } from "./vector";
 
@@ -197,7 +197,7 @@ export class BaseBullet {
         this.maxDistance = (range * (this.rangeVariance + 1)) / (this.reflectionCount + 1);
         this.maxDistanceSquared = this.maxDistance ** 2;
 
-        this.direction = Vec.create(Math.sin(this.rotation), -Math.cos(this.rotation));
+        this.direction = Vec(Math.sin(this.rotation), -Math.cos(this.rotation));
 
         this.velocity = Vec.scale(
             this.direction,
@@ -263,14 +263,14 @@ export class BaseBullet {
                     );
                     if (!point) return null;
                     const s = Vec.sub(pointA, pointB);
-                    const normal = Vec.normalize(Vec.create(-s.y, s.x));
+                    const normal = Vec.normalize(Vec(-s.y, s.x));
                     return { point, normal };
                 };
 
                 const activeDef = object.activeItemDefinition;
                 const backDef = object.backEquippedMelee;
 
-                if (activeDef.itemType === ItemType.Melee && activeDef.reflectiveSurface) {
+                if (activeDef.defType === DefinitionType.Melee && activeDef.reflectiveSurface) {
                     const intersection = getIntersection(activeDef.reflectiveSurface);
                     if (intersection) {
                         collisions.push({

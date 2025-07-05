@@ -15,7 +15,7 @@ import type { ReportData } from "@common/packets/reportPacket";
 import { type PlayerData, type UpdateDataCommon } from "@common/packets/updatePacket";
 import { Numeric } from "@common/utils/math";
 import { ExtendedMap } from "@common/utils/misc";
-import { DefinitionType, ItemType, type ReferenceTo } from "@common/utils/objectDefinitions";
+import { DefinitionType, type ReferenceTo } from "@common/utils/objectDefinitions";
 import { Vec, type Vector } from "@common/utils/vector";
 import $ from "jquery";
 import { Color } from "pixi.js";
@@ -145,7 +145,7 @@ class UIManagerClass {
             return teammate.id === id;
         });
 
-        const colorIndex = teammate ? teammate.colorIndex : (Game.teamMode ? undefined : 0);
+        const colorIndex = teammate ? teammate.colorIndex : (Game.isTeamMode ? undefined : 0);
         return colorIndex;
     }
 
@@ -250,7 +250,7 @@ class UIManagerClass {
 
         lockedInfo: $<HTMLButtonElement>("#locked-info"),
         lockedTooltip: $<HTMLDivElement>("#locked-tooltip"),
-        teamSizeSwitchTime: $<HTMLSpanElement>("#next-team-size-msg .next-switch-time"),
+        teamModeSwitchTime: $<HTMLSpanElement>("#next-team-size-msg .next-switch-time"),
         modeSwitchTime: $<HTMLSpanElement>("#next-mode-msg .next-switch-time"),
 
         playSoloBtn: $<HTMLDivElement>("#btn-play-solo"),
@@ -260,8 +260,8 @@ class UIManagerClass {
         teamOptionBtns: $<HTMLDivElement>("#team-option-btns"),
 
         switchMessages: $<HTMLDivElement>("#next-switch-messages"),
-        nextTeamSizeMsg: $<HTMLDivElement>("#next-team-size-msg"),
-        nextTeamSizeIcon: $<HTMLDivElement>("#next-team-size-msg .next-switch-icon"),
+        nextTeamModeMsg: $<HTMLDivElement>("#next-team-size-msg"),
+        nextTeamModeIcon: $<HTMLDivElement>("#next-team-size-msg .next-switch-icon"),
         nextModeMsg: $<HTMLDivElement>("#next-mode-msg"),
         nextModeIcon: $<HTMLDivElement>("#next-mode-msg .next-switch-icon"),
 
@@ -434,7 +434,7 @@ class UIManagerClass {
         let mostDamageTaken = 0;
         let mostDamageTakenIDs: number[] | undefined = [];
 
-        if (Game.teamMode) {
+        if (Game.isTeamMode) {
             for (const { playerID, kills, damageDone, damageTaken } of teammates) {
                 if (kills > highestKills) {
                     highestKills = kills;
@@ -478,7 +478,7 @@ class UIManagerClass {
             if (!alive) {
                 medal = "dead";
             }
-            if (Game.teamMode) {
+            if (Game.isTeamMode) {
                 if (highestKillsIDs?.includes(playerID)) {
                     medal = "kills";
                 } else if (mostDamageDoneIDs?.includes(playerID)) {
@@ -566,7 +566,7 @@ class UIManagerClass {
     }
 
     updateRequestableItems(): void {
-        if (!Game.teamMode) return;
+        if (!Game.isTeamMode) return;
 
         const pingWheelActive = MapPingWheelManager.enabled;
 
@@ -715,7 +715,7 @@ class UIManagerClass {
                 .css("color", healthPercent <= 40 || Game.activePlayer?.downed ? "#ffffff" : "#000000");
         }
 
-        if (teammates && Game.teamMode) {
+        if (teammates && Game.isTeamMode) {
             this.teammates = teammates;
 
             const _teammateDataCache = this._teammateDataCache;
@@ -862,7 +862,7 @@ class UIManagerClass {
                 .css("color", count > 0 ? "inherit" : "red");
 
             let showReserve = false;
-            if (activeWeapon.definition.itemType === ItemType.Gun) {
+            if (activeWeapon.definition.defType === DefinitionType.Gun) {
                 const ammoType = activeWeapon.definition.ammoType;
                 let totalAmmo: number | string = ClientPerkManager.hasItem(PerkIds.InfiniteAmmo)
                     ? "∞"
@@ -888,7 +888,7 @@ class UIManagerClass {
             }
 
             if (InputManager.isMobile) {
-                this.ui.reloadIcon.toggle(activeWeapon.definition.itemType !== ItemType.Throwable);
+                this.ui.reloadIcon.toggle(activeWeapon.definition.defType !== DefinitionType.Throwable);
             }
         }
 
@@ -959,7 +959,7 @@ class UIManagerClass {
                 cache.idString = idString;
 
                 if (definition) {
-                    const isGun = definition.itemType === ItemType.Gun;
+                    const isGun = definition.defType === DefinitionType.Gun;
 
                     if (isGun) {
                         itemImage.css("transform", definition.inventoryScale !== undefined ? `scale(${definition.inventoryScale})` : "unset");
@@ -999,7 +999,7 @@ class UIManagerClass {
                         let frame = definition.idString;
                         if (
                             ClientPerkManager.hasItem(PerkIds.PlumpkinBomb)
-                            && definition.itemType === ItemType.Throwable
+                            && definition.defType === DefinitionType.Throwable
                             && !definition.noSkin
                         ) {
                             frame += "_halloween";
@@ -1107,11 +1107,11 @@ class UIManagerClass {
 
             itemSlot.toggleClass("has-item", isPresent);
 
-            if ((itemDef.itemType === ItemType.Ammo || itemDef.itemType === ItemType.Healing) && itemDef.hideUnlessPresent) {
+            if ((itemDef.defType === DefinitionType.Ammo || itemDef.defType === DefinitionType.HealingItem) && itemDef.hideUnlessPresent) {
                 itemSlot.css("visibility", isPresent ? "visible" : "hidden");
             }
 
-            if (itemDef.itemType === ItemType.Scope && !UI_DEBUG_MODE) {
+            if (itemDef.defType === DefinitionType.Scope && !UI_DEBUG_MODE) {
                 itemSlot.toggle(isPresent).removeClass("active");
             }
         }
@@ -1203,7 +1203,7 @@ class UIManagerClass {
             const boundingRects = child.getBoundingClientRect();
             return {
                 element: child as HTMLDivElement,
-                position: Vec.create(boundingRects.x, boundingRects.y)
+                position: Vec(boundingRects.x, boundingRects.y)
             };
         });
     }
@@ -1238,7 +1238,7 @@ class UIManagerClass {
         const grenadeImpactKill = (
             weaponPresent
             && weaponUsed.defType !== DefinitionType.Explosion
-            && weaponUsed.itemType === ItemType.Throwable
+            && weaponUsed.defType === DefinitionType.Throwable
         )
             ? getTranslatedString("kf_impact_of")
             : "";
@@ -1260,7 +1260,7 @@ class UIManagerClass {
 
                 // Remove spaces if chinese/japanese language.
                 if (TRANSLATIONS.translations[language].no_space && messageText) {
-                    messageText = messageText.replaceAll("<span>", "<span style=\"display:contents;\">");
+                    messageText = messageText.split("<span>").join("<span style=\"display:contents;\">");
                 }
 
                 // special case for turkish
@@ -1596,7 +1596,7 @@ class UIManagerClass {
                     if (creditedId === victimId) {
                         event = "kf_finally_ended_themselves";
                     } else if (creditedId !== undefined) {
-                        event = "kf_finally_killed";
+                        event = activeId === victimId ? "kf_were_finally_killed" : "kf_finally_killed";
                     } else {
                         event = "kf_finally_died";
                     }

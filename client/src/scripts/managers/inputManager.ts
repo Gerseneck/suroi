@@ -5,7 +5,7 @@ import { type WeaponDefinition } from "@common/definitions/loots";
 import { areDifferent, InputPacket, type InputAction, type InputData, type SimpleInputActions } from "@common/packets/inputPacket";
 import { PacketType } from "@common/packets/packet";
 import { Geometry, Numeric } from "@common/utils/math";
-import { ItemType, type ItemDefinition } from "@common/utils/objectDefinitions";
+import { DefinitionType, type ItemDefinition } from "@common/utils/objectDefinitions";
 import { Vec } from "@common/utils/vector";
 import $ from "jquery";
 import nipplejs, { type JoystickOutputData } from "nipplejs";
@@ -198,7 +198,7 @@ class InputManagerClass {
     // and inputManager assumes all keys of `movement` are booleans
     movementAngle = 0;
 
-    mousePosition = Vec.create(0, 0);
+    mousePosition = Vec(0, 0);
 
     rotation = 0;
 
@@ -224,20 +224,20 @@ class InputManagerClass {
             let playSound = !item.noDrop;
 
             if (playSound) {
-                switch (item.itemType) {
-                    case ItemType.Ammo:
-                    case ItemType.Healing:
-                    case ItemType.Scope:
+                switch (item.defType) {
+                    case DefinitionType.Ammo:
+                    case DefinitionType.HealingItem:
+                    case DefinitionType.Scope:
                         playSound = inventory.items[item.idString] > 0;
                         break;
-                    case ItemType.Throwable:
-                    case ItemType.Armor:
-                    case ItemType.Gun:
-                    case ItemType.Melee:
-                    case ItemType.Skin:
+                    case DefinitionType.Throwable:
+                    case DefinitionType.Armor:
+                    case DefinitionType.Gun:
+                    case DefinitionType.Melee:
+                    case DefinitionType.Skin:
                         playSound = true; // probably fine…?
                         break;
-                    case ItemType.Backpack:
+                    case DefinitionType.Backpack:
                         playSound = false; // womp womp
                         break;
                 }
@@ -249,7 +249,7 @@ class InputManagerClass {
         this.actions.push(action);
     }
 
-    gameMousePosition = Vec.create(0, 0);
+    gameMousePosition = Vec(0, 0);
     distanceToMouse = 0;
 
     attacking = false;
@@ -361,7 +361,7 @@ class InputManagerClass {
         gameContainer.addEventListener("pointermove", (e: MouseEvent) => {
             if (this.isMobile) return;
 
-            this.mousePosition = Vec.create(e.clientX, e.clientY);
+            this.mousePosition = Vec(e.clientX, e.clientY);
             this.turning = true;
             this.rotation = Math.atan2(e.clientY - window.innerHeight / 2, e.clientX - window.innerWidth / 2);
 
@@ -437,27 +437,28 @@ class InputManagerClass {
                 aimJoystickUsed = true;
                 this.rotation = -data.angle.radian;
                 this.turning = true;
-                const activePlayer = Game.activePlayer;
-                if (GameConsole.getBuiltInCVar("cv_responsive_rotation") && !Game.gameOver && activePlayer) {
-                    activePlayer.container.rotation = this.rotation;
-                }
 
                 const joystickSize = GameConsole.getBuiltInCVar("mb_joystick_size");
 
                 this.distanceToMouse = Numeric.remap(data.distance, 0, joystickSize / 2, 0, GameConstants.player.maxMouseDist);
 
+                const activePlayer = Game.activePlayer;
                 if (!activePlayer) return;
+
+                if (GameConsole.getBuiltInCVar("cv_responsive_rotation") && !Game.gameOver) {
+                    activePlayer.container.rotation = this.rotation;
+                }
 
                 const def = activePlayer.activeItem;
 
-                if (activePlayer.images.aimTrail !== undefined) {
-                    activePlayer.images.aimTrail.alpha = 1;
-                }
+                const { aimTrail, altAimTrail } = activePlayer.images;
+                if (aimTrail) aimTrail.visible = true;
+                if (altAimTrail) altAimTrail.visible = def.defType === DefinitionType.Gun && (def.isDual ?? false);
 
                 const attacking = data.distance > joystickSize / 3;
                 if (
-                    (def.itemType === ItemType.Throwable && this.attacking)
-                    || (def.itemType === ItemType.Gun && def.shootOnRelease)
+                    (def.defType === DefinitionType.Throwable && this.attacking)
+                    || (def.defType === DefinitionType.Gun && def.shootOnRelease)
                 ) {
                     shootOnRelease = true;
                     this.shootOnReleaseAngle = this.rotation;
@@ -468,10 +469,16 @@ class InputManagerClass {
 
             aimJoystick.on("end", () => {
                 aimJoystickUsed = false;
-                if (Game.activePlayer?.images.aimTrail !== undefined) Game.activePlayer.images.aimTrail.alpha = 0;
                 this.attacking = shootOnRelease;
                 this.resetAttacking = true;
                 shootOnRelease = false;
+
+                const activePlayer = Game.activePlayer;
+                if (!activePlayer) return;
+
+                const { aimTrail, altAimTrail } = activePlayer.images;
+                if (aimTrail) aimTrail.visible = false;
+                if (altAimTrail) altAimTrail.visible = false;
             });
         }
 
@@ -707,7 +714,7 @@ class InputManagerClass {
 
     cycleThrowable(offset: number): void {
         const throwable = UIManager.inventory.weapons
-            .find(weapon => weapon?.definition.itemType === ItemType.Throwable)
+            .find(weapon => weapon?.definition.defType === DefinitionType.Throwable)
             ?.definition as ThrowableDefinition | undefined;
 
         if (!throwable) return;
