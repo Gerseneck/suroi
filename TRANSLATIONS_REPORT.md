@@ -2661,6 +2661,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `bdg_froog` is not a valid key
 - Key `bdg_aegis_logo` is not a valid key
 - Key `bdg_flint_logo` is not a valid key
+- Key `bdg_nsd_logo` is not a valid key
 - Key `bdg_duel` is not a valid key
 - Key `bdg_suroi_logo` is not a valid key
 - Key `bdg_fire` is not a valid key
@@ -2720,6 +2721,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `emote_sighing_face` is not a valid key
 - Key `emote_yawning_face` is not a valid key
 - Key `emote_frustrated_face` is not a valid key
+- Key `emote_thousand_yard_stare` is not a valid key
 - Key `emote_weary_face` is not a valid key
 - Key `emote_pensive_face` is not a valid key
 - Key `emote_zipper_mouth_face` is not a valid key
@@ -2886,7 +2888,5 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `emote_blindfolded_face` is not a valid key
 - Key `lobotomy` is not a valid key
 
-### Undefined Keys
-
-- Key `interact_recorder_interactable` is not defined
+### (No Undefined Keys)
 
