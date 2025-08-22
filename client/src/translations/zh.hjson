@@ -3,7 +3,14 @@
 "no_space": true
 "html_lang": "zh-CN"
 
+
 // translatrs: @XNOR, @gerseneck, inhalerisinsane, acxiynt233
+
+
+
+/*
+    MAIN MENU MESSAGES - 主菜单消息
+*/
 
 "msg_rotate": "请将设备旋转至横向来获得更好的游戏体验。"
 "msg_loading": "连接中"
@@ -17,6 +24,7 @@
 "msg_try_again": "请重试。"
 "msg_punishment_warn": "你已被警告！"
 "msg_punishment_warn_reason": "你已被管理员警告：<reason>"
+"msg_punishment_warn_agreement": "我承认这次警告，并且不会再犯。"
 "msg_punishment_temp": "你已被暂时封禁！"
 "msg_punishment_temp_reason": "你已因此被暂时封禁：<reason>"
 "msg_punishment_perma": "你已被永久封禁！"
@@ -25,23 +33,22 @@
 "msg_punishment_vpn_reason": "为了防止绕过封禁，不允许使用VPN和代理。请禁用你的VPN/代理后再进行游戏。如果你认为此消息有误，或者希望申请豁免，请联系Discord服务器（https://discord.suroi.io）上的管理员，或发送电子邮件至support@suroi.io。"
 "msg_no_reason": "未提供原因。"
 "msg_error_kicked_team": "你被踢出队伍。"
-"msg_waiting_for_leader": "等待击杀领袖中"
-"msg_you_died": "你死了。"
-"msg_player_died": "<player>死了。"
-"msg_win": "大吉大利，今晚吃鸡！"
-"msg_your_rank": "排名"
-"msg_kills": "击杀：<kills>"
-"msg_not_enough_space": "空间不足！"
-"msg_item_already_equipped": "已装备此物品！"
-"msg_better_item_equipped": "已装备更好的物品！"
-"msg_cannot_use_flare": "无法在室内使用信号弹！"
-"msg_your_team_eliminated": "你的队伍被淘汰了。"
-"msg_the_team_eliminated": "队伍被淘汰了。"
-"msg_punishment_warn_agreement": "我承认这次警告，并且不会再犯。"
+
+
+
+/*
+    WARNINGS - 警告
+*/
 
 "warning_hw_accel_1": "图形加速被此浏览器关闭或者此浏览器无法使用。"
 "warning_hw_accel_2": "Suroi表现可能会差。"
 "warning_hw_accel_link": "查看更多"
+
+
+
+/*
+    MAIN MENU - 主菜单
+*/
 
 "play_solo": "单人游戏"
 "play_duo": "双人游戏"
@@ -55,15 +62,83 @@
 "privacy": "隐私政策"
 "loadout": "装饰"
 "settings": "设置"
+"featured_youtubr": "精选Youtubr"
+"featured_streamr": "精选主播"
+"contact": "联系我们"
+"partners": "友情链接"
+"username_placeholder": "输入昵称"
+
+
+
+/*
+    MAIN MENU LOADING - 主菜单加载
+*/
+"loading_spritesheets": "加载图像中<progress>"
+"loading_connecting": "连接中"
+"loading_joining_game": "加入游戏中"
+"loading_fetching_data": "获取数据中……"
+"loading_fetching_data_failed": "获取服务器数据失败"
+"retry": "重试"
+"loading_finding_game": "查找游戏中"
+
+
+
+/* 
+    TEAM MENU - 队伍菜单
+*/
+
+"create_team": "创建队伍"
+"create_team_autofill": "自动填充"
+"create_team_lock": "锁定队伍"
+"create_team_ready": "准备"
+"create_team_waiting": "等待中……"
+"create_team_play": "开始游戏"
+"create_team_force_start": "强行开始"
+"create_team_not_ready": "未准备"
+
+
+
+/*
+    IN GAME MENU - 游戏内菜单
+*/
+
 "fullscreen": "全屏"
 "recording": "录屏记录"
 "resume": "继续"
 "quit": "退出"
+"btn_report": "举报"
+"btn_spectate_kill_leader": "观战击杀领袖"
+"btn_spectate": "观战"
+"btn_play_again": "再玩一局"
+"btn_menu": "菜单"
+
+
+
+/*
+    REPORT MENU - 举报菜单
+*/
+
+"report_reporting": "举报"
+"report_id": "举报ID："
+"report_instructions": "\n    <p><strong>请按照以下说明操作！</strong>否则，你的举报将被忽略。</p>\n    <h4>如何提交举报</h4>\n    <ol>\n      <li>加入<a href=\"https://discord.suroi.io\">Discord服务器。</a></li>\n      <li>前往<a href=\"https://discord.com/channels/1077043833621184563/1135288369526607973\">#player-reports\n          频道。</a></li>\n      <li>阅读置顶帖中的举报方针。</li>\n      <li>以帖子的形式提交你的举报。</li>\n    </ol>"
+"languages": "语言"
+
+
+/*
+    COMMON - 通用
+*/
+
 "none": "无"
 "copy": "复制"
 "copied": "已复制"
 "health": "生命值"
 "adrenaline": "肾上腺素"
+
+
+
+/*
+    SETTINGS TABS - 设置界面
+*/
 
 "settings_volume": "声音"
 "settings_keybinds": "键位"
@@ -73,120 +148,24 @@
 "settings_mobile": "触控"
 "settings_require_reload": "* 刷新网页以生效"
 "settings_performance_warning": "* 此设置可能会在某些设备上导致问题。若你无法加入游戏，请尝试禁用此设置。"
+
+
+
+/*
+    SETTINGS (VOLUME) - 设置（声音）
+*/
+
 "settings_master_volume": "主音量"
 "settings_sfx_volume": "音效音量"
 "settings_ambience_volume": "环境音量"
 "settings_music_volume": "音乐音量"
 "settings_old_menu_music": "旧菜单音乐"
-"settings_render_mode": "渲染模式"
-"settings_render_resolution": "渲染解析度"
-"settings_render_resolution_auto": "自动"
-"settings_hires_textures": "高清纹理"
-"settings_cooler_graphics": "更酷的图形"
-"settings_ambient_particles": "环境粒子"
-"settings_antialias": "抗锯齿"
-"settings_movement_smoothing": "平滑移动"
-"settings_responsive_rotation": "响应式旋转"
-"settings_camera_shake": "画面抖动"
-"settings_interface_scale": "界面缩放"
-"settings_minimap_opacity": "小地图可见度"
-"settings_fs_map_opacity": "大地图可见度"
-"settings_hide_minimap": "隐藏小地图"
-"settings_blur_splash": "模糊菜单界面"
-"settings_hide_rules": "隐藏规则按钮"
-"settings_warn_before_leaving": "离开前警告"
-"settings_show_fps": "显示帧数"
-"settings_show_ping": "显示延迟"
-"settings_show_inout": "显示网络统计"
-"settings_show_coordinates": "显示坐标"
-"settings_anon_names": "玩家匿名"
-"settings_hide_emotes": "隐藏表情"
-"settings_text_killfeed": "文本击杀信息"
-"settings_colored_weapon_slots": "武器槽颜色"
-"settings_scope_looping": "循环选择倍镜"
-"settings_draw_hud": "平视显示器"
-"settings_autopickup": "自动拾取"
-"settings_autopickup_dual_guns": "自动拾取双枪"
-"settings_load_settings": "加载设置"
-"settings_copy_settings": "复制设置"
-"settings_reset_settings": "重置设置"
-"settings_reload": "刷新"
-"settings_mobile_controls": "触摸控制"
-"settings_joystick_size": "摇杆大小"
-"settings_joystick_opacity": "摇杆可见度"
-"settings_gyro_angle": "陀螺仪武器切换角度"
-"settings_haptics": "触觉反应"
-"settings_shake_to_reload": "摇晃以装填弹药"
-"settings_shake_count": "摇晃所需次数"
-"settings_shake_force": "摇晃触发力"
-"settings_shake_delay": "摇晃检测间隔"
-"settings_record_res": "录屏分辨率"
-"settings_lock_joysticks": "锁定摇杆位置"
-"settings_switch_joysticks": "互换摇杆设置"
-"settings_left_joystick_color": "左摇杆颜色"
-"settings_right_joystick_color": "右摇杆颜色"
-"settings_normal_joystick_info": "左摇杆移动，右摇杆瞄准"
-"settings_switched_joystick_info": "左摇杆瞄准，右摇杆移动"
-"settings_alt_texture_loading": "代替纹理加载方法"
 
-"loadout_skins": "服装"
-"loadout_emotes": "表情"
-"loadout_crosshairs": "准星"
-"loadout_badges": "徽章"
-"loadout_special": "特殊"
-"loadout_crosshairs_default": "系统默认"
-"loadout_crosshairs_size": "大小："
-"loadout_crosshairs_color": "颜色："
-"loadout_crosshairs_stroke_size": "描边大小："
-"loadout_crosshairs_stroke_color": "描边颜色："
-"emotes_category_People": "人物"
-"emotes_category_Text": "文字"
-"emotes_category_Memes": "模因"
-"emotes_category_Icons": "图标"
-"emotes_category_Misc": "杂物"
 
-"featured_youtubr": "精选Youtubr"
-"featured_streamr": "精选主播"
-"btn_report": "举报"
-"btn_spectate_kill_leader": "观战击杀领袖"
-"btn_spectate": "观战"
-"btn_play_again": "再玩一局"
-"btn_menu": "菜单"
 
-"gas_waiting": "毒气将在<time>后扩散"
-"gas_advancing": "毒气正在扩散！向安全区撤离"
-"final_gas_waiting": "决赛圈将在<time>后缩小"
-"final_gas_advancing": "决赛圈正在缩小!"
-"gas_inactive": "等待玩家中……"
-
-"action_open_door": "开门"
-"action_close_door": "关门"
-"action_revive": "救援<player>"
-"action_cancel": "取消"
-"action_reloading": "装填中……"
-"action_reviving": "救援中……"
-"action_being_revived": "被救援中……"
-"action_gauze_use": "应用<item>中"
-"action_medikit_use": "使用<item>中"
-"action_cola_use": "饮用<item>中"
-"action_tablets_use": "服用<item>中"
-"action_vaccine_syringe_use": "注射疫苗中"
-"interact_airdrop_crate_locked": "解锁空投"
-"interact_control_panel": "激活控制台"
-"interact_headquarters_security_desk": "激活控制台"
-"interact_generator": "启动发电机"
-"interact_button": "按下按钮"
-"interact_speaker": "播放音箱"
-"interact_monument": "表达敬意"
-"interact_recorder_interactable": "播放录音机"
-
-"loading_spritesheets": "加载图像中<progress>"
-"loading_connecting": "连接中"
-"loading_joining_game": "加入游戏中"
-"loading_fetching_data": "获取数据中……"
-"loading_fetching_data_failed": "获取服务器数据失败"
-"retry": "重试"
-"loading_finding_game": "查找游戏中"
+/*
+    SETTINGS (KEYBINDS) - 设置（键位）
+*/
 
 "keybind_clear_tooltip": "要移除键位，请点击选择键位并按下<kbd>Escape键</kbd>或<kbd>Backspace键</kbd>。"
 "keybind_reset": "重置全部"
@@ -228,6 +207,158 @@
 "bindings_toggle pf_net_graph 0 1 2": "调整网络图标风格"
 "bindings_fullscreen": "全屏"
 "bindings_screen_record": "录全屏/停止录制"
+
+
+
+/*
+    SETTINGS (GRAPHICS) - 设置（图形）
+*/
+
+"settings_render_mode": "渲染模式"
+"settings_render_resolution": "渲染解析度"
+"settings_render_resolution_auto": "自动"
+"settings_hires_textures": "高清纹理"
+"settings_alt_texture_loading": "代替纹理加载方法"
+"settings_cooler_graphics": "更酷的图形"
+"settings_ambient_particles": "环境粒子"
+"settings_antialias": "抗锯齿"
+"settings_movement_smoothing": "平滑移动"
+"settings_responsive_rotation": "响应式旋转"
+"settings_camera_shake": "画面抖动"
+"settings_record_res": "录屏分辨率"
+
+
+
+/*
+    SETTINGS (INTERFACE) - 设置（界面）
+*/
+
+"settings_interface_scale": "界面缩放"
+"settings_minimap_opacity": "小地图可见度"
+"settings_fs_map_opacity": "大地图可见度"
+"settings_hide_minimap": "隐藏小地图"
+"settings_blur_splash": "模糊菜单界面"
+"settings_hide_rules": "隐藏规则按钮"
+"settings_warn_before_leaving": "离开前警告"
+"settings_show_fps": "显示帧数"
+"settings_show_ping": "显示延迟"
+"settings_show_inout": "显示网络统计"
+"settings_show_coordinates": "显示坐标"
+"settings_anon_names": "玩家匿名"
+"settings_hide_emotes": "隐藏表情"
+"settings_text_killfeed": "文本击杀信息"
+"settings_colored_weapon_slots": "武器槽颜色"
+"settings_scope_looping": "循环选择倍镜"
+"settings_draw_hud": "平视显示器"
+
+
+
+/*
+    SETTINGS (MOBILE) - 设置（触控）
+*/
+
+"settings_reload": "刷新"
+"settings_autopickup": "自动拾取"
+"settings_autopickup_dual_guns": "自动拾取双枪"
+"settings_load_settings": "加载设置"
+"settings_copy_settings": "复制设置"
+"settings_reset_settings": "重置设置"
+"settings_mobile_controls": "触摸控制"
+"settings_joystick_size": "摇杆大小"
+"settings_joystick_opacity": "摇杆可见度"
+"settings_gyro_angle": "陀螺仪武器切换角度"
+"settings_haptics": "触觉反应"
+"settings_shake_to_reload": "摇晃以装填弹药"
+"settings_shake_count": "摇晃所需次数"
+"settings_shake_force": "摇晃触发力"
+"settings_shake_delay": "摇晃检测间隔"
+"settings_lock_joysticks": "锁定摇杆位置"
+"settings_switch_joysticks": "互换摇杆设置"
+"settings_left_joystick_color": "左摇杆颜色"
+"settings_right_joystick_color": "右摇杆颜色"
+"settings_normal_joystick_info": "左摇杆移动，右摇杆瞄准"
+"settings_switched_joystick_info": "左摇杆瞄准，右摇杆移动"
+
+
+
+/*
+    LOADOUT TABS - 装饰界面
+*/
+
+"loadout_skins": "服装"
+"loadout_emotes": "表情"
+"loadout_crosshairs": "准星"
+"loadout_badges": "徽章"
+"loadout_special": "特殊"
+"loadout_crosshairs_default": "系统默认"
+"loadout_crosshairs_size": "大小："
+"loadout_crosshairs_color": "颜色："
+"loadout_crosshairs_stroke_size": "描边大小："
+"loadout_crosshairs_stroke_color": "描边颜色："
+"emotes_category_People": "人物"
+"emotes_category_Text": "文字"
+"emotes_category_Memes": "模因"
+"emotes_category_Icons": "图标"
+"emotes_category_Misc": "杂物"
+
+
+
+/* 
+    IN GAME MESSAGES - 游戏内信息
+*/
+
+"msg_waiting_for_leader": "等待击杀领袖中"
+"msg_you_died": "你死了。"
+"msg_player_died": "<player>死了。"
+"msg_win": "大吉大利，今晚吃鸡！"
+"msg_your_rank": "排名"
+"msg_kills": "击杀：<kills>"
+"msg_not_enough_space": "空间不足！"
+"msg_item_already_equipped": "已装备此物品！"
+"msg_better_item_equipped": "已装备更好的物品！"
+"msg_cannot_use_flare": "无法在室内使用信号弹！"
+"msg_your_team_eliminated": "你的队伍被淘汰了。"
+"msg_the_team_eliminated": "队伍被淘汰了。"
+
+"gas_waiting": "毒气将在<time>后扩散"
+"gas_advancing": "毒气正在扩散！向安全区撤离"
+"final_gas_waiting": "决赛圈将在<time>后缩小"
+"final_gas_advancing": "决赛圈正在缩小!"
+"gas_inactive": "等待玩家中……"
+
+
+
+/*
+    IN GAME ACTIONS - 游戏内动作
+*/
+
+"action_open_door": "开门"
+"action_close_door": "关门"
+"action_revive": "救援<player>"
+"action_cancel": "取消"
+"action_reloading": "装填中……"
+"action_reviving": "救援中……"
+"action_being_revived": "被救援中……"
+"action_gauze_use": "应用<item>中"
+"action_medikit_use": "使用<item>中"
+"action_cola_use": "饮用<item>中"
+"action_tablets_use": "服用<item>中"
+"action_vaccine_syringe_use": "注射疫苗中"
+"interact_airdrop_crate_locked": "解锁空投"
+"interact_control_panel": "激活控制台"
+"interact_headquarters_security_desk": "激活控制台"
+"interact_generator": "启动发电机"
+"interact_button": "按下按钮"
+"interact_speaker": "播放音箱"
+"interact_monument": "表达敬意"
+"interact_recorder_interactable": "播放录音机"
+"interact_server": "骇入服务器"
+
+
+
+/*
+    IN GAME KILLFEED - 游戏内击杀回报
+*/
 
 "kf_suicide_kill": "<player>自杀了"
 "kf_suicide_down": "<player>击倒了自己"
@@ -273,28 +404,27 @@
 "km_killed_you": "把你击杀了"
 "km_suicide_down": "击倒了自己"
 "km_suicide_finished_off": "解决了自己"
-"tt_restores": "<item>恢复<amount>点<type>"
-"tt_reduces": "<item>受到的伤害减少<percent>%"
-"tt_desc": "<item> <desc>"
-"vaccine_syringe_desc": "恢复50肾上腺素并且治愈感染"
+"kf_saw_kill": "<player>被圆锯切碎了"
+"kf_saw_down": "<player>被圆锯切倒了"
+"km_saw_kill_you": "你被圆锯切碎了"
+"km_saw_down_you": "你被圆锯切倒了"
+
+
+
+/*
+    GAME OVER SCREEN - 游戏结束屏幕
+*/
+
 "go_kills": "击杀："
 "go_damage_done": "造成伤害："
 "go_damage_taken": "受到伤害："
 "go_time_alive": "存活时间："
 
-"create_team": "创建队伍"
-"create_team_autofill": "自动填充"
-"create_team_lock": "锁定队伍"
-"create_team_ready": "准备"
-"create_team_waiting": "等待中……"
-"create_team_play": "开始游戏"
-"create_team_force_start": "强行开始"
-"create_team_not_ready": "未准备"
 
-"report_reporting": "举报"
-"report_id": "举报ID："
-"report_instructions": "\n    <p><strong>请按照以下说明操作！</strong>否则，你的举报将被忽略。</p>\n    <h4>如何提交举报</h4>\n    <ol>\n      <li>加入<a href=\"https://discord.suroi.io\">Discord服务器。</a></li>\n      <li>前往<a href=\"https://discord.com/channels/1077043833621184563/1135288369526607973\">#player-reports\n          频道。</a></li>\n      <li>阅读置顶帖中的举报方针。</li>\n      <li>以帖子的形式提交你的举报。</li>\n    </ol>"
-"languages": "语言"
+
+/*
+    CONSUMABLES - 消耗物品
+*/
 
 "gauze": "纱布"
 "medikit": "医疗包"
@@ -302,25 +432,57 @@
 "tablets": "药片"
 "vaccine_syringe": "疫苗注射器"
 
+
+
+/*
+    CONSUMABLES DESCRIPTIONS - 消耗物品简介
+*/
+
+"tt_restores": "<item>恢复<amount>点<type>"
+"tt_reduces": "<item>受到的伤害减少<percent>%"
+"tt_desc": "<item> <desc>"
+"vaccine_syringe_desc": "恢复50肾上腺素并且治愈感染"
+
+
+
+/*
+    EQUIPMENT - 装备
+*/
+
 "basic_vest": "基础护甲"
 "regular_vest": "常规护甲"
 "tactical_vest": "战术护甲"
+"power_vest": "ERV-3核心"
 
 "developr_vest": "开发者护甲"
 "basic_helmet": "基础头盔"
 "regular_helmet": "常规头盔"
 "tactical_helmet": "战术头盔"
+"power_helmet": "NTK-11神翠鸟"
 
 "bag": "袋子"
 "basic_pack": "基础背包"
 "regular_pack": "常规背包"
 "tactical_pack": "战术背包"
+"power_pack": "AMP-4骡"
+
+
+
+/*
+    SCOPES - 倍镜
+*/
 
 "1x_scope": "一倍镜"
 "2x_scope": "二倍镜"
 "4x_scope": "四倍镜"
 "8x_scope": "八倍镜"
 "16x_scope": "十六倍镜"
+
+
+
+/*
+    MELEE WEAPONS - 近战武器
+*/
 
 "fists": "拳头"
 "baseball_bat": "球棒"
@@ -339,6 +501,13 @@
 "chainsaw": "电锯"
 "pan": "平底锅"
 "kukri": "库克力弯刀"
+"pipe_wrench": "管钳"
+
+
+
+/*
+    GUNS - 枪械
+*/
 
 "mosin_nagant": "莫辛纳甘"
 "hp18": "HP-18"
@@ -389,11 +558,29 @@
 "stevens_555": "史蒂文斯555"
 "mpx": "MPX"
 "rgs": "RG侦察兵"
+"aks74u": "AKs-74u"
+"an94": "AN-94"
+"ots23": "OTs-23"
+"psm": "PSM"
+"rpk16": "RPK-16"
+"rpk74": "RPK-74"
+
+
+
+/*
+    THROWABLES - 投掷物
+*/
 
 "frag_grenade": "破片手榴弹"
 "smoke_grenade": "烟雾弹"
 "confetti_grenade": "彩屑手榴弹"
 "dual_template": "双持<gun>"
+
+
+
+/*
+    SERVER REGIONS - 服务器地区
+*/
 
 "region_dev": "本地"
 "region_na": "北美"
@@ -403,11 +590,18 @@
 "region_ea": "东亚"
 "region_oc": "大洋洲"
 
+
+
+/*
+    AMMO - 子弹
+*/
+
 "12g": "12号口径"
 "556mm": "5.56毫米"
 "762mm": "7.62毫米"
 "9mm": "9毫米"
 "50cal": ".50口径"
+"545mm": "5.45毫米"
 "338lap": ".338拉普马格南"
 "firework_rocket": "烟花火箭"
 "power_cell": "能量电池"
@@ -415,6 +609,12 @@
 "proj_seed": "南瓜种子"
 "needle": "针管"
 "plumpkin_ammo": "南瓜子弹"
+
+
+
+/*
+    BADGES - 徽章
+*/
 
 "bdg_developr": "开发者"
 "bdg_dev_managr": "开发管理者"
@@ -426,6 +626,7 @@
 "bdg_content_creatr": "内容创作者"
 "bdg_donatr": "赞助者"
 "bdg_ownr": "所有者"
+"bdg_marketr": "营销者"
 
 "bdg_bleh": "略"
 "bdg_froog": "蛙"
@@ -437,6 +638,12 @@
 "bdg_fire": "火"
 "bdg_colon_three": ":3"
 "bdg_suroi_general_chat": "Suroi通用聊天"
+
+
+
+/*
+    EMOTES - 表情
+*/
 
 "emote_happy_face": "微笑"
 "emote_sad_face": "不满"
@@ -470,6 +677,7 @@
 "emote_man_face": "成熟"
 "emote_satisfied_face": "满意"
 "emote_hot_face": "发烧"
+"emote_blindfolded_face": "蒙眼"
 "emote_blindfolded": "蒙眼"
 "emote_melting_face": "融化"
 "emote_grimacing_face": "咬牙"
@@ -550,6 +758,12 @@
 "emote_logged": "木桩"
 "emote_sun_and_moon": "日月"
 
+
+
+/*
+    OBSTICLES (EXPLOSIVE) - 障碍物（可引爆）
+*/
+
 "barrel_explosion": "油桶"
 "confetti_grenade_explosion": "彩屑手榴弹"
 "control_panel_explosion": "控制台"
@@ -564,6 +778,12 @@
 "small_refinery_barrel_explosion": "炼油厂小型油桶"
 "stove_explosion": "炉灶"
 "super_barrel_explosion": "超级油桶"
+
+
+
+/*
+    SKINS - 服装
+*/
 
 "1st_birthday": "一岁生日"
 "algae": "藻类"
@@ -643,6 +863,13 @@
 "wave_jumpsuit": "波浪连衣裤"
 "werewolf": "狼人"
 "zebra": "斑马"
+"lobotomy": "火在洞里"
+
+
+
+/*
+    SPECIAL - 特殊
+*/
 
 "fps": "<frames>帧每秒"
 "ping": "<time>毫秒"
@@ -656,10 +883,14 @@
 "special_weapon_preset": "武器预设："
 "special_weapon_preset_placeholder": "用法：枪械一 枪械二 近战武器"
 "special_weapon_preset_title": "注意：请使用Guns.ts中有效的武器ID"
-"partners": "友情链接"
-"username_placeholder": "输入昵称"
 "time_minute": "分"
 "time_second": "秒"
+
+
+
+/*
+    PERKS + DESCRIPTIONS - 特权 + 简介
+*/
 
 "berserker": "狂人"
 "berserker_desc": "当装备近战武器时，提升移动速度和伤害"
@@ -729,30 +960,3 @@
 "overdrive_desc": "击杀玩家后短暂提升速度并恢复生命值和肾上腺素。冷却时间为十二秒。"
 "loot_baron": "战利品领主"
 "loot_baron_desc": "增加战利品掉落。"
-"interact_server": "骇入服务器"
-"kf_saw_kill": "<player>被圆锯切碎了"
-"kf_saw_down": "<player>被圆锯切倒了"
-"km_saw_kill_you": "你被圆锯切碎了"
-"km_saw_down_you": "你被圆锯切倒了"
-"contact": "联系我们"
-
-"545mm": "5.45毫米"
-
-"power_helmet": "NTK-11神翠鸟"
-"power_vest": "ERV-3核心"
-"power_pack": "AMP-4骡"
-
-"bdg_marketr": "营销者"
-
-"emote_blindfolded_face": "蒙眼"
-
-"aks74u": "AKs-74u"
-"an94": "AN-94"
-"ots23": "OTs-23"
-"psm": "PSM"
-"rpk16": "RPK-16"
-"rpk74": "RPK-74"
-
-"pipe_wrench": "管钳"
-
-"lobotomy": "火在洞里"

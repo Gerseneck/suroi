@@ -2633,7 +2633,10 @@ This file is a report of all errors and missing keys in the translation files of
 
 - Key `msg_lost_connection` is not a valid key
 - Key `create_team_waiting` is not a valid key
+- Key `power_vest` is not a valid key
 - Key `developr_vest` is not a valid key
+- Key `power_helmet` is not a valid key
+- Key `power_pack` is not a valid key
 - Key `destroyer_of_worlds` is not a valid key
 - Key `deathray` is not a valid key
 - Key `12g` is not a valid key
@@ -2641,6 +2644,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `762mm` is not a valid key
 - Key `9mm` is not a valid key
 - Key `50cal` is not a valid key
+- Key `545mm` is not a valid key
 - Key `338lap` is not a valid key
 - Key `firework_rocket` is not a valid key
 - Key `power_cell` is not a valid key
@@ -2657,6 +2661,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `bdg_content_creatr` is not a valid key
 - Key `bdg_donatr` is not a valid key
 - Key `bdg_ownr` is not a valid key
+- Key `bdg_marketr` is not a valid key
 - Key `bdg_bleh` is not a valid key
 - Key `bdg_froog` is not a valid key
 - Key `bdg_aegis_logo` is not a valid key
@@ -2699,6 +2704,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `emote_man_face` is not a valid key
 - Key `emote_satisfied_face` is not a valid key
 - Key `emote_hot_face` is not a valid key
+- Key `emote_blindfolded_face` is not a valid key
 - Key `emote_blindfolded` is not a valid key
 - Key `emote_melting_face` is not a valid key
 - Key `emote_grimacing_face` is not a valid key
@@ -2866,6 +2872,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `wave_jumpsuit` is not a valid key
 - Key `werewolf` is not a valid key
 - Key `zebra` is not a valid key
+- Key `lobotomy` is not a valid key
 - Key `fps` is not a valid key
 - Key `ping` is not a valid key
 - Key `special_developer_cheats` is not a valid key
@@ -2880,13 +2887,6 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `special_weapon_preset_title` is not a valid key
 - Key `time_minute` is not a valid key
 - Key `time_second` is not a valid key
-- Key `545mm` is not a valid key
-- Key `power_helmet` is not a valid key
-- Key `power_vest` is not a valid key
-- Key `power_pack` is not a valid key
-- Key `bdg_marketr` is not a valid key
-- Key `emote_blindfolded_face` is not a valid key
-- Key `lobotomy` is not a valid key
 
 ### (No Undefined Keys)
 
