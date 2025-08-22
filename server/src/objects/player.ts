@@ -9,9 +9,10 @@ import { HealingItems } from "@common/definitions/items/healingItems";
 import { Melees, type MeleeDefinition } from "@common/definitions/items/melees";
 import { PerkCategories, PerkData, PerkIds, Perks, type PerkDefinition } from "@common/definitions/items/perks";
 import { DEFAULT_SCOPE, Scopes, type ScopeDefinition } from "@common/definitions/items/scopes";
-import { type SkinDefinition } from "@common/definitions/items/skins";
+import { Skins, type SkinDefinition } from "@common/definitions/items/skins";
 import { Throwables, type ThrowableDefinition } from "@common/definitions/items/throwables";
 import { Loots, type WeaponDefinition } from "@common/definitions/loots";
+import { MapIndicators } from "@common/definitions/mapIndicators";
 import { type PlayerPing } from "@common/definitions/mapPings";
 import { Obstacles, type ObstacleDefinition } from "@common/definitions/obstacles";
 import { type SyncedParticleDefinition } from "@common/definitions/syncedParticles";
@@ -36,22 +37,22 @@ import { FloorNames, FloorTypes } from "@common/utils/terrain";
 import { Vec, type Vector } from "@common/utils/vector";
 import { randomBytes } from "crypto";
 import { WebSocket } from "uWebSockets.js";
-import { Config } from "../utils/config";
 import { type Game } from "../game";
 import { HealingAction, ReloadAction, ReviveAction, type Action } from "../inventory/action";
 import { GunItem } from "../inventory/gunItem";
 import { Inventory, type InventoryItem } from "../inventory/inventory";
 import { CountableInventoryItem, InventoryItemBase } from "../inventory/inventoryItem";
 import { MeleeItem } from "../inventory/meleeItem";
-import { ServerPerkManager, UpdatablePerkDefinition } from "../inventory/perkManager";
 import { ThrowableItem } from "../inventory/throwableItem";
 import { type Team } from "../team";
+import { Config } from "../utils/config";
 import { DeathMarker } from "./deathMarker";
 import { Emote } from "./emote";
 import { Explosion } from "./explosion";
 import { BaseGameObject, type DamageParams, type GameObject } from "./gameObject";
 import { type Loot } from "./loot";
-import { type Obstacle } from "./obstacle";
+import { MapIndicator } from "./mapIndicator";
+import { Obstacle } from "./obstacle";
 import { Projectile } from "./projectile";
 import { type SyncedParticle } from "./syncedParticle";
 import { serverWarn } from "../utils/serverHelpers";
@@ -88,8 +89,16 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
     bulletTargetHitCount = 0;
     targetHitCountExpiration?: Timeout;
 
+    overdriveTimeout?: Timeout;
+    activeOverdrive = false;
+    overdriveKills = 0;
+    overdriveCooldown?: Timeout;
+    canUseOverdrive = true;
+
     teamID?: number;
     colorIndex = 0; // Assigned in the team.ts file.
+
+    isConsumingItem = false;
 
     // Rate Limiting: Team Pings & Emotes.
     emoteCount = 0;
@@ -209,6 +218,53 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         this._normalizedAdrenaline = Numeric.remap(this.adrenaline, this.minAdrenaline, this.maxAdrenaline, 0, 1);
     }
 
+    private _maxShield = GameConstants.player.maxShield;
+
+    private _normalizedShield = 0;
+    get normalizedShield(): number { return this._normalizedShield; }
+
+    get maxShield(): number { return this._maxShield; }
+    set maxShield(maxShield: number) {
+        if (this._maxShield === maxShield) return;
+        this._maxShield = maxShield;
+        this.dirty.maxMinStats = true;
+
+        if (this._shield < this._maxShield) {
+            this._normalizedShield = Numeric.remap(this.shield, 0, this.maxShield, 0, 1);
+            this.dirty.shield = true;
+        } else {
+            this.shield = this._shield;
+        }
+    }
+
+    hadShield = false;
+
+    private _shield = 0;
+    get shield(): number { return this._shield; }
+    set shield(shield: number) {
+        const clamped = Numeric.clamp(shield, 0, this._maxShield);
+        if (this._shield === clamped) return;
+
+        this._shield = clamped;
+        this.dirty.shield = true;
+        this._normalizedShield = Numeric.remap(this.shield, 0, this.maxShield, 0, 1);
+
+        const hasBubble = this.shield > 0;
+        if (this.hasBubble !== hasBubble) {
+            this.hasBubble = hasBubble;
+            this.setDirty();
+            if (!hasBubble && this.hasPerk(PerkIds.ExperimentalForcefield)) {
+                this._setShieldTimeout();
+            }
+        }
+    }
+
+    private _setShieldTimeout(): void {
+        this.shieldTimeout = this.game.addTimeout(() => {
+            if (!this.dead && this.hasPerk(PerkIds.ExperimentalForcefield)) this.shield = 100;
+        }, PerkData[PerkIds.ExperimentalForcefield].shieldRespawnTime);
+    }
+
     private _sizeMod = 1;
     get sizeMod(): number { return this._sizeMod; }
     set sizeMod(size: number) {
@@ -288,9 +344,11 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
     readonly dirty = {
         id: true,
         teammates: true,
+        highlightedPlayers: true,
         health: true,
         maxMinStats: true,
         adrenaline: true,
+        shield: true,
         size: true,
         weapons: true,
         slotLocks: true,
@@ -394,6 +452,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             && this.activeItem.isGun
             && this.activeItem.ammo <= 0
             && this.inventory.items.hasItem((this.activeItemDefinition as GunDefinition).ammoType)
+            && !this.isConsumingItem // we do not want a forced reload action when we are using a healing item otherwise we will "reload" fists
         ) {
             // The action slot is now free, meaning our player isn't doing anything
             // Let's try reloading our empty gun then, unless we just cancelled a reload
@@ -463,8 +522,13 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
     backEquippedMelee?: MeleeDefinition;
 
-    readonly perks = new ServerPerkManager(this, []);
-    perkUpdateMap?: Map<UpdatablePerkDefinition, number>; // key = perk, value = last updated
+    hasBubble = false;
+
+    readonly perks: PerkDefinition[] = [];
+
+    perkUpdateMap?: Map<PerkDefinition, number>; // key = perk, value = last updated
+
+    private readonly _perkData: Record<string, unknown> = {};
 
     private _pingSeq = 0;
 
@@ -472,6 +536,15 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
     stuckProjectiles: Map<Projectile, number> | undefined;
 
     immunityTimeout: Timeout | undefined;
+
+    shieldTimeout: Timeout | undefined;
+
+    mapIndicator?: MapIndicator;
+
+    highlightedPlayers?: Player[];
+    highlightedIndicators?: Map<Player, MapIndicator>;
+
+    recentlyHitPlayers?: Map<Player, number>;
 
     constructor(game: Game, socket: WebSocket<PlayerSocketData> | undefined, position: Vector, layer?: Layer, team?: Team) {
         super(game, position);
@@ -657,10 +730,12 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
     private static readonly _weaponTiersCache: Partial<Record<DefinitionType, Partial<Record<Tier, WeaponDefinition[]>>>> = {};
 
     tryRefund(item: InventoryItem = this.activeItem): void {
+        const bulletCount = item.category === DefinitionType.Gun && item.definition.bulletCount ? item.definition.bulletCount : 1;
+
         if (
             item.category !== DefinitionType.Gun
             || item.owner !== this
-            || item.definition.bulletCount !== 1
+            || bulletCount !== 1
             || !this.inventory.weapons.includes(item)
         ) return;
 
@@ -689,7 +764,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
     }
 
     swapWeaponRandomly(item: InventoryItem = this.activeItem, force = false, modeRestricted?: boolean, weighted?: boolean): void {
-        if (item.definition.noSwap || this.perks.hasItem(PerkIds.Lycanthropy)) return; // womp womp
+        if (item.definition.noSwap || this.hasPerk(PerkIds.Lycanthropy)) return; // womp womp
 
         let slot = item === this.activeItem
             ? this.activeItemIndex
@@ -930,6 +1005,97 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
     update(): void {
         const dt = this.game.dt;
 
+        // Building & smoke checks
+        let isInsideBuilding = false;
+        let scopeTarget: ReifiableDef<ScopeDefinition> | undefined;
+        const syncedParticles = new Set<SyncedParticle>();
+        for (const object of this.nearObjects) {
+            if (
+                !isInsideBuilding
+                && object?.isBuilding
+                && (!object.dead || (object.dead && object.definition.hasDamagedCeiling))
+                && object.scopeHitbox?.collidesWith(this._hitbox)
+                && !Config.disableBuildingCheck
+            ) {
+                isInsideBuilding = true;
+                scopeTarget ??= object.definition.ceilingScope;
+            } else if (
+                object.isSyncedParticle
+                && object.hitbox?.collidesWith(this._hitbox)
+                && adjacentOrEqualLayer(object.layer, this.layer)
+            ) {
+                syncedParticles.add(object);
+            }
+        }
+        this.isInsideBuilding = isInsideBuilding;
+
+        // Recoil
+        const recoilMultiplier = this.recoil.active && (this.recoil.active = (this.recoil.time >= this.game.now))
+            ? this.recoil.multiplier
+            : 1;
+
+        // Speed multiplier for perks
+        const perkSpeedMod
+            = this.mapPerkOrDefault(
+                PerkIds.AdvancedAthletics,
+                ({ waterSpeedMod, smokeSpeedMod }) => {
+                    return (
+                        (FloorTypes[this.floor].overlay ? waterSpeedMod : 1) // man do we need a better way of detecting water lol
+                        * (syncedParticles.size !== 0 ? smokeSpeedMod : 1)
+                    );
+                },
+                1
+            )
+            * this.mapPerkOrDefault(
+                PerkIds.Claustrophobic,
+                ({ speedMod }) => isInsideBuilding ? speedMod : 1,
+                1
+            );
+
+        const adrenSpeedMod = (() => {
+            /*
+                The relation between speed and adrenaline is modelled around these three points:
+
+                adren. | speed multiplier
+                -------|---------------
+                   0   |       1
+                  30   |     1.10
+                  100  |     1.15
+
+                Using a logarithmic regression model, we obtain:
+
+                a = 0.944297822457
+                b = -0.0158132859327
+                c = 0.699999999995
+                d = 3.51269916486
+
+                y = b•log[c](x + d) + a
+
+                or, using the change of base law,
+                y = b•log(x + d) / log(c) + a
+
+                https://www.desmos.com/calculator/sgimzzda0b
+            */
+            const a = 0.944297822457;
+            const b = -0.0158132859327;
+            const c = 0.699999999995;
+            const d = 3.51269916486;
+
+            return b * Math.log(this._adrenaline + d) / Math.log(c) + a;
+        })();
+
+        // Calculate speed
+        const speed = this.baseSpeed                                                 // Base speed
+            * (FloorTypes[this.floor].speedMultiplier ?? 1)                          // Speed multiplier from floor player is standing in
+            * recoilMultiplier                                                       // Recoil from items
+            * perkSpeedMod                                                           // See above
+            * (this.action?.speedMultiplier ?? 1)                                    // Speed modifier from performing actions
+            * adrenSpeedMod                                                          // Speed boost from adrenaline
+            * (this.downed ? 0.5 : (this.activeItemDefinition.speedMultiplier ?? 1)) // Active item/knocked out speed modifier
+            * (this.beingRevivedBy ? 0.5 : 1)                                        // Being revived speed multiplier
+            * this.effectSpeedMultiplier                                             // Effect speed multiplier (currently only used for vaccinator slowdown)
+            * this._modifiers.baseSpeed;                                             // Current on-wearer modifier
+
         // Calculate movement
         let movement: Vector;
 
@@ -949,16 +1115,226 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             movement = Vec(x, y);
         }
 
-        // Rate Limiting: Team Pings & Emotes
+        // Update position
+        const oldPosition = Vec.clone(this.position);
+        this._movementVector = Vec.scale(movement, speed);
+
+        this.position = Vec.add(
+            this.position,
+            Vec.scale(this.movementVector, dt)
+        );
+
+        // Find and resolve collisions
+        this.nearObjects = this.game.grid.intersectsHitbox(this._hitbox, this.layer);
+
+        for (let step = 0; step < 10; step++) {
+            let collided = false;
+
+            for (const potential of this.nearObjects) {
+                const { isObstacle, isBuilding } = potential;
+
+                if (
+                    (isObstacle || isBuilding)
+                    && this.mapPerkOrDefault(
+                        PerkIds.AdvancedAthletics,
+                        () => {
+                            return potential.definition.material !== "tree"
+                                && (
+                                    !isObstacle
+                                    || !potential.definition.isWindow
+                                    || !potential.dead
+                                );
+                        },
+                        true
+                    )
+                    && potential.collidable
+                    && potential.hitbox?.collidesWith(this._hitbox)
+                ) {
+                    if (isObstacle && potential.definition.isStair) {
+                        const oldLayer = this.layer;
+                        potential.handleStairInteraction(this);
+                        if (this.layer !== oldLayer) this.setDirty();
+                        this.activeStair = potential;
+                    } else {
+                        collided = true;
+                        this._hitbox.resolveCollision(potential.hitbox);
+
+                        if (isObstacle && potential.activated && potential.definition.damage) {
+                            this.damage({
+                                amount: potential.definition.damage,
+                                source: DamageSources.Obstacle,
+                                weaponUsed: potential
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (!collided) break;
+        }
+
+        // Clamp position to world boundaries
+        this.position.x = Numeric.clamp(this.position.x, this._hitbox.radius, this.game.map.width - this._hitbox.radius);
+        this.position.y = Numeric.clamp(this.position.y, this._hitbox.radius, this.game.map.height - this._hitbox.radius);
+
+        this.isMoving = !Vec.equals(oldPosition, this.position);
+        if (this.isMoving) {
+            this.game.grid.updateObject(this);
+            this.floor = this.game.map.terrain.getFloor(this.position, this.layer);
+            this.mapIndicator?.updatePosition(this.position);
+        }
+
+        if (this.isMoving || this.turning) {
+            this.disableInvulnerability();
+            this.setPartialDirty();
+        }
+
+        this.turning = false;
+
+        // Health regen
+        let toRegen = this._modifiers.hpRegen;
+        if (this._adrenaline >= 0) {
+            /*
+                The relation between healing and adrenaline is modelled around these three points:
+
+                adren. | healing (hp/s)
+                -------|---------------
+                   0   |       1
+                  30   |     1.875
+                  100  |      2.75
+
+                Using a logarithmic regression model, we obtain:
+
+                a = -2.2153107223876285
+                b = -1.9660534157593246
+                c = 0.14899999980029943
+                d = 22.5
+
+                y = b•log[c](x + d) + a
+
+                or, using the change of base law,
+                y = b•log(x + d) / log(c) + a
+
+                https://www.desmos.com/calculator/idwbtpnzbv
+            */
+
+            const a = -2.2153107223876285;
+            const b = -1.9660534157593246;
+            const c = 0.14899999980029943;
+            const d = 22.5;
+            const adrenRegen = b * Math.log(this._adrenaline + d) / Math.log(c) + a;
+
+            // Regenerate health
+            toRegen += adrenRegen * this.mapPerkOrDefault(
+                PerkIds.LacedStimulants,
+                ({ healDmgRate, lowerHpLimit }) => (this.health <= lowerHpLimit ? 1 : -healDmgRate),
+                (this.adrenaline > 0 || (this.normalizedHealth < 0.3 && !this.hasPerk(PerkIds.Infected))) && !this.downed ? 1 : 0
+            );
+
+            // Drain adrenaline
+            this.adrenaline -= 0.0005 * this._modifiers.adrenDrain * dt;
+        }
+        this.health += dt / 1000 * toRegen;
+
+        // Shield regen
+        if (this.hasBubble) {
+            const _toRegen = this._modifiers.shieldRegen;
+            this.shield += dt / 1000 * _toRegen;
+        }
+
+        // Shoot gun/use item
+        if (this.startedAttacking && this.game.pluginManager.emit("player_start_attacking", this) === undefined) {
+            this.startedAttacking = false;
+            this.disableInvulnerability();
+            this.activeItem.useItem();
+        }
+        if (this.stoppedAttacking && this.game.pluginManager.emit("player_stop_attacking", this) === undefined) {
+            this.stoppedAttacking = false;
+            this.activeItem.stopUse();
+        }
+
+        // Gas damage
+        const gas = this.game.gas;
+        const now = Date.now();
+        const applyScaleDamageFactor = (now - this.timeWhenLastOutsideOfGas) >= 10000;
+        if (gas.doDamage && gas.isInGas(this.position)) {
+            this.piercingDamage({
+                amount: gas.scaledDamage(this.position) + (applyScaleDamageFactor ? (gas.getDef().scaleDamageFactor ?? 0) + this.additionalGasDamage : 0),
+                source: DamageSources.Gas
+            });
+            if (applyScaleDamageFactor) {
+                this.additionalGasDamage = this.additionalGasDamage + (gas.getDef().scaleDamageFactor ?? 0);
+            }
+        } else if (!gas.isInGas(this.position)) {
+            this.timeWhenLastOutsideOfGas = now;
+            this.additionalGasDamage = 0;
+        }
+
+        // Knocked out damage
+        if (this.downed && !this.beingRevivedBy) {
+            this.piercingDamage({
+                amount: GameConstants.player.bleedOutDPMs * dt,
+                source: DamageSources.BleedOut
+            });
+        }
+
+        // Cancel reviving when out of range
+        if (this.action instanceof ReviveAction) {
+            if (
+                Vec.squaredLen(
+                    Vec.sub(
+                        this.position,
+                        this.action.target.position
+                    )
+                ) >= 7 ** 2
+            ) {
+                this.action.cancel();
+            }
+        }
+
+        // Smoke effects
+        for (const syncedParticle of syncedParticles) {
+            const def = syncedParticle.definition;
+            const depletion = def.depletePerMs;
+
+            const { snapScopeTo, scopeOutPreMs = 0 } = def as SyncedParticleDefinition & { readonly hitbox: Hitbox };
+            // If lifetime - age > scope out time, we have the potential to zoom in the scope
+            if (
+                snapScopeTo
+                && syncedParticle._lifetime - (this.game.now - syncedParticle._creationDate) >= scopeOutPreMs
+            ) {
+                scopeTarget ??= snapScopeTo;
+            }
+
+            // TODO if this is ever used, make a new damage type; gas is misleading
+            if (depletion?.health) {
+                this.piercingDamage({
+                    amount: depletion.health * dt,
+                    source: DamageSources.Gas
+                });
+            }
+
+            if (depletion?.adrenaline) {
+                this.adrenaline -= depletion.adrenaline * dt;
+            }
+        }
+
+        // Set scope
+        if (this.downed || (isInsideBuilding && !scopeTarget)) {
+            scopeTarget = DEFAULT_SCOPE;
+        }
+        this.effectiveScope = scopeTarget ?? this.inventory.scope;
+
+        // Rate limit team pings & emotes
         if (this.emoteCount > 0 && !this.blockEmoting && (this.game.now - this.lastRateLimitUpdate > GameConstants.player.rateLimitInterval)) {
             this.emoteCount--;
             this.lastRateLimitUpdate = this.game.now;
         }
 
-        // Perks
+        // Update perks
         if (this.perkUpdateMap !== undefined) {
             for (const [perk, lastUpdated] of this.perkUpdateMap.entries()) {
-                if (this.game.now - lastUpdated <= perk.updateInterval) continue;
+                if (this.game.now - lastUpdated <= (perk.updateInterval ?? 1000)) continue;
 
                 this.perkUpdateMap.set(perk, this.game.now);
                 // ! evil starts here
@@ -1030,9 +1406,9 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                                 !player.isPlayer
                                 || !player.hitbox.collidesWith(detectionHitbox)
                                 || Math.random() > perk.infectionChance
-                                || player.perks.hasItem(PerkIds.Immunity)
+                                || player.hasPerk(PerkIds.Immunity)
                             ) continue;
-                            player.perks.addItem(Perks.fromString(PerkIds.Infected));
+                            player.addPerk(Perks.fromString(PerkIds.Infected));
                             player.setDirty();
                         }
                         break;
@@ -1042,6 +1418,73 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             }
         }
 
+        // Update Thermal Goggles & Hollow Points perks
+        // TODO this is dogshit there's gotta be a cleaner way to do this
+        const hasThermalGoggles = this.hasPerk(PerkIds.ThermalGoggles);
+        const hasHollowPoints = this.hasPerk(PerkIds.HollowPoints);
+        if (hasThermalGoggles || hasHollowPoints) {
+            let indicatedPlayers;
+
+            if (hasThermalGoggles) {
+                const detectionHitbox = new CircleHitbox(PerkData[PerkIds.ThermalGoggles].detectionRadius, this.position);
+                indicatedPlayers = [];
+                this.highlightedPlayers = [];
+                const alreadyHighlighted: PerkDefinition[] = [
+                    PerkData[PerkIds.ThermalGoggles],
+                    PerkData[PerkIds.ExperimentalForcefield],
+                    PerkData[PerkIds.HollowPoints]
+                ];
+
+                for (const player of this.game.grid.intersectsHitbox(detectionHitbox)) {
+                    if (
+                        !player.isPlayer
+                        || player === this
+                        || player.dead
+                        || (this.game.isTeamMode && player.teamID === this.teamID)
+                        || !player.hitbox.collidesWith(detectionHitbox)
+                    ) continue;
+
+                    if (this.visibleObjects.has(player)) {
+                        this.highlightedPlayers.push(player);
+                    }
+
+                    if (player.perks.some(perk => alreadyHighlighted.includes(perk))) continue;
+
+                    indicatedPlayers.push(player);
+
+                    const indicator = this.highlightedIndicators?.get(player);
+                    if (indicator) {
+                        indicator.updatePosition(player.position);
+                    } else {
+                        (this.highlightedIndicators ??= new Map<Player, MapIndicator>())
+                            .set(player, new MapIndicator(this.game, "player_indicator", player.position));
+                    }
+                }
+
+                this.dirty.highlightedPlayers = true; // TODO determine if the list of highlighted players actually changed
+            }
+
+            for (const [player, indicator] of this.highlightedIndicators ?? []) {
+                const lastHitTime = this.recentlyHitPlayers?.get(player);
+                if (lastHitTime !== undefined) {
+                    if (this.game.now - lastHitTime < PerkData[PerkIds.HollowPoints].highlightDuration) {
+                        indicator.updatePosition(player.position);
+                        continue;
+                    }
+                    this.recentlyHitPlayers?.delete(player);
+                }
+
+                if (indicatedPlayers?.includes(player)) continue;
+
+                if (indicator.dead) {
+                    this.game.mapIndicatorIDAllocator.give(indicator.id);
+                    this.highlightedIndicators?.delete(player);
+                }
+                indicator.dead = true;
+            }
+        }
+
+        // Update stuck projectiles (currently only seedshot seeds)
         if (this.stuckProjectiles) {
             for (const [proj, angle] of this.stuckProjectiles) {
                 if (proj.detonated || proj.dead) {
@@ -1055,303 +1498,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             }
         }
 
-        // Recoil
-        const recoilMultiplier = this.recoil.active && (this.recoil.active = (this.recoil.time >= this.game.now))
-            ? this.recoil.multiplier
-            : 1;
-
-        // building & smoke checks
-        let isInsideBuilding = false;
-        const depleters = new Set<SyncedParticle>();
-        for (const object of this.nearObjects) {
-            if (
-                !isInsideBuilding
-                && object?.isBuilding
-                && (!object.dead || (object.dead && object.definition.hasDamagedCeiling))
-                && object.scopeHitbox?.collidesWith(this._hitbox)
-                && !Config.disableBuildingCheck
-            ) {
-                isInsideBuilding = true;
-            } else if (
-                object.isSyncedParticle
-                && object.hitbox?.collidesWith(this._hitbox)
-                && adjacentOrEqualLayer(object.layer, this.layer)
-            ) {
-                depleters.add(object);
-            }
-        }
-
-        // Speed multiplier for perks
-        const perkSpeedMod
-            = this.mapPerkOrDefault(
-                PerkIds.AdvancedAthletics,
-                ({ waterSpeedMod, smokeSpeedMod }) => {
-                    return (
-                        (FloorTypes[this.floor].overlay ? waterSpeedMod : 1) // man do we need a better way of detecting water lol
-                        * (depleters.size !== 0 ? smokeSpeedMod : 1)
-                    );
-                },
-                1
-            )
-            * this.mapPerkOrDefault(
-                PerkIds.Claustrophobic,
-                ({ speedMod }) => isInsideBuilding ? speedMod : 1,
-                1
-            );
-
-        const adrenSpeedMod = (() => {
-            /*
-                The relation between speed and adrenaline is modelled around these three points:
-
-                adren. | speed multiplier
-                -------|---------------
-                   0   |       1
-                  30   |     1.10
-                  100  |     1.15
-
-                Using a logarithmic regression model, we obtain:
-
-                a = 0.944297822457
-                b = -0.0158132859327
-                c = 0.699999999995
-                d = 3.51269916486
-
-                y = b•log[c](x + d) + a
-
-                or, using the change of base law,
-                y = b•log(x + d) / log(c) + a
-
-                https://www.desmos.com/calculator/sgimzzda0b
-            */
-            const a = 0.944297822457;
-            const b = -0.0158132859327;
-            const c = 0.699999999995;
-            const d = 3.51269916486;
-
-            return b * Math.log(this._adrenaline + d) / Math.log(c) + a;
-        })();
-
-        // Calculate speed
-        const speed = this.baseSpeed                                                 // Base speed
-            * (FloorTypes[this.floor].speedMultiplier ?? 1)                          // Speed multiplier from floor player is standing in
-            * recoilMultiplier                                                       // Recoil from items
-            * perkSpeedMod                                                           // See above
-            * (this.action?.speedMultiplier ?? 1)                                    // Speed modifier from performing actions
-            * adrenSpeedMod                                                          // Speed boost from adrenaline
-            * (this.downed ? 0.5 : (this.activeItemDefinition.speedMultiplier ?? 1)) // Active item/knocked out speed modifier
-            * (this.beingRevivedBy ? 0.5 : 1)                                        // Being revived speed multiplier
-            * this.effectSpeedMultiplier                                             // Effect speed multiplier (currently only used for vaccinator slowdown)
-            * this._modifiers.baseSpeed;                                             // Current on-wearer modifier
-
-        // Update position
-        const oldPosition = Vec.clone(this.position);
-        const movementVector = Vec.scale(movement, speed);
-        this._movementVector = movementVector;
-
-        this.position = Vec.add(
-            this.position,
-            Vec.scale(this.movementVector, dt)
-        );
-
-        // Cancel reviving when out of range
-        if (this.action instanceof ReviveAction) {
-            if (
-                Vec.squaredLen(
-                    Vec.sub(
-                        this.position,
-                        this.action.target.position
-                    )
-                ) >= 7 ** 2
-            ) {
-                this.action.cancel();
-            }
-        }
-
-        // Find and resolve collisions
-        this.nearObjects = this.game.grid.intersectsHitbox(this._hitbox, this.layer);
-
-        for (let step = 0; step < 10; step++) {
-            let collided = false;
-
-            for (const potential of this.nearObjects) {
-                const { isObstacle, isBuilding } = potential;
-
-                if (
-                    (isObstacle || isBuilding)
-                    && this.mapPerkOrDefault(
-                        PerkIds.AdvancedAthletics,
-                        () => {
-                            return potential.definition.material !== "tree"
-                                && (
-                                    !isObstacle
-                                    || !potential.definition.isWindow
-                                    || !potential.dead
-                                );
-                        },
-                        true
-                    )
-                    && potential.collidable
-                    && potential.hitbox?.collidesWith(this._hitbox)
-                ) {
-                    if (isObstacle && potential.definition.isStair) {
-                        const oldLayer = this.layer;
-                        potential.handleStairInteraction(this);
-                        if (this.layer !== oldLayer) this.setDirty();
-                        this.activeStair = potential;
-                    } else {
-                        collided = true;
-                        this._hitbox.resolveCollision(potential.hitbox);
-                    }
-                }
-            }
-
-            if (!collided) break;
-        }
-
-        // World boundaries
-        this.position.x = Numeric.clamp(this.position.x, this._hitbox.radius, this.game.map.width - this._hitbox.radius);
-        this.position.y = Numeric.clamp(this.position.y, this._hitbox.radius, this.game.map.height - this._hitbox.radius);
-
-        this.isMoving = !Vec.equals(oldPosition, this.position);
-        if (this.isMoving) {
-            this.game.grid.updateObject(this);
-        }
-
-        // Disable invulnerability if the player moves or turns
-        if (this.isMoving || this.turning) {
-            this.disableInvulnerability();
-            this.setPartialDirty();
-
-            if (this.isMoving) {
-                this.floor = this.game.map.terrain.getFloor(this.position, this.layer);
-            }
-        }
-
-        // Health regen
-        let toRegen = this._modifiers.hpRegen;
-        if (this._adrenaline >= 0) {
-            /*
-                The relation between healing and adrenaline is modelled around these three points:
-
-                adren. | healing (hp/s)
-                -------|---------------
-                   0   |       1
-                  30   |     1.875
-                  100  |      2.75
-
-                Using a logarithmic regression model, we obtain:
-
-                a = -2.2153107223876285
-                b = -1.9660534157593246
-                c = 0.14899999980029943
-                d = 22.5
-
-                y = b•log[c](x + d) + a
-
-                or, using the change of base law,
-                y = b•log(x + d) / log(c) + a
-
-                https://www.desmos.com/calculator/idwbtpnzbv
-            */
-
-            const a = -2.2153107223876285;
-            const b = -1.9660534157593246;
-            const c = 0.14899999980029943;
-            const d = 22.5;
-            const adrenRegen = b * Math.log(this._adrenaline + d) / Math.log(c) + a;
-
-            // Regenerate health
-            toRegen += adrenRegen * this.mapPerkOrDefault(
-                PerkIds.LacedStimulants,
-                ({ healDmgRate, lowerHpLimit }) => (this.health <= lowerHpLimit ? 1 : -healDmgRate),
-                (this.adrenaline > 0 || (this.normalizedHealth < 0.3 && !this.perks.hasItem(PerkIds.Infected))) && !this.downed ? 1 : 0
-            );
-
-            // Drain adrenaline
-            this.adrenaline -= 0.0005 * this._modifiers.adrenDrain * dt;
-        }
-        this.health += dt / 1000 * toRegen;
-
-        // Shoot gun/use item
-        if (this.startedAttacking && this.game.pluginManager.emit("player_start_attacking", this) === undefined) {
-            this.startedAttacking = false;
-            this.disableInvulnerability();
-            this.activeItem.useItem();
-        }
-        if (this.stoppedAttacking && this.game.pluginManager.emit("player_stop_attacking", this) === undefined) {
-            this.stoppedAttacking = false;
-            this.activeItem.stopUse();
-        }
-
-        // Gas damage
-        const gas = this.game.gas;
-        const now = Date.now();
-        const applyScaleDamageFactor = (now - this.timeWhenLastOutsideOfGas) >= 10000;
-        if (gas.doDamage && gas.isInGas(this.position)) {
-            this.piercingDamage({
-                amount: gas.scaledDamage(this.position) + (applyScaleDamageFactor ? (gas.getDef().scaleDamageFactor ?? 0) + this.additionalGasDamage : 0),
-                source: DamageSources.Gas
-            });
-            if (applyScaleDamageFactor) {
-                this.additionalGasDamage = this.additionalGasDamage + (gas.getDef().scaleDamageFactor ?? 0);
-            }
-        } else if (!gas.isInGas(this.position)) {
-            this.timeWhenLastOutsideOfGas = now;
-            this.additionalGasDamage = 0;
-        }
-
-        // Knocked out damage
-        if (this.downed && !this.beingRevivedBy) {
-            this.piercingDamage({
-                amount: GameConstants.player.bleedOutDPMs * dt,
-                source: DamageSources.BleedOut
-            });
-        }
-
-        // Determine if player is inside building + reduce scope in buildings
-        if (!this.isInsideBuilding) {
-            this.effectiveScope = isInsideBuilding
-                ? DEFAULT_SCOPE
-                : this.inventory.scope;
-        }
-        this.isInsideBuilding = isInsideBuilding;
-
-        if (this.downed) {
-            this.effectiveScope = DEFAULT_SCOPE;
-        }
-
-        let scopeTarget: ReferenceTo<ScopeDefinition> | undefined;
-        depleters.forEach(depleter => {
-            const def = depleter.definition;
-            const depletion = def.depletePerMs;
-
-            const { snapScopeTo, scopeOutPreMs = 0 } = def as SyncedParticleDefinition & { readonly hitbox: Hitbox };
-            // If lifetime - age > scope out time, we have the potential to zoom in the scope
-            if (
-                snapScopeTo
-                && depleter._lifetime - (this.game.now - depleter._creationDate) >= scopeOutPreMs
-            ) {
-                scopeTarget ??= snapScopeTo;
-            }
-
-            if (depletion?.health) {
-                this.piercingDamage({
-                    amount: depletion.health * dt,
-                    source: DamageSources.Gas
-                //          ^^^^^^^^^^^^^ dubious
-                });
-            }
-
-            if (depletion?.adrenaline) {
-                this.adrenaline -= depletion.adrenaline * dt;
-            }
-        });
-
-        if (scopeTarget !== undefined || this.isInsideBuilding || this.downed) {
-            this.effectiveScope = scopeTarget ?? DEFAULT_SCOPE;
-        }
-
-        // Automatic doors
+        // Update automatic doors
         const openedDoors: Obstacle[] = [];
         const unopenedDoors: Obstacle[] = [];
 
@@ -1392,7 +1539,6 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         };
         this.game.addTimeout(closeDoors, 1000);
 
-        this.turning = false;
         this.game.pluginManager.emit("player_update", this);
     }
 
@@ -1480,6 +1626,10 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             playerData.adrenaline = player._normalizedAdrenaline;
         }
 
+        if (player.dirty.shield || forceInclude) {
+            playerData.shield = player._normalizedShield;
+        }
+
         if (player.dirty.zoom || forceInclude) {
             playerData.zoom = player._scope.zoomLevel;
         }
@@ -1493,6 +1643,10 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
         if ((player.dirty.teammates || forceInclude) && player._team) {
             playerData.teammates = player._team.players as Player[];
+        }
+
+        if (player.dirty.highlightedPlayers || forceInclude) {
+            playerData.highlightedPlayers = this.highlightedPlayers;
         }
 
         if (player.dirty.weapons || forceInclude) {
@@ -1623,6 +1777,11 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         packet.mapPings = [...game.mapPings, ...this._mapPings];
         this._mapPings.length = 0;
 
+        const indicators = [...game.mapIndicators, ...(this.highlightedIndicators?.values() ?? [])];
+        packet.mapIndicators = this._firstPacket
+            ? indicators.map(indicator => ({ ...indicator, positionDirty: true, definitionDirty: true }))
+            : indicators.filter(indicator => indicator.positionDirty || indicator.definitionDirty || indicator.dead);
+
         if (game.killLeaderDirty || this._firstPacket) {
             packet.killLeader = {
                 id: game.killLeader?.id ?? -1,
@@ -1662,30 +1821,261 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         this._action.dirty = false;
     }
 
-    hasPerk(perk: PerkIds | PerkDefinition): boolean {
-        return this.perks.hasItem(perk);
+    addPerk(perk: ReifiableDef<PerkDefinition>): void {
+        const perkDef = Perks.reify(perk);
+        if (this.perks.includes(perkDef)) return;
+
+        this.perks.push(perkDef);
+
+        if ("updateInterval" in perkDef) {
+            (this.perkUpdateMap ??= new Map<PerkDefinition, number>())
+                .set(perkDef, this.game.now);
+        }
+
+        if (this.hasPerk(PerkIds.HollowPoints) && this.hasPerk(PerkIds.ExperimentalForcefield) && this.hasPerk(PerkIds.ThermalGoggles)) {
+            this.addPerk(PerkIds.Overdrive);
+        }
+
+        // ! evil starts here
+        // some perks need to perform setup when added
+        switch (perkDef.idString) {
+            case PerkIds.Costumed: {
+                const { choices } = PerkData[PerkIds.Costumed];
+
+                this.activeDisguise = Obstacles.fromString(
+                    weightedRandom(
+                        Object.keys(choices),
+                        Object.values(choices)
+                    )
+                );
+                this.setDirty();
+                break;
+            }
+            case PerkIds.PlumpkinBomb: {
+                this.halloweenThrowableSkin = true;
+                this.setDirty();
+                break;
+            }
+            case PerkIds.Lycanthropy: {
+                [this._perkData["Lycanthropy::old_skin"], this.loadout.skin] = [this.loadout.skin, Skins.fromString("werewolf")];
+                this.setDirty();
+                this.action?.cancel();
+                const inventory = this.inventory;
+                inventory.dropWeapon(0, true)?.destroy();
+                inventory.dropWeapon(1, true)?.destroy();
+                inventory.dropWeapon(2, true)?.destroy();
+
+                // Drop all throwables
+                while (inventory.getWeapon(3)) {
+                    inventory.dropWeapon(3, true)?.destroy();
+                }
+
+                inventory.lockAllSlots();
+
+                /* TODO: continue crying */
+                break;
+            }
+            case PerkIds.ExtendedMags: {
+                const weapons = this.inventory.weapons;
+                const maxWeapons = GameConstants.player.maxWeapons;
+                for (let i = 0; i < maxWeapons; i++) {
+                    const weapon = weapons[i];
+
+                    if (!weapon?.isGun) continue;
+
+                    const def = weapon.definition;
+
+                    if (def.extendedCapacity === undefined) continue;
+
+                    const extra = weapon.ammo - def.extendedCapacity;
+                    if (extra > 0) {
+                        // firepower is anti-boosting this weapon, we need to shave the extra rounds off
+                        weapon.ammo = def.extendedCapacity;
+                        this.inventory.giveItem(def.ammoType, extra);
+                    }
+                }
+                break;
+            }
+            case PerkIds.CombatExpert: {
+                if (this.action?.type === PlayerActions.Reload) this.action?.cancel();
+                break;
+            }
+            case PerkIds.PrecisionRecycling: {
+                this.bulletTargetHitCount = 0;
+                break;
+            }
+            case PerkIds.ExperimentalForcefield: {
+                if (!this.hadShield) {
+                    this.shield = 100;
+                } else {
+                    this._setShieldTimeout();
+                }
+                break;
+            }
+            case PerkIds.Overdrive: {
+                this.overdriveTimeout?.kill();
+                this.overdriveKills = 0;
+                break;
+            }
+        }
+        // ! evil ends here
+
+        this.updateAndApplyModifiers();
+        this.dirty.perks = true;
     }
 
-    ifPerkPresent<Name extends PerkIds>(
-        perk: Name | PerkDefinition & { readonly idString: Name },
-        cb: (data: PerkDefinition & { readonly idString: Name }) => void
-    ): void {
-        return this.perks.ifPresent<Name>(perk, cb);
+    hasPerk(perk: ReifiableDef<PerkDefinition>): boolean {
+        return this.perks.includes(Perks.reify(perk));
     }
 
-    mapPerk<Name extends PerkIds, U>(
-        perk: Name | PerkDefinition & { readonly idString: Name },
+    removePerk(perk: ReifiableDef<PerkDefinition>): void {
+        const perkDef = Perks.reify(perk);
+        if (!this.perks.includes(perkDef)) return;
+
+        removeFrom(this.perks, perkDef);
+
+        if (this.hasPerk(PerkIds.Overdrive)) {
+            this.removePerk(PerkIds.Overdrive);
+        }
+
+        const perkUpdateMap = this.perkUpdateMap;
+        if ("updateInterval" in perkDef && perkUpdateMap !== undefined) {
+            perkUpdateMap?.delete(perkDef);
+
+            if (perkUpdateMap?.size === 0) {
+                this.perkUpdateMap = undefined;
+            }
+        }
+
+        // ! evil starts here
+        // some perks need to perform cleanup on removal
+        switch (perkDef.idString) {
+            case PerkIds.Lycanthropy: {
+                this.loadout.skin = Skins.fromStringSafe(this._perkData["Lycanthropy::old_skin"] as string) ?? Skins.fromString("hazel_jumpsuit");
+                this.inventory.unlockAllSlots();
+                this.setDirty();
+                break;
+            }
+            case PerkIds.ExtendedMags: {
+                const weapons = this.inventory.weapons;
+                const maxWeapons = GameConstants.player.maxWeapons;
+                for (let i = 0; i < maxWeapons; i++) {
+                    const weapon = weapons[i];
+
+                    if (!weapon?.isGun) continue;
+
+                    const def = weapon.definition;
+                    const extra = weapon.ammo - def.capacity;
+                    if (extra > 0) {
+                        // firepower boosted this weapon, we need to shave the extra rounds off
+                        weapon.ammo = def.capacity;
+                        this.inventory.giveItem(def.ammoType, extra);
+                    }
+                }
+                break;
+            }
+            case PerkIds.PlumpkinBomb: {
+                this.halloweenThrowableSkin = false;
+                this.setDirty();
+                break;
+            }
+            case PerkIds.Costumed: {
+                this.activeDisguise = undefined;
+                this.setDirty();
+                break;
+            }
+            case PerkIds.CombatExpert: {
+                if (this.action?.type === PlayerActions.Reload) this.action?.cancel();
+                break;
+            }
+            case PerkIds.PrecisionRecycling: {
+                this.bulletTargetHitCount = 0;
+                this.targetHitCountExpiration?.kill();
+                this.targetHitCountExpiration = undefined;
+                break;
+            }
+            case PerkIds.Infected: { // evil
+                const immunity = PerkData[PerkIds.Immunity];
+                this.addPerk(immunity);
+                this.immunityTimeout?.kill();
+                this.immunityTimeout = this.game.addTimeout(() => this.removePerk(immunity), immunity.duration);
+                this.setDirty();
+                break;
+            }
+            case PerkIds.ExperimentalForcefield: {
+                this.hadShield = true;
+                this.shield = 0;
+                break;
+            }
+            case PerkIds.Overdrive: {
+                this.overdriveTimeout?.kill();
+                this.overdriveKills = 0;
+                break;
+            }
+        }
+        // ! evil ends here
+
+        this.updateAndApplyModifiers();
+        this.dirty.perks = true;
+    }
+
+    mapPerk<Name extends ReferenceTo<PerkDefinition>, U>(
+        perk: Name | (PerkDefinition & { readonly idString: Name }),
         mapper: (data: PerkDefinition & { readonly idString: Name }) => U
     ): U | undefined {
-        return this.perks.map<Name, U>(perk, mapper);
+        const def = Perks.reify(perk);
+        if (this.perks.includes(def)) {
+            return mapper(def as PerkDefinition & { readonly idString: Name });
+        }
     }
 
-    mapPerkOrDefault<Name extends PerkIds, U>(
-        perk: Name | PerkDefinition & { readonly idString: Name },
+    mapPerkOrDefault<Name extends ReferenceTo<PerkDefinition>, U>(
+        perk: Name | (PerkDefinition & { readonly idString: Name }),
         mapper: (data: PerkDefinition & { readonly idString: Name }) => U,
         defaultValue: U
     ): U {
-        return this.perks.mapOrDefault<Name, U>(perk, mapper, defaultValue);
+        const def = Perks.reify(perk);
+        if (this.perks.includes(def)) {
+            return mapper(def as PerkDefinition & { readonly idString: Name });
+        }
+
+        return defaultValue;
+    }
+
+    updateMapIndicator(): void {
+        const { helmet, vest, backpack } = this.inventory;
+        const helmetIndicator = helmet?.mapIndicator;
+        const vestIndicator = vest?.mapIndicator;
+        const backpackIndicator = backpack.mapIndicator;
+        const specialEquipmentCount = [helmetIndicator, vestIndicator, backpackIndicator].filter(i => i !== undefined).length;
+        let indicator: string | undefined;
+        switch (specialEquipmentCount) {
+            case 0:
+                break;
+            case 1:
+                if (helmetIndicator) indicator = helmetIndicator;
+                else if (vestIndicator) indicator = vestIndicator;
+                else if (backpackIndicator) indicator = backpackIndicator;
+                break;
+            case 2:
+            case 3:
+            default:
+                indicator = "juggernaut_indicator";
+                break;
+        }
+
+        if (indicator) {
+            if (this.mapIndicator) {
+                this.mapIndicator.definition = MapIndicators.fromString(indicator);
+                this.mapIndicator.definitionDirty = true;
+            } else {
+                this.mapIndicator = new MapIndicator(this.game, indicator, this.position);
+                this.game.mapIndicators.push(this.mapIndicator);
+            }
+        } else if (this.mapIndicator) {
+            this.mapIndicator.dead = true;
+            this.mapIndicator = undefined;
+        }
     }
 
     spectate(packet: SpectateData): void {
@@ -1879,12 +2269,14 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             weaponUsed
         });
 
-        // Reductions are merged additively
-        amount *= 1 - (
-            (this.inventory.helmet?.damageReduction ?? 0) + (this.inventory.vest?.damageReduction ?? 0)
-        );
+        if (this.shield <= 0) {
+            // Reductions are merged additively
+            amount *= 1 - (
+                (this.inventory.helmet?.damageReduction ?? 0) + (this.inventory.vest?.damageReduction ?? 0)
+            );
 
-        amount = this._clampDamageAmount(amount);
+            amount = this._clampDamageAmount(amount);
+        }
 
         this.piercingDamage({
             amount,
@@ -1915,7 +2307,9 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             return this.heal(-amount);
         }
 
-        amount = this._clampDamageAmount(amount);
+        if (this.shield <= 0) {
+            amount = this._clampDamageAmount(amount);
+        }
 
         if (
             this.game.pluginManager.emit("player_will_piercing_damaged", {
@@ -1942,7 +2336,18 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         const oldStats = canTrackStats ? { ...weaponUsed.stats } : undefined;
 
         // Decrease health; update damage done and damage taken
-        this.health -= amount;
+        if (this.shield <= 0) {
+            this.health -= amount;
+        } else {
+            const initialShield = this.shield;
+            this.shield -= amount;
+
+            // If the shield broke, account for remaining damage
+            const remainingDamage = amount - initialShield;
+            if (remainingDamage > 0) {
+                this.damage({ ...params, amount: remainingDamage });
+            }
+        }
         if (amount > 0) {
             this.damageTaken += amount;
 
@@ -2049,12 +2454,12 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         for (const perk of this.perks) {
             switch (perk.idString) {
                 case PerkIds.PlumpkinGamble: { // AW DANG IT
-                    this.perks.removeItem(perk);
+                    this.removePerk(perk);
 
-                    const halloweenPerks = Perks.definitions.filter(perkDef => {
-                        return !perkDef.plumpkinGambleIgnore && perkDef.category === PerkCategories.Halloween;
-                    });
-                    this.perks.addItem(pickRandomInArray(halloweenPerks));
+                    const halloweenPerks = Perks.definitions.filter(perkDef =>
+                        !perkDef.plumpkinGambleIgnore && perkDef.category === PerkCategories.Halloween
+                    );
+                    this.addPerk(pickRandomInArray(halloweenPerks));
                     break;
                 }
                 case PerkIds.Lycanthropy: {
@@ -2097,6 +2502,18 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                     newModifiers.adrenDrain *= perk.adrenDrainMod;
                     break;
                 }
+                case PerkIds.ExperimentalForcefield: {
+                    newModifiers.shieldRegen += perk.shieldRegenRate;
+                    break;
+                }
+                case PerkIds.Overdrive: {
+                    newModifiers.size *= perk.sizeMod;
+                    /* if (this.overdriveTimeout !== undefined) break;
+                    this.overdriveTimeout = this.game.addTimeout(() => {
+                        this.overdriveKills = 0;
+                    }, perk.achieveTime); */
+                    break;
+                }
             }
         }
         // ! evil ends here
@@ -2135,11 +2552,13 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             maxHealth,
             maxAdrenaline,
             minAdrenaline,
+            maxShield,
             size
         } = this._modifiers = this._calculateModifiers();
 
         this.maxHealth = GameConstants.player.defaultHealth * maxHealth;
         this.maxAdrenaline = GameConstants.player.maxAdrenaline * maxAdrenaline;
+        this.maxShield = GameConstants.player.maxShield * maxShield;
         this.minAdrenaline = minAdrenaline;
         this.sizeMod = size;
     }
@@ -2160,6 +2579,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
     private static _itemToDamageSource(item: NonNullable<DamageParams["weaponUsed"]>): DamageSources {
         if (item instanceof Explosion) return DamageSources.Explosion;
+        else if (item instanceof Obstacle) return DamageSources.Obstacle;
         else if (item.isGun) return DamageSources.Gun;
         else if (item.isMelee) return DamageSources.Melee;
         else /* if (item.isThrowable) */ return DamageSources.Throwable;
@@ -2183,6 +2603,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         this.canDespawn = false;
         this._team?.setDirty();
 
+        if (this.mapIndicator) this.mapIndicator.dead = true;
+
         const action = this.beingRevivedBy?.action;
         if (action instanceof ReviveAction) {
             action.cancel();
@@ -2201,7 +2623,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         const downedBy = this.downedBy?.player;
         if (
             source === DamageSources.Gas
-            || source === DamageSources.Airdrop
+            || source === DamageSources.Obstacle
             || source === DamageSources.BleedOut
             || source === DamageSources.FinallyKilled
         ) {
@@ -2213,10 +2635,10 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             }
 
             if (this.game.mode.weaponSwap && downedBy !== undefined) {
-                if (!(weaponUsed instanceof Explosion)) {
-                    downedBy.swapWeaponRandomly(weaponUsed, true);
-                } else if (weaponUsed.weapon) {
+                if (weaponUsed instanceof Explosion) {
                     downedBy.swapWeaponRandomly(weaponUsed.weapon, true);
+                } else if (!(weaponUsed instanceof Obstacle)) {
+                    downedBy.swapWeaponRandomly(weaponUsed, true);
                 }
             }
         } else if (source instanceof Player && source !== this) {
@@ -2273,15 +2695,41 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                         }, perk.speedBoostDuration);
                         break;
                     }
+
+                    case PerkIds.Overdrive: {
+                        if (source.activeOverdrive || !source.canUseOverdrive) break;
+
+                        if (source.overdriveKills++ >= perk.requiredKills) {
+                            source.overdriveKills = 0;
+                            source.health += perk.healBonus;
+                            source.adrenaline += perk.adrenalineBonus;
+                            source.baseSpeed *= perk.speedMod;
+                            source.canUseOverdrive = false;
+                            source.activeOverdrive = true;
+                            source.setDirty();
+
+                            this.game.addTimeout(() => {
+                                source.baseSpeed /= perk.speedMod;
+                                source.activeOverdrive = false;
+                                source.setDirty();
+
+                                this.overdriveCooldown?.kill();
+                                this.overdriveCooldown = this.game.addTimeout(() => {
+                                    source.canUseOverdrive = true;
+                                }, perk.cooldown);
+                            }, perk.speedBoostDuration);
+                        }
+                        break;
+                    }
                 }
             }
 
             // Weapon swap
             if (this.game.mode.weaponSwap) {
-                if (!(weaponUsed instanceof Explosion)) {
-                    source.swapWeaponRandomly(weaponUsed, true);
-                } else if (weaponUsed.weapon) {
+                if (weaponUsed instanceof Explosion) {
                     source.swapWeaponRandomly(weaponUsed.weapon, true);
+                } else if (!(weaponUsed instanceof Obstacle)) {
+                    source.swapWeaponRandomly(weaponUsed, true);
                 }
             }
 
@@ -2397,6 +2845,10 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             c4.damage({ amount: Infinity });
         }
 
+        if (this.mapIndicator) {
+            this.mapIndicator.dead = true;
+        }
+
         if (!this.disconnected) {
             this.sendGameOverPacket();
         }
@@ -2432,8 +2884,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
     }
 
     down(
-        source?: GameObject | (typeof DamageSources)["Gas" | "Airdrop" | "BleedOut" | "FinallyKilled"],
-        weaponUsed?: GunItem | MeleeItem | ThrowableItem | Explosion
+        source?: GameObject | (typeof DamageSources)["Gas" | "Obstacle" | "BleedOut" | "FinallyKilled"],
+        weaponUsed?: DamageParams["weaponUsed"]
     ): void {
         const packet = KillPacket.create();
         packet.victimId = this.id;
@@ -2454,7 +2906,10 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             if (source !== this) {
                 packet.attackerId = source.id;
             }
-        } else if (source === DamageSources.Gas || source === DamageSources.Airdrop) {
+        } else if (source === DamageSources.Obstacle) {
+            packet.weaponUsed = weaponUsed?.definition;
+            packet.damageSource = source;
+        } else if (source === DamageSources.Gas) {
             packet.damageSource = source;
         }
 
@@ -2484,7 +2939,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             && this.downed
             && !this.beingRevivedBy
             && this !== player
-            && this.teamID === player.teamID;
+            && this.teamID === player.teamID
+            && adjacentOrEqualLayer(this.layer, player.layer);
     }
 
     interact(reviver: Player): void {
@@ -2612,7 +3068,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                         dist: Number.MAX_VALUE
                     };
                     const detectionHitbox = new CircleHitbox(3 * this._sizeMod, this.position);
-                    const nearObjects = this.game.grid.intersectsHitbox(detectionHitbox);
+                    const nearObjects = this.game.grid.intersectsHitbox(detectionHitbox, this.layer);
 
                     for (const object of nearObjects) {
                         const { isLoot, isObstacle, isPlayer } = object;
@@ -2621,8 +3077,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                         if (
                             (isLoot || (type === InputActions.Interact && isInteractable))
                             && object.hitbox?.collidesWith(detectionHitbox)
-                            && adjacentOrEqualLayer(this.layer, object.layer)
-                            && !(isLoot && [DefinitionType.Throwable, DefinitionType.Gun].includes(object.definition.defType) && this.perks.hasItem(PerkIds.Lycanthropy))
+                            && !(isLoot && [DefinitionType.Throwable, DefinitionType.Gun].includes(object.definition.defType) && this.hasPerk(PerkIds.Lycanthropy))
                         ) {
                             const dist = Geometry.distanceSquared(object.position, this.position);
                             if (isInteractable) {
@@ -2649,7 +3104,6 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                                     && !object.door?.locked
                                     && object !== interactable.object
                                     && object.hitbox.collidesWith(detectionHitbox)
-                                    && adjacentOrEqualLayer(this.layer, object.layer)
                                 ) {
                                     object.interact(this);
                                 }
@@ -2725,8 +3179,10 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 backpack: this.inventory.backpack,
                 halloweenThrowableSkin: this.halloweenThrowableSkin,
                 activeDisguise: this.activeDisguise,
-                infected: this.perks.hasItem(PerkIds.Infected),
-                backEquippedMelee: this.backEquippedMelee
+                infected: this.hasPerk(PerkIds.Infected),
+                backEquippedMelee: this.backEquippedMelee,
+                hasBubble: this.hasBubble,
+                activeOverdrive: this.activeOverdrive
             }
         };
 

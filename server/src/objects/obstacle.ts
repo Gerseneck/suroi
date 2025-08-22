@@ -1,5 +1,5 @@
 import { FlyoverPref, ObjectCategory, RotationMode } from "@common/constants";
-import { PerkIds, Perks } from "@common/definitions/items/perks";
+import { PerkData, PerkIds } from "@common/definitions/items/perks";
 import { Obstacles, type ObstacleDefinition } from "@common/definitions/obstacles";
 import { type Orientation, type Variation } from "@common/typings";
 import { CircleHitbox, RectangleHitbox, type Hitbox } from "@common/utils/hitbox";
@@ -15,6 +15,7 @@ import { type Building } from "./building";
 import { type Bullet } from "./bullet";
 import { BaseGameObject, DamageParams, type GameObject } from "./gameObject";
 import { type Player } from "./player";
+import { Explosion } from "./explosion";
 
 export class Obstacle extends BaseGameObject.derive(ObjectCategory.Obstacle) {
     override readonly fullAllocBytes = 10;
@@ -148,6 +149,10 @@ export class Obstacle extends BaseGameObject.derive(ObjectCategory.Obstacle) {
                 offset: 0,
                 powered: false
             };
+
+            if (this.game.mode.unlockStage !== undefined && this.definition.unlockableWithStage && this.door.locked) {
+                this.game.unlockableDoors.push(this);
+            }
         }
 
         this.puzzlePiece = puzzlePiece;
@@ -206,7 +211,9 @@ export class Obstacle extends BaseGameObject.derive(ObjectCategory.Obstacle) {
             this.health = 0;
             this.dead = true;
             if (definition.weaponSwap && source instanceof BaseGameObject && source.isPlayer) {
-                source.swapWeaponRandomly(weaponIsItem ? weaponUsed : weaponUsed?.weapon, true, definition.weaponSwap.modeRestricted, definition.weaponSwap.weighted);
+                source.swapWeaponRandomly(weaponIsItem ? weaponUsed : (weaponUsed as Explosion)?.weapon, true, definition.weaponSwap.modeRestricted, definition.weaponSwap.weighted);
+                //                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+                // FIXME this cast to Explosion is not ideal and could cause issues in future if weaponUsed isn't an explosion
             }
 
             if (
@@ -225,13 +232,15 @@ export class Obstacle extends BaseGameObject.derive(ObjectCategory.Obstacle) {
             if (definition.explosion !== undefined && source instanceof BaseGameObject) {
                 //                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 // FIXME This is implying that obstacles won't explode if destroyed by non–game objects
-                this.game.addExplosion(definition.explosion, this.position, source, this.layer, weaponIsItem ? weaponUsed : weaponUsed?.weapon);
+                this.game.addExplosion(definition.explosion, this.position, source, this.layer, weaponIsItem ? weaponUsed : (weaponUsed as Explosion)?.weapon);
+                //                                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+                // FIXME this cast to Explosion is not ideal and could cause issues in future if weaponUsed isn't an explosion
             }
 
             if (source instanceof BaseGameObject && source.isPlayer) {
                 // Plumpkin Bomb
                 if (
-                    source.perks.hasItem(PerkIds.PlumpkinBomb)
+                    source.hasPerk(PerkIds.PlumpkinBomb)
                     && definition.material === "pumpkin"
                 ) {
                     this.playMaterialDestroyedSound = false;
@@ -243,9 +252,9 @@ export class Obstacle extends BaseGameObject.derive(ObjectCategory.Obstacle) {
                     definition.applyPerkOnDestroy
                     && definition.applyPerkOnDestroy.mode === this.game.modeName
                     && definition.applyPerkOnDestroy.chance > Math.random()
-                    && !(definition.applyPerkOnDestroy.perk === PerkIds.Infected && source.perks.hasItem(PerkIds.Immunity)) // evil
+                    && !(definition.applyPerkOnDestroy.perk === PerkIds.Infected && source.hasPerk(PerkIds.Immunity)) // evil
                 ) {
-                    source.perks.addItem(Perks.fromString(definition.applyPerkOnDestroy.perk));
+                    source.addPerk(definition.applyPerkOnDestroy.perk);
                     if (definition.applyPerkOnDestroy.perk === PerkIds.Infected) { // evil
                         source.setDirty();
                     }
@@ -255,6 +264,8 @@ export class Obstacle extends BaseGameObject.derive(ObjectCategory.Obstacle) {
             if (definition.particlesOnDestroy !== undefined) {
                 this.game.addSyncedParticles(definition.particlesOnDestroy, this.position, this.layer);
             }
+
+            if (this.puzzlePiece) this.parentBuilding?.solvePuzzle();
 
             const lootSpawnPosition = position ?? (source as { readonly position?: Vector } | undefined)?.position ?? this.position;
             for (const item of this.loot) {
@@ -271,6 +282,29 @@ export class Obstacle extends BaseGameObject.derive(ObjectCategory.Obstacle) {
                     Angle.betweenPoints(this.position, lootSpawnPosition),
                     0.02
                 );
+            }
+
+            if (source instanceof BaseGameObject && source.isPlayer && source.hasPerk(PerkIds.LootBaron) && this.definition.hasLoot) {
+                const perkBonus = PerkData[PerkIds.LootBaron].lootBonus;
+                const lootTable = getLootFromTable(this.game.modeName, definition.lootTable ?? definition.idString);
+
+                for (let i = 0; i < perkBonus; i++) {
+                    for (const item of lootTable) {
+                        this.game.addLoot(
+                            item.idString,
+                            this.lootSpawnOffset
+                                ? Vec.add(this.position, this.lootSpawnOffset)
+                                : this.loot.length > 1
+                                    ? this.hitbox.randomPoint()
+                                    : this.position,
+                            this.layer,
+                            { count: item.count }
+                        )?.push(
+                            Angle.betweenPoints(this.position, lootSpawnPosition),
+                            0.02
+                        );
+                    }
+                }
             }
 
             if (definition.isWall) {
@@ -299,6 +333,18 @@ export class Obstacle extends BaseGameObject.derive(ObjectCategory.Obstacle) {
                             }
                         }
                     }
+
+                    if (object.isObstacle && object.definition.wallAttached) {
+                        const detectionHitbox = new CircleHitbox(2, object.position);
+
+                        if (this.hitbox.collidesWith(detectionHitbox)) {
+                            object.damage({
+                                amount: Infinity,
+                                source,
+                                weaponUsed
+                            });
+                        }
+                    }
                 }
             }
 
@@ -324,7 +370,7 @@ export class Obstacle extends BaseGameObject.derive(ObjectCategory.Obstacle) {
     }
 
     canInteract(player?: Player): boolean {
-        return !this.dead
+        return !this.dead && !this.definition?.damage
             && (
                 player === undefined
                 || this.definition.interactOnlyFromSide === undefined

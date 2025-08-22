@@ -431,15 +431,15 @@ export const Melees = new InventoryItemDefinitions<MeleeDefinition>([
         idString: "sickle",
         name: "Sickle",
         defType: DefinitionType.Melee,
-        tier: Tier.A,
-        damage: 24,
+        tier: Tier.B,
+        damage: 20,
         swingSound: "soft_swing",
         speedMultiplier: 1,
         obstacleMultiplier: 1.3,
         radius: 2.7,
         offset: Vec(4, 0),
-        cooldown: 150,
-        attackCooldown: 125,
+        cooldown: 160,
+        attackCooldown: 140,
         reskins: ["winter"],
         fireMode: FireMode.Auto,
         fists: {
@@ -1023,6 +1023,53 @@ export const Melees = new InventoryItemDefinitions<MeleeDefinition>([
                 image: {
                     position: Vec(45, 45),
                     angle: 50
+                }
+            }
+        ]
+    },
+    {
+        idString: "pipe_wrench",
+        name: "Pipe Wrench",
+        defType: DefinitionType.Melee,
+        tier: Tier.A,
+        damage: 42,
+        obstacleMultiplier: 2.5,
+        radius: 2.6,
+        offset: Vec(4.25, -0.05),
+        cooldown: 450,
+        speedMultiplier: 1,
+        swingSound: "heavy_swing",
+        fists: {
+            animationDuration: 200,
+            left: Vec(38, -40),
+            right: Vec(47, 0)
+        },
+        image: {
+            position: Vec(40, -40),
+            angle: -60,
+            lootScale: 0.7
+        },
+        animation: [
+            {
+                duration: 200,
+                fists: {
+                    left: Vec(48, -33),
+                    right: Vec(65, 20)
+                },
+                image: {
+                    position: Vec(85, 10),
+                    angle: 10
+                }
+            },
+            {
+                duration: 200,
+                fists: {
+                    left: Vec(38, -40),
+                    right: Vec(47, 0)
+                },
+                image: {
+                    position: Vec(40, -40),
+                    angle: -60
                 }
             }
         ]

@@ -1,7 +1,7 @@
 import { Layer, ObjectCategory, ZIndexes } from "@common/constants";
 import { BaseBullet, type BulletOptions } from "@common/utils/baseBullet";
 import { RectangleHitbox } from "@common/utils/hitbox";
-import { adjacentOrEqualLayer } from "@common/utils/layer";
+import { adjacentOrEqualLayer, adjacentOrEquivLayer } from "@common/utils/layer";
 import { Geometry, Numeric, resolveStairInteraction } from "@common/utils/math";
 import { random, randomFloat, randomRotation } from "@common/utils/random";
 import { Vec } from "@common/utils/vector";
@@ -13,11 +13,12 @@ import { Game } from "../game";
 import { CameraManager } from "../managers/cameraManager";
 import { ParticleManager } from "../managers/particleManager";
 import { SoundManager } from "../managers/soundManager";
-import { PIXI_SCALE } from "../utils/constants";
+import { PIXI_SCALE, SATURATION_SOUND_SPEED, SPLIT_SOUND_SPEED, THIN_SOUND_SPEED } from "../utils/constants";
 import { SuroiSprite, toPixiCoords } from "../utils/pixi";
 import type { Building } from "./building";
 import { type Obstacle } from "./obstacle";
 import { type Player } from "./player";
+import type { Projectile } from "./projectile";
 
 const white = 0xFFFFFF;
 
@@ -82,12 +83,49 @@ export class Bullet extends BaseBullet {
         this._playBulletWhiz = !Game.activePlayer?.bulletWhizHitbox.isPointInside(this.initialPosition);
 
         this.updateLayer();
+
+        // Gun Sounds (shotFX basically makes it so that the sound is played once)
+        if (this.shotFX) {
+            const gunIdString = this.definition.idString.slice(0, -7);
+
+            let soundSpeed: number;
+            switch (true) {
+                case this.split: {
+                    soundSpeed = SPLIT_SOUND_SPEED;
+                    break;
+                }
+
+                case this.saturate: {
+                    soundSpeed = SATURATION_SOUND_SPEED;
+                    break;
+                }
+
+                case this.thin: {
+                    soundSpeed = THIN_SOUND_SPEED;
+                    break;
+                }
+
+                default: {
+                    soundSpeed = 1;
+                }
+            }
+
+            SoundManager.play(
+                `${gunIdString}_fire${this.lastShot ? "_last" : ""}`,
+                {
+                    position: this.position,
+                    layer: this.layer,
+                    speed: soundSpeed
+                }
+            );
+        }
     }
 
     update(delta: number): void {
         if (!this.dead) {
             for (const collision of this.updateAndGetCollisions(delta, Game.objects)) {
                 const object = collision.object;
+                const { isProjectile, isObstacle, isPlayer } = object;
 
                 if (object.isObstacle && object.definition.isStair) {
                     const newLayer = resolveStairInteraction(
@@ -102,9 +140,12 @@ export class Bullet extends BaseBullet {
                     continue;
                 }
 
+                // We check for projectiles first, not obstacles, otherwise stuff like tables or bushes won't be damaged by bullets.
+                if (isProjectile && !adjacentOrEquivLayer(object, this.layer)) continue;
+
                 const { point, normal } = collision.intersection;
 
-                if (object.isPlayer && collision.reflected) {
+                if (isPlayer && collision.reflected) {
                     SoundManager.play(
                         `bullet_reflection_${random(1, 5)}`,
                         {
@@ -114,14 +155,16 @@ export class Bullet extends BaseBullet {
                             layer: object.layer
                         });
                 } else {
-                    (object as Player | Obstacle | Building).hitEffect(point, Math.atan2(normal.y, normal.x));
+                    (object as Player | Obstacle | Building | Projectile).hitEffect(point, Math.atan2(normal.y, normal.x));
                 }
 
                 this.collidedIDs.add(object.id);
 
                 this.position = point;
 
-                if (object.isObstacle && object.definition.noCollisions) continue;
+                // We check here for obstacles, after the collision was done, in order to damage tables and bushes.
+                // think of it as bullet penetration.
+                if (isObstacle && object.definition.noCollisions) continue;
 
                 this.dead = true;
                 break;

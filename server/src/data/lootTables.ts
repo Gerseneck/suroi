@@ -80,6 +80,35 @@ export const LootTables: Record<ModeName, Record<string, LootTable>> = {
                 { table: "special_equipment", weight: 0.5 }
             ]
         ],
+        nsd_crate: {
+            min: 3,
+            max: 4,
+            loot: [
+                { table: "special_guns", weight: 1 },
+                { table: "special_equipment", weight: 0.75 },
+                { table: "special_healing_items", weight: 0.15 },
+                { table: "special_scopes", weight: 0.3 }
+            ]
+        },
+        lansirama_crate: {
+            min: 3,
+            max: 4,
+            loot: [
+                { table: "special_guns", weight: 1 },
+                { table: "special_equipment", weight: 0.75 },
+                { table: "special_healing_items", weight: 0.15 },
+                { table: "special_scopes", weight: 0.3 }
+            ]
+        },
+        solid_crate: {
+            min: 1,
+            max: 1,
+            loot: [
+                { item: "mg5", weight: 1 },
+                { item: "rpk16", weight: 1 },
+                { item: "pk61", weight: 1 }
+            ]
+        },
         dumpster: {
             min: 2,
             max: 4,
@@ -267,8 +296,8 @@ export const LootTables: Record<ModeName, Record<string, LootTable>> = {
             { item: "cola", weight: 0.1 }
         ],
         fridge: {
-            min: 2,
-            max: 3,
+            min: 1,
+            max: 2,
             loot: [
                 { item: "cola", weight: 1 }
             ]
@@ -283,8 +312,8 @@ export const LootTables: Record<ModeName, Record<string, LootTable>> = {
             ]
         },
         cooler: {
-            min: 2,
-            max: 3,
+            min: 1,
+            max: 2,
             loot: [
                 { item: "cola", weight: 1 }
             ]
@@ -294,6 +323,7 @@ export const LootTables: Record<ModeName, Record<string, LootTable>> = {
             { item: "flamingo", weight: 1 },
             { item: "verified", weight: 0.5 },
             { item: "no_kil_pls", weight: 0.5 },
+            { item: "lobotomy", weight: 0.25 },
             { item: "ghillie_suit", weight: 0.15 },
             { item: "ancestral_garb", weight: 0.05 }
         ],
@@ -423,6 +453,9 @@ export const LootTables: Record<ModeName, Record<string, LootTable>> = {
         flint_lockbox: [
             { table: "gold_airdrop_guns", weight: 1 }
         ],
+        reinforced_crate: [
+            { table: "gold_airdrop_guns", weight: 1 }
+        ],
         christmas_tree: {
             min: 4,
             max: 5,
@@ -442,6 +475,19 @@ export const LootTables: Record<ModeName, Record<string, LootTable>> = {
                 { table: "special_guns", weight: 1 }
             ]
         },
+        nsd_rock: [
+            [
+                { item: "stoner_63", weight: 1 },
+                { item: "fn_fal", weight: 1 },
+                { item: "rgs", weight: 1 },
+                { item: "rpk74", weight: 0.2 }
+            ],
+            [{ item: "hatchet", weight: 1 }],
+            [{ item: "one_at_nsd", weight: 1 }],
+            [{ item: "basic_helmet", weight: 1 }],
+            [{ item: "basic_pack", weight: 1 }],
+            [{ table: "ammo", weight: 1 }]
+        ],
         gun_locker: {
             min: 1,
             max: 2,
@@ -853,7 +899,8 @@ export const LootTables: Record<ModeName, Record<string, LootTable>> = {
                 { item: PerkIds.LowProfile, weight: 1 },
                 { item: PerkIds.Berserker, weight: 1 },
                 { item: PerkIds.CombatExpert, weight: 1 },
-                { item: PerkIds.PrecisionRecycling, weight: 1 }
+                { item: PerkIds.PrecisionRecycling, weight: 1 },
+                { item: PerkIds.LootBaron, weight: 1 }
             ]
         },
         red_gift: [
@@ -924,7 +971,47 @@ export const LootTables: Record<ModeName, Record<string, LootTable>> = {
         ],
         pan_stove: [{ item: "pan", weight: 1 }],
         small_pan_stove: [{ item: "pan", weight: 1 }],
-        ducktub: [{ table: "gold_airdrop_guns", weight: 1 }]
+        ducktub: [{ table: "gold_airdrop_guns", weight: 1 }],
+        special_table_vest: [{ item: "power_vest", weight: 1 }],
+        special_table_helmet: [{ item: "power_helmet", weight: 1 }],
+        special_table_pack: [{ item: "power_pack", weight: 1 }],
+        toolbox: [
+            [
+                { table: "equipment", weight: 1 },
+                { table: "healing_items", weight: 1 },
+                { table: "ammo", weight: 1 }
+            ],
+            [{ table: "scopes", weight: 1 }],
+            [{ table: "guns", weight: 1 }],
+            [
+                { item: NullString, weight: 1 },
+                { item: "crowbar", weight: 0.5 },
+                { item: "pipe_wrench", weight: 0.5 }
+            ]
+        ],
+        research_desk: [
+            [
+                { table: "equipment", weight: 1 },
+                { table: "guns", weight: 0.65 },
+                { table: "scopes", weight: 0.3 }
+            ],
+            [
+                { table: "ammo", weight: 1 },
+                { table: "healing_items", weight: 0.8 },
+                { table: "guns", weight: 0.3 }
+            ]
+        ],
+        shooting_range_practice_log: [{ item: "ak47", weight: 1, count: 3, spawnSeparately: true }],
+        hunted_skins: {
+            min: 1,
+            max: 1,
+            loot: [
+                { item: "military_camo", weight: 1 },
+                { item: "nsd_uniform", weight: 1 },
+                { item: "veteran", weight: 1 },
+                { item: "carpenter_uniform", weight: 1 }
+            ]
+        }
     },
 
     halloween: {
@@ -1646,6 +1733,282 @@ export const LootTables: Record<ModeName, Record<string, LootTable>> = {
         aegis_golden_case: [{ item: "vaccinator", weight: 1 }],
         rsh_case_single: [{ item: "seedshot", weight: 1 }],
         rsh_case_dual: [{ item: "seedshot", weight: 1 }]
+    },
+    hunted: {
+        equipment: [
+            { item: "basic_helmet", weight: 0.95 },
+            { item: "regular_helmet", weight: 0.25 },
+            { item: "tactical_helmet", weight: 0.055 },
+
+            { item: "basic_vest", weight: 0.95 },
+            { item: "regular_vest", weight: 0.25 },
+            { item: "tactical_vest", weight: 0.055 },
+
+            { item: "basic_pack", weight: 0.95 },
+            { item: "regular_pack", weight: 0.25 },
+            { item: "tactical_pack", weight: 0.055 }
+        ],
+        ground_loot: [
+            { table: "equipment", weight: 1.05 },
+            { table: "healing_items", weight: 0.9 },
+            { table: "ammo", weight: 0.9 },
+            { table: "guns", weight: 0.9 },
+            { table: "scopes", weight: 0.35 },
+            { table: "hunted_skins", weight: 0.2 }
+        ],
+
+        throwables: [
+            { item: "frag_grenade", count: 2, weight: 1 },
+            { item: "smoke_grenade", count: 2, weight: 1 }
+        ],
+
+        ammo: [
+            { item: "545mm", count: 40, weight: 0.75 },
+            { item: "556mm", count: 30, weight: 1 },
+            { item: "762mm", count: 30, weight: 1 },
+            { item: "9mm", count: 30, weight: 1 },
+            { item: "50cal", count: 20, weight: 0.01 }
+        ],
+
+        ammo_crate: [
+            [{ table: "ammo", weight: 1 }],
+            [{ table: "ammo", weight: 1 }],
+            [
+                { item: NullString, weight: 1 },
+                { item: "50cal", count: 20, weight: 0.3 }
+            ]
+        ],
+
+        viking_chest_guns: [
+            { item: "m16a2", weight: 0.75 },
+            { item: "ak47", weight: 0.75 },
+            { item: "mini14", weight: 0.75 },
+            { item: "sr25", weight: 0.75 },
+            { item: "vss", weight: 0.75 },
+            { item: "blr", weight: 0.75 },
+            { item: "mcx_spear", weight: 0.75 },
+            { item: "fn_fal", weight: 0.6 },
+            { item: "rpk74", weight: 0.6 },
+            { item: "mosin_nagant", weight: 0.5 },
+            { item: "tango_51", weight: 0.2 },
+            { item: "mg36", weight: 0.25 },
+            { item: "stoner_63", weight: 0.2 },
+            { item: "vks", weight: 0.2 },
+            { item: "pk61", weight: 0.1 },
+            { item: "negev", weight: 0.1 },
+            { item: "mg5", weight: 0.1 },
+            { item: "rpk16", weight: 0.1 },
+            { item: "mp153", weight: 0.1 },
+            { item: "g19", weight: 0.05 }
+        ],
+
+        river_chest_guns: [
+            { item: "m16a2", weight: 1 },
+            { item: "ak47", weight: 1 },
+            { item: "mcx_spear", weight: 1 },
+            { item: "aks74u", weight: 0.75 },
+            { item: "rpk74", weight: 0.8 },
+            { item: "fn_fal", weight: 0.8 },
+            { item: "mg36", weight: 0.5 },
+            { item: "mini14", weight: 0.5 },
+            { item: "sr25", weight: 0.5 },
+            { item: "vss", weight: 0.5 },
+            { item: "blr", weight: 0.5 },
+            { item: "mosin_nagant", weight: 0.45 },
+            { item: "tango_51", weight: 0.45 },
+            { item: "vks", weight: 0.45 },
+            { item: "model_89", weight: 0.45 },
+            { item: "g19", weight: 0.08 }
+        ],
+
+        special_guns: [
+            // 32%
+            { item: "psm", weight: 0.16 },
+            { item: "g19", weight: 0.16 },
+            { item: "mpx", weight: 0.16 },
+            { item: "mp5k", weight: 0.16 },
+            { item: "aks74u", weight: 0.16 },
+            { item: "saf200", weight: 0.16 },
+
+            // 37%
+            { item: "dual_m1895", weight: 0.074 },
+            { item: "fn_fal", weight: 0.074 },
+            { item: "mcx_spear", weight: 0.074 },
+            { item: "rpk74", weight: 0.074 },
+            { item: "m16a2", weight: 0.074 },
+            { item: "ak47", weight: 0.074 },
+
+            // 15%
+            { item: "ots23", weight: 0.075 },
+
+            // 10%
+            { item: "mg36", weight: 0.033 },
+
+            // 5%
+            { item: "stoner_63", weight: 0.0125 },
+            { item: "rsh12", weight: 0.0125 },
+            { item: "vss", weight: 0.0125 },
+            { item: "blr", weight: 0.0125 },
+            { item: "sr25", weight: 0.0125 },
+            { item: "mini14", weight: 0.0125 },
+            { item: "tango_51", weight: 0.0125 },
+            { item: "mosin_nagant", weight: 0.0125 },
+            { item: "vks", weight: 0.0125 },
+            { item: "model_89", weight: 0.0125 },
+            { item: "rgs", weight: 0.0125 },
+
+            // 1%
+            { item: "flare", weight: 0.002 },
+            { item: "mg5", weight: 0.002 },
+            { item: "shak12", weight: 0.002 },
+            { item: "pk61", weight: 0.002 }
+        ],
+
+        guns: [
+            // 50%
+            { item: "g19", weight: 0.166 },
+            { item: "psm", weight: 0.166 },
+            { item: "m1895", weight: 0.166 },
+
+            // 28%
+            { item: "mp5k", weight: 0.14 },
+            { item: "mpx", weight: 0.14 },
+            { item: "saf200", weight: 0.14 },
+            { item: "ak47", weight: 0.14 },
+            { item: "aks74u", weight: 0.14 },
+
+            // 16%
+            { item: "ots23", weight: 0.032 },
+            { item: "m16a2", weight: 0.032 },
+            { item: "fn_fal", weight: 0.032 },
+            { item: "mcx_spear", weight: 0.032 },
+            { item: "rpk74", weight: 0.032 },
+
+            // 4%
+            { item: "mg36", weight: 0.0133 },
+
+            // 2%
+            { item: "stoner_63", weight: 0.005 },
+
+            // DMRs
+            { item: "blr", weight: 0.005 },
+            { item: "vss", weight: 0.005 },
+            { item: "model_89", weight: 0.005 },
+            { item: "rgs", weight: 0.005 },
+            { item: "sr25", weight: 0.005 },
+            { item: "mini14", weight: 0.005 },
+
+            // Sniper Rifles
+            { item: "vks", weight: 0.005 },
+            { item: "rsh12", weight: 0.005 },
+            { item: "mosin_nagant", weight: 0.005 },
+            { item: "tango_51", weight: 0.005 },
+
+            // rare
+            { item: "pk61", weight: 0.001 },
+            { item: "negev", weight: 0.001 },
+            { item: "mg5", weight: 0.001 },
+            { item: "rpk16", weight: 0.001 },
+            { item: "flare", weight: 0.001 },
+            { item: "shak12", weight: 0.001 },
+            { item: "mp153", weight: 0.001 },
+            { item: "mk18", weight: 0.001 }
+        ],
+
+        airdrop_skins: [
+            { item: NullString, weight: 1 },
+            { item: "one_at_nsd", weight: 0.2 },
+            { item: "sky", weight: 0.7 },
+            { item: "military_camo", weight: 0.5 },
+            { item: "ghillie_suit", weight: 0.1 },
+            { item: "ancestral_garb", weight: 0.001 }
+        ],
+
+        airdrop_guns: [
+            { item: "mg36", weight: 1 },
+            { item: "sr25", weight: 1 },
+            { item: "vss", weight: 1 },
+            { item: "rpk74", weight: 0.95 },
+            { item: "stoner_63", weight: 0.95 },
+            { item: "mcx_spear", weight: 0.95 },
+            { item: "mosin_nagant", weight: 0.9 },
+            { item: "tango_51", weight: 0.9 },
+            { item: "model_89", weight: 0.6 },
+            { item: "vks", weight: 0.6 },
+            { item: "flare", weight: 0.1 }
+        ],
+
+        gold_airdrop_guns: [
+            { item: "negev", weight: 1 },
+            { item: "rpk16", weight: 1 },
+            { item: "mg5", weight: 1 },
+            { item: "pk61", weight: 1 },
+            { item: "shak12", weight: 0.9 },
+            { item: "mp153", weight: 0.85 },
+            { item: "mk18", weight: 0.85 },
+            { item: "an94", weight: 0.8 },
+            { item: "dual_rsh12", weight: 0.8 },
+            { item: "g19", weight: 0.0005 }
+        ],
+
+        airdrop_melee: [
+            { item: NullString, weight: 1 },
+            { item: "crowbar", weight: 0.12 },
+            { item: "hatchet", weight: 0.12 },
+            { item: "sickle", weight: 0.12 },
+            { item: "maul", weight: 0.12 },
+            { item: "pan", weight: 0.075 }
+        ],
+
+        airdrop_crate: [
+            [{ table: "airdrop_equipment", weight: 1 }],
+            [{ table: "airdrop_scopes", weight: 1 }],
+            [{ table: "airdrop_healing_items", weight: 1 }],
+            [{ table: "airdrop_skins", weight: 1 }],
+            [{ table: "airdrop_melee", weight: 1 }],
+            [{ table: "ammo", weight: 1 }],
+            [{ table: "ammo", weight: 1 }],
+            [{ table: "airdrop_guns", weight: 1 }],
+            [
+                { item: "frag_grenade", count: 3, weight: 2 },
+                { item: NullString, weight: 1 }
+            ]
+        ],
+
+        gun_locker: {
+            min: 1,
+            max: 2,
+            loot: [
+                // 65%
+                { item: "aks74u", weight: 0.1083 },
+                { item: "fn_fal", weight: 0.1083 },
+                { item: "rpk74", weight: 0.1083 },
+                { item: "m16a2", weight: 0.1083 },
+                { item: "mcx_spear", weight: 0.1083 },
+                { item: "ak47", weight: 0.1083 },
+                { item: "dual_m1895", weight: 0.1083 },
+                { item: "dual_mp5k", weight: 0.1083 },
+                { item: "dual_psm", weight: 0.1083 },
+                { item: "dual_ots23", weight: 0.1083 },
+
+                // 20%
+                { item: "vss", weight: 0.066 },
+                { item: "sr25", weight: 0.066 },
+                { item: "mini14", weight: 0.066 },
+
+                // 10%
+                { item: "rsh12", weight: 0.03 },
+                { item: "stoner_63", weight: 0.03 },
+                { item: "mg36", weight: 0.03 },
+
+                // 5%
+                { item: "tango_51", weight: 0.01 },
+                { item: "rgs", weight: 0.01 },
+                { item: "mosin_nagant", weight: 0.01 },
+                { item: "vks", weight: 0.01 },
+                { item: "model_89", weight: 0.01 }
+            ]
+        }
     },
     birthday: {}
 };

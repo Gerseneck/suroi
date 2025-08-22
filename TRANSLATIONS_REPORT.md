@@ -2,7 +2,7 @@
 
 This file is a report of all errors and missing keys in the translation files of this game.
 
-## 🇦🇱 Shqip (63% Complete) - ab.hjson
+## 🇦🇱 Shqip (59% Complete) - ab.hjson
 
 ### Invalid Keys
 
@@ -18,6 +18,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `warning_hw_accel_2` is not defined
 - Key `warning_hw_accel_link` is not defined
 - Key `privacy` is not defined
+- Key `contact` is not defined
 - Key `donate` is not defined
 - Key `wiki` is not defined
 - Key `bindings_fullscreen` is not defined
@@ -33,6 +34,10 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
 - Key `settings_haptics` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_your_team_eliminated` is not defined
 - Key `msg_the_team_eliminated` is not defined
 - Key `msg_not_enough_space` is not defined
@@ -42,6 +47,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `final_gas_waiting` is not defined
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
 - Key `interact_recorder_interactable` is not defined
@@ -52,6 +58,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
 - Key `kf_impact_of` is not defined
 - Key `finally` is not defined
 - Key `with` is not defined
@@ -67,8 +75,10 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `km_finally_killed` is not defined
 - Key `km_gas_kill_you` is not defined
 - Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
+- Key `km_airdrop_crate_locked_kill_you` is not defined
+- Key `km_airdrop_crate_locked_down_you` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `km_knocked_you` is not defined
 - Key `km_finished_off_you` is not defined
 - Key `km_killed_you` is not defined
@@ -80,7 +90,6 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `create_team_force_start` is not defined
 - Key `create_team_ready` is not defined
 - Key `create_team_not_ready` is not defined
-- Key `m16a4` is not defined
 - Key `region_ea` is not defined
 - Key `region_oc` is not defined
 - Key `vaccine_syringe` is not defined
@@ -113,6 +122,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -128,6 +139,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -142,15 +154,23 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇧🇷 Português (Brasil) (95% Complete) - br.hjson
+## 🇧🇷 Português (Brasil) (94% Complete) - br.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
-- Key `baby_plumpkin_pie_desc` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
@@ -163,6 +183,10 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_right_joystick_color` is not defined
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_monument` is not defined
 - Key `interact_recorder_interactable` is not defined
@@ -174,11 +198,12 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `vaccine_syringe` is not defined
 - Key `vaccine_syringe_desc` is not defined
 
-## 🇨🇿 Čeština (66% Complete) - cz.hjson
+## 🇨🇿 Čeština (62% Complete) - cz.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
@@ -190,6 +215,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `warning_hw_accel_2` is not defined
 - Key `warning_hw_accel_link` is not defined
 - Key `privacy` is not defined
+- Key `contact` is not defined
 - Key `donate` is not defined
 - Key `wiki` is not defined
 - Key `bindings_fullscreen` is not defined
@@ -207,6 +233,10 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
 - Key `settings_haptics` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_your_team_eliminated` is not defined
 - Key `msg_the_team_eliminated` is not defined
 - Key `msg_not_enough_space` is not defined
@@ -216,6 +246,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `final_gas_waiting` is not defined
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
 - Key `interact_recorder_interactable` is not defined
@@ -226,13 +257,17 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
 - Key `km_gas_kill_you` is not defined
 - Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
+- Key `km_airdrop_crate_locked_kill_you` is not defined
+- Key `km_airdrop_crate_locked_down_you` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `km_knocked_you` is not defined
 - Key `km_finished_off_you` is not defined
 - Key `km_killed_you` is not defined
@@ -274,6 +309,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -289,6 +326,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -303,14 +341,23 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇩🇪 Deutsch (74% Complete) - de.hjson
+## 🇩🇪 Deutsch (70% Complete) - de.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
@@ -318,6 +365,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `warning_hw_accel_2` is not defined
 - Key `warning_hw_accel_link` is not defined
 - Key `privacy` is not defined
+- Key `contact` is not defined
 - Key `wiki` is not defined
 - Key `bindings_fullscreen` is not defined
 - Key `recording` is not defined
@@ -331,10 +379,15 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
 - Key `settings_haptics` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_cannot_use_flare` is not defined
 - Key `final_gas_waiting` is not defined
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_monument` is not defined
 - Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
@@ -342,6 +395,10 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `bindings_screen_record` is not defined
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `tt_desc` is not defined
 - Key `region_ea` is not defined
 - Key `region_oc` is not defined
@@ -375,6 +432,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -390,6 +449,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -404,6 +464,14 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
@@ -413,11 +481,12 @@ This file is a report of all errors and missing keys in the translation files of
 
 ### (No Undefined Keys)
 
-## 🇪🇸 Español (70% Complete) - es.hjson
+## 🇪🇸 Español (66% Complete) - es.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
@@ -426,6 +495,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `warning_hw_accel_2` is not defined
 - Key `warning_hw_accel_link` is not defined
 - Key `privacy` is not defined
+- Key `contact` is not defined
 - Key `wiki` is not defined
 - Key `bindings_fullscreen` is not defined
 - Key `recording` is not defined
@@ -438,10 +508,15 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_right_joystick_color` is not defined
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_cannot_use_flare` is not defined
 - Key `final_gas_waiting` is not defined
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_monument` is not defined
 - Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
@@ -450,13 +525,17 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
 - Key `km_gas_kill_you` is not defined
 - Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
+- Key `km_airdrop_crate_locked_kill_you` is not defined
+- Key `km_airdrop_crate_locked_down_you` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `km_knocked_you` is not defined
 - Key `km_finished_off_you` is not defined
 - Key `km_killed_you` is not defined
@@ -497,6 +576,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -512,6 +593,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -526,10 +608,18 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇪🇪 eesti (99% Complete) - et.hjson
+## 🇪🇪 eesti (93% Complete) - et.hjson
 
 ### Invalid Keys
 
@@ -690,17 +780,44 @@ This file is a report of all errors and missing keys in the translation files of
 
 ### Undefined Keys
 
+- Key `contact` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
+- Key `interact_server` is not defined
 - Key `interact_recorder_interactable` is not defined
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_were_finally_killed` is not defined
-- Key `m16a4` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `region_ea` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 
-## 🇫🇮 suomi (69% Complete) - fi.hjson
+## 🇮🇷 فارسی (100% Complete) - fa.hjson
+
+### (No Invalid Keys)
+
+### (No Undefined Keys)
+
+## 🇫🇮 suomi (65% Complete) - fi.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
@@ -710,6 +827,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `warning_hw_accel_2` is not defined
 - Key `warning_hw_accel_link` is not defined
 - Key `privacy` is not defined
+- Key `contact` is not defined
 - Key `wiki` is not defined
 - Key `bindings_fullscreen` is not defined
 - Key `recording` is not defined
@@ -724,12 +842,17 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
 - Key `settings_haptics` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_your_team_eliminated` is not defined
 - Key `msg_the_team_eliminated` is not defined
 - Key `msg_cannot_use_flare` is not defined
 - Key `final_gas_waiting` is not defined
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_monument` is not defined
 - Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
@@ -738,13 +861,17 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
 - Key `km_gas_kill_you` is not defined
 - Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
+- Key `km_airdrop_crate_locked_kill_you` is not defined
+- Key `km_airdrop_crate_locked_down_you` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `km_knocked_you` is not defined
 - Key `km_finished_off_you` is not defined
 - Key `km_killed_you` is not defined
@@ -785,6 +912,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -800,6 +929,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -814,10 +944,18 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇫🇷 Français (98% Complete) - fr.hjson
+## 🇫🇷 Français (95% Complete) - fr.hjson
 
 ### Invalid Keys
 
@@ -826,21 +964,35 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `radio` is not a valid key
 - Key `flues` is not a valid key
 - Key `mp40` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
+- Key `contact` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_recorder_interactable` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `tt_desc` is not defined
 - Key `region_ea` is not defined
 - Key `vaccine_syringe` is not defined
 - Key `vaccine_syringe_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 
-## 🇬🇷 Ελληνικά (84% Complete) - gr.hjson
+## 🇬🇷 Ελληνικά (83% Complete) - gr.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
@@ -867,10 +1019,6 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `close_quarters_combat_desc` is not defined
 - Key `low_profile` is not defined
 - Key `low_profile_desc` is not defined
-- Key `combat_expert` is not defined
-- Key `combat_expert_desc` is not defined
-- Key `precision_recycling` is not defined
-- Key `precision_recycling_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -886,6 +1034,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -900,14 +1049,23 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇭🇰 🇲🇴 廣東話(香港/澳門) (65% Complete) - hk_mo.hjson
+## 🇭🇰 🇲🇴 廣東話(香港/澳門) (61% Complete) - hk_mo.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
@@ -920,6 +1078,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `warning_hw_accel_2` is not defined
 - Key `warning_hw_accel_link` is not defined
 - Key `privacy` is not defined
+- Key `contact` is not defined
 - Key `donate` is not defined
 - Key `wiki` is not defined
 - Key `bindings_fullscreen` is not defined
@@ -938,6 +1097,10 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
 - Key `settings_haptics` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_your_team_eliminated` is not defined
 - Key `msg_the_team_eliminated` is not defined
 - Key `msg_not_enough_space` is not defined
@@ -947,6 +1110,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `final_gas_waiting` is not defined
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
 - Key `interact_recorder_interactable` is not defined
@@ -959,13 +1123,17 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `kf_finished_off_kill` is not defined
 - Key `kf_finished_off_down` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
 - Key `km_gas_kill_you` is not defined
 - Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
+- Key `km_airdrop_crate_locked_kill_you` is not defined
+- Key `km_airdrop_crate_locked_down_you` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `km_knocked_you` is not defined
 - Key `km_finished_off_you` is not defined
 - Key `km_killed_you` is not defined
@@ -1007,6 +1175,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -1022,6 +1192,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -1036,23 +1207,54 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇭🇺 Magyar (98% Complete) - hu.hjson
+## 🇭🇺 Magyar (93% Complete) - hu.hjson
 
-### (No Invalid Keys)
+### Invalid Keys
+
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
+- Key `contact` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_cannot_use_flare` is not defined
+- Key `interact_server` is not defined
 - Key `interact_recorder_interactable` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `region_ea` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇮🇹 Italiano (63% Complete) - it.hjson
+## 🇮🇹 Italiano (60% Complete) - it.hjson
 
 ### Invalid Keys
 
@@ -1083,6 +1285,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `warning_hw_accel_2` is not defined
 - Key `warning_hw_accel_link` is not defined
 - Key `privacy` is not defined
+- Key `contact` is not defined
 - Key `donate` is not defined
 - Key `wiki` is not defined
 - Key `bindings_fullscreen` is not defined
@@ -1100,6 +1303,10 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
 - Key `settings_haptics` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_your_team_eliminated` is not defined
 - Key `msg_the_team_eliminated` is not defined
 - Key `msg_not_enough_space` is not defined
@@ -1109,6 +1316,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `final_gas_waiting` is not defined
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_headquarters_security_desk` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
@@ -1122,13 +1330,17 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `kf_finished_off_kill` is not defined
 - Key `kf_finished_off_down` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
 - Key `km_gas_kill_you` is not defined
 - Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
+- Key `km_airdrop_crate_locked_kill_you` is not defined
+- Key `km_airdrop_crate_locked_down_you` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `km_knocked_you` is not defined
 - Key `km_finished_off_you` is not defined
 - Key `km_killed_you` is not defined
@@ -1138,7 +1350,6 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `create_team_force_start` is not defined
 - Key `create_team_ready` is not defined
 - Key `create_team_not_ready` is not defined
-- Key `m16a4` is not defined
 - Key `region_ea` is not defined
 - Key `region_oc` is not defined
 - Key `vaccine_syringe` is not defined
@@ -1171,6 +1382,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -1186,6 +1399,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -1200,20 +1414,31 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇯🇵 日本語 (99% Complete) - jp.hjson
+## 🇯🇵 日本語 (100% Complete) - jp.hjson
 
 ### Invalid Keys
 
-- Key ``"kf_were_finally_killed"` is not a valid key
+- Key `power_vest` is not a valid key
+- Key `power_helmet` is not a valid key
+- Key `power_pack` is not a valid key
 - Key `12g` is not a valid key
 - Key `556mm` is not a valid key
 - Key `762mm` is not a valid key
 - Key `9mm` is not a valid key
 - Key `50cal` is not a valid key
 - Key `338lap` is not a valid key
+- Key `545mm` is not a valid key
 - Key `firework_rocket` is not a valid key
 - Key `power_cell` is not a valid key
 - Key `bb` is not a valid key
@@ -1227,11 +1452,14 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `super_barrel_explosion` is not a valid key
 - Key `small_refinery_barrel_explosion` is not a valid key
 - Key `large_refinery_barrel_explosion` is not a valid key
+- Key `silo_explosion` is not a valid key
+- Key `propane_tank_explosion` is not a valid key
 - Key `firework_launcher_explosion` is not a valid key
-- Key `confetti_grenade_explosion` is not a valid key
-- Key `frag_grenade_explosion` is not a valid key
-- Key `pumpkin_explosion` is not a valid key
 - Key `seed_explosion` is not a valid key
+- Key `coal_explosion` is not a valid key
+- Key `frag_grenade_explosion` is not a valid key
+- Key `confetti_grenade_explosion` is not a valid key
+- Key `pumpkin_explosion` is not a valid key
 - Key `bdg_developr` is not a valid key
 - Key `bdg_dev_managr` is not a valid key
 - Key `bdg_designr` is not a valid key
@@ -1244,12 +1472,14 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `bdg_youtubr` is not a valid key
 - Key `bdg_boostr` is not a valid key
 - Key `bdg_ownr` is not a valid key
+- Key `bdg_marketr` is not a valid key
 - Key `bdg_bleh` is not a valid key
 - Key `bdg_froog` is not a valid key
 - Key `bdg_aegis_logo` is not a valid key
 - Key `bdg_flint_logo` is not a valid key
-- Key `bdg_duel` is not a valid key
+- Key `bdg_nsd_logo` is not a valid key
 - Key `bdg_suroi_logo` is not a valid key
+- Key `bdg_duel` is not a valid key
 - Key `bdg_fire` is not a valid key
 - Key `bdg_colon_three` is not a valid key
 - Key `bdg_suroi_general_chat` is not a valid key
@@ -1285,7 +1515,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `emote_man_face` is not a valid key
 - Key `emote_satisfied_face` is not a valid key
 - Key `emote_hot_face` is not a valid key
-- Key `emote_blind_walking` is not a valid key
+- Key `emote_blindfolded_face` is not a valid key
 - Key `emote_melting_face` is not a valid key
 - Key `emote_grimacing_face` is not a valid key
 - Key `emote_vomiting_face` is not a valid key
@@ -1311,6 +1541,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `emote_pensive_face` is not a valid key
 - Key `emote_zipper_mouth_face` is not a valid key
 - Key `emote_zombie_face` is not a valid key
+- Key `emote_thousand_yard_stare` is not a valid key
 - Key `emote_question_mark` is not a valid key
 - Key `emote_team_=_ban` is not a valid key
 - Key `emote_hack_=_ban` is not a valid key
@@ -1346,6 +1577,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `emote_chicken_dinner` is not a valid key
 - Key `emote_trophy` is not a valid key
 - Key `emote_fire` is not a valid key
+- Key `emote_heart` is not a valid key
 - Key `emote_penguin` is not a valid key
 - Key `emote_squid` is not a valid key
 - Key `emote_eagle` is not a valid key
@@ -1397,6 +1629,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `holiday_tree` is not a valid key
 - Key `lemon` is not a valid key
 - Key `light_choco` is not a valid key
+- Key `lobotomy` is not a valid key
 - Key `lumberjack` is not a valid key
 - Key `mango` is not a valid key
 - Key `military_camo` is not a valid key
@@ -1458,17 +1691,24 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `spokelsesfelt` is not a valid key
 - Key `haunted_hollow` is not a valid key
 - Key `mt_fang` is not a valid key
+- Key `pine_cone` is not a valid key
+- Key `gunpoint` is not a valid key
+- Key `kuolema` is not a valid key
+- Key `switchback` is not a valid key
+- Key `black_hill` is not a valid key
+- Key `the_grove` is not a valid key
+- Key `region_1v1` is not a valid key
+- Key `region_ea1v1` is not a valid key
+- Key `region_test` is not a valid key
 
-### Undefined Keys
+### (No Undefined Keys)
 
-- Key `interact_recorder_interactable` is not defined
-- Key `kf_were_finally_killed` is not defined
-
-## 🇱🇹 Lietuvių (66% Complete) - lt.hjson
+## 🇱🇹 Lietuvių (62% Complete) - lt.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
@@ -1480,6 +1720,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `warning_hw_accel_2` is not defined
 - Key `warning_hw_accel_link` is not defined
 - Key `privacy` is not defined
+- Key `contact` is not defined
 - Key `donate` is not defined
 - Key `wiki` is not defined
 - Key `bindings_fullscreen` is not defined
@@ -1497,6 +1738,10 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
 - Key `settings_haptics` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_your_team_eliminated` is not defined
 - Key `msg_the_team_eliminated` is not defined
 - Key `msg_not_enough_space` is not defined
@@ -1506,6 +1751,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `final_gas_waiting` is not defined
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
 - Key `interact_recorder_interactable` is not defined
@@ -1516,13 +1762,17 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
 - Key `km_gas_kill_you` is not defined
 - Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
+- Key `km_airdrop_crate_locked_kill_you` is not defined
+- Key `km_airdrop_crate_locked_down_you` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `km_knocked_you` is not defined
 - Key `km_finished_off_you` is not defined
 - Key `km_killed_you` is not defined
@@ -1564,6 +1814,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -1579,6 +1831,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -1593,14 +1846,23 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇱🇻 Latviešu (66% Complete) - lv.hjson
+## 🇱🇻 Latviešu (62% Complete) - lv.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
@@ -1612,6 +1874,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `warning_hw_accel_2` is not defined
 - Key `warning_hw_accel_link` is not defined
 - Key `privacy` is not defined
+- Key `contact` is not defined
 - Key `donate` is not defined
 - Key `wiki` is not defined
 - Key `bindings_fullscreen` is not defined
@@ -1629,6 +1892,10 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
 - Key `settings_haptics` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_your_team_eliminated` is not defined
 - Key `msg_the_team_eliminated` is not defined
 - Key `msg_not_enough_space` is not defined
@@ -1638,6 +1905,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `final_gas_waiting` is not defined
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_speaker` is not defined
 - Key `interact_monument` is not defined
 - Key `interact_recorder_interactable` is not defined
@@ -1648,13 +1916,17 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
 - Key `km_gas_kill_you` is not defined
 - Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
+- Key `km_airdrop_crate_locked_kill_you` is not defined
+- Key `km_airdrop_crate_locked_down_you` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `km_knocked_you` is not defined
 - Key `km_finished_off_you` is not defined
 - Key `km_killed_you` is not defined
@@ -1696,6 +1968,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -1711,6 +1985,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -1725,27 +2000,50 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇳🇱 Nederlands (98% Complete) - nl.hjson
+## 🇳🇱 Nederlands (95% Complete) - nl.hjson
 
-### (No Invalid Keys)
+### Invalid Keys
+
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
+- Key `contact` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_recorder_interactable` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `tt_desc` is not defined
 - Key `region_ea` is not defined
 - Key `vaccine_syringe` is not defined
 - Key `vaccine_syringe_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 
-## 🇵🇱 Polski (69% Complete) - pl.hjson
+## 🇵🇱 Polski (65% Complete) - pl.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
@@ -1755,6 +2053,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `warning_hw_accel_2` is not defined
 - Key `warning_hw_accel_link` is not defined
 - Key `privacy` is not defined
+- Key `contact` is not defined
 - Key `wiki` is not defined
 - Key `bindings_fullscreen` is not defined
 - Key `recording` is not defined
@@ -1769,12 +2068,17 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
 - Key `settings_haptics` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_your_team_eliminated` is not defined
 - Key `msg_the_team_eliminated` is not defined
 - Key `msg_cannot_use_flare` is not defined
 - Key `final_gas_waiting` is not defined
 - Key `final_gas_advancing` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_monument` is not defined
 - Key `interact_recorder_interactable` is not defined
 - Key `loading_fetching_data_failed` is not defined
@@ -1783,13 +2087,17 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `bindings_toggle pf_net_graph 0 1 2` is not defined
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
 - Key `km_gas_kill_you` is not defined
 - Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
+- Key `km_airdrop_crate_locked_kill_you` is not defined
+- Key `km_airdrop_crate_locked_down_you` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `km_knocked_you` is not defined
 - Key `km_finished_off_you` is not defined
 - Key `km_killed_you` is not defined
@@ -1830,6 +2138,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -1845,6 +2155,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -1859,18 +2170,28 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🎀 Cute Engwish (73% Complete) - qen.hjson
+## 🎀 Cute Engwish (69% Complete) - qen.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
 - Key `msg_error_kicked_team` is not defined
+- Key `contact` is not defined
 - Key `bindings_fullscreen` is not defined
 - Key `recording` is not defined
 - Key `settings_record_res` is not defined
@@ -1881,21 +2202,30 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `settings_right_joystick_color` is not defined
 - Key `settings_normal_joystick_info` is not defined
 - Key `settings_switched_joystick_info` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_cannot_use_flare` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_monument` is not defined
 - Key `interact_recorder_interactable` is not defined
 - Key `bindings_explode_c4` is not defined
 - Key `bindings_screen_record` is not defined
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
 - Key `km_gas_kill_you` is not defined
 - Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
+- Key `km_airdrop_crate_locked_kill_you` is not defined
+- Key `km_airdrop_crate_locked_down_you` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `km_knocked_you` is not defined
 - Key `km_finished_off_you` is not defined
 - Key `km_killed_you` is not defined
@@ -1936,6 +2266,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -1951,6 +2283,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -1965,148 +2298,109 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇷🇴 Română (98% Complete) - ro.hjson
+## 🇷🇴 Română (99% Complete) - ro.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
-- Key `action_vaccine_syringe_use` is not defined
-- Key `interact_recorder_interactable` is not defined
-- Key `tt_desc` is not defined
-- Key `region_ea` is not defined
-- Key `vaccine_syringe` is not defined
-- Key `vaccine_syringe_desc` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 
-## 🇷🇺 Русский (98% Complete) - ru.hjson
+## 🇷🇺 Русский (95% Complete) - ru.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `power_helmet` is not a valid key
+- Key `power_vest` is not a valid key
+- Key `power_pack` is not a valid key
 
 ### Undefined Keys
 
+- Key `contact` is not defined
 - Key `settings_show_inout` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `action_vaccine_syringe_use` is not defined
 - Key `interact_recorder_interactable` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `tt_desc` is not defined
-- Key `m16a4` is not defined
 - Key `region_ea` is not defined
 - Key `vaccine_syringe` is not defined
 - Key `vaccine_syringe_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 
-## 🇮🇳 தமிழ் (77% Complete) - ta.hjson
+## 🇮🇳 தமிழ் (98% Complete) - ta.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
+- Key `interact_record_interactable` is not a valid key
+- Key `berseker` is not a valid key
+- Key `berseker_desc` is not a valid key
 
 ### Undefined Keys
 
-- Key `msg_error_kicked_team` is not defined
-- Key `settings_alt_texture_loading` is not defined
-- Key `msg_cannot_use_flare` is not defined
-- Key `action_vaccine_syringe_use` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `interact_recorder_interactable` is not defined
-- Key `kf_suicide_finished_off` is not defined
-- Key `kf_were_finally_killed` is not defined
 - Key `kf_impact_of` is not defined
-- Key `km_finally_ended_yourself` is not defined
-- Key `km_finally_killed` is not defined
-- Key `km_gas_kill_you` is not defined
-- Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
-- Key `km_knocked_you` is not defined
-- Key `km_finished_off_you` is not defined
-- Key `km_killed_you` is not defined
-- Key `km_suicide_down` is not defined
-- Key `km_suicide_finished_off` is not defined
-- Key `tt_desc` is not defined
-- Key `create_team_force_start` is not defined
-- Key `create_team_not_ready` is not defined
-- Key `region_ea` is not defined
-- Key `vaccine_syringe` is not defined
-- Key `vaccine_syringe_desc` is not defined
-- Key `second_wind` is not defined
-- Key `second_wind_desc` is not defined
-- Key `flechettes` is not defined
-- Key `flechettes_desc` is not defined
-- Key `sabot_rounds` is not defined
-- Key `sabot_rounds_desc` is not defined
-- Key `extended_mags` is not defined
-- Key `extended_mags_desc` is not defined
-- Key `demo_expert` is not defined
-- Key `demo_expert_desc` is not defined
-- Key `advanced_athletics` is not defined
-- Key `advanced_athletics_desc` is not defined
-- Key `toploaded` is not defined
-- Key `toploaded_desc` is not defined
-- Key `infinite_ammo` is not defined
-- Key `infinite_ammo_desc` is not defined
-- Key `field_medic` is not defined
-- Key `field_medic_desc` is not defined
 - Key `berserker` is not defined
 - Key `berserker_desc` is not defined
-- Key `close_quarters_combat` is not defined
-- Key `close_quarters_combat_desc` is not defined
-- Key `low_profile` is not defined
-- Key `low_profile_desc` is not defined
-- Key `combat_expert` is not defined
-- Key `combat_expert_desc` is not defined
-- Key `precision_recycling` is not defined
-- Key `precision_recycling_desc` is not defined
-- Key `plumpkin_gamble` is not defined
-- Key `plumpkin_gamble_desc` is not defined
-- Key `lycanthropy` is not defined
-- Key `lycanthropy_desc` is not defined
-- Key `bloodthirst` is not defined
-- Key `bloodthirst_desc` is not defined
 - Key `plumpkin_bomb` is not defined
 - Key `plumpkin_bomb_desc` is not defined
-- Key `shrouded` is not defined
-- Key `shrouded_desc` is not defined
-- Key `experimental_treatment` is not defined
-- Key `experimental_treatment_desc` is not defined
-- Key `engorged` is not defined
-- Key `engorged_desc` is not defined
-- Key `baby_plumpkin_pie` is not defined
-- Key `costumed` is not defined
-- Key `costumed_desc` is not defined
-- Key `torn_pockets` is not defined
-- Key `torn_pockets_desc` is not defined
-- Key `claustrophobic` is not defined
-- Key `claustrophobic_desc` is not defined
-- Key `laced_stimulants` is not defined
-- Key `laced_stimulants_desc` is not defined
-- Key `rotten_plumpkin` is not defined
-- Key `rotten_plumpkin_desc` is not defined
-- Key `infected` is not defined
-- Key `infected_desc` is not defined
-- Key `immunity` is not defined
-- Key `immunity_desc` is not defined
-- Key `partners` is not defined
-- Key `username_placeholder` is not defined
+- Key `experimental_forcefield_desc` is not defined
 
-## 🇹🇷 Turkısh (81% Complete) - tr.hjson
+## 🇹🇷 Turkısh (76% Complete) - tr.hjson
 
 ### Invalid Keys
 
 - Key `kf_message_grammar` is not a valid key
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
 - Key `msg_error_kicked_team` is not defined
+- Key `contact` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_cannot_use_flare` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_recorder_interactable` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `tt_desc` is not defined
 - Key `create_team_force_start` is not defined
 - Key `create_team_not_ready` is not defined
@@ -2141,6 +2435,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -2156,6 +2452,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -2170,31 +2467,50 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇹🇼 中文（繁體） (77% Complete) - tw.hjson
+## 🇹🇼 中文（繁體） (72% Complete) - tw.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
 - Key `msg_error_kicked_team` is not defined
+- Key `contact` is not defined
 - Key `settings_alt_texture_loading` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
 - Key `msg_cannot_use_flare` is not defined
 - Key `action_vaccine_syringe_use` is not defined
+- Key `interact_server` is not defined
 - Key `interact_recorder_interactable` is not defined
 - Key `kf_suicide_finished_off` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
 - Key `kf_impact_of` is not defined
 - Key `km_finally_ended_yourself` is not defined
 - Key `km_finally_killed` is not defined
 - Key `km_gas_kill_you` is not defined
 - Key `km_gas_down_you` is not defined
-- Key `km_airdrop_kill_you` is not defined
-- Key `km_airdrop_down_you` is not defined
+- Key `km_airdrop_crate_locked_kill_you` is not defined
+- Key `km_airdrop_crate_locked_down_you` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `km_knocked_you` is not defined
 - Key `km_finished_off_you` is not defined
 - Key `km_killed_you` is not defined
@@ -2234,6 +2550,8 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `combat_expert_desc` is not defined
 - Key `precision_recycling` is not defined
 - Key `precision_recycling_desc` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
 - Key `plumpkin_gamble` is not defined
 - Key `plumpkin_gamble_desc` is not defined
 - Key `lycanthropy` is not defined
@@ -2249,6 +2567,7 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `engorged` is not defined
 - Key `engorged_desc` is not defined
 - Key `baby_plumpkin_pie` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
 - Key `costumed` is not defined
 - Key `costumed_desc` is not defined
 - Key `torn_pockets` is not defined
@@ -2263,22 +2582,52 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `infected_desc` is not defined
 - Key `immunity` is not defined
 - Key `immunity_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 - Key `partners` is not defined
 - Key `username_placeholder` is not defined
 
-## 🇻🇳 Tiếng Việt (99% Complete) - vi.hjson
+## 🇻🇳 Tiếng Việt (94% Complete) - vi.hjson
 
 ### Invalid Keys
 
 - Key `create_team_waiting` is not a valid key
+- Key `m16a4` is not a valid key
 
 ### Undefined Keys
 
+- Key `contact` is not defined
+- Key `settings_shake_to_reload` is not defined
+- Key `settings_shake_count` is not defined
+- Key `settings_shake_force` is not defined
+- Key `settings_shake_delay` is not defined
+- Key `interact_server` is not defined
 - Key `interact_recorder_interactable` is not defined
 - Key `kf_were_finally_killed` is not defined
+- Key `kf_saw_kill` is not defined
+- Key `kf_saw_down` is not defined
+- Key `km_saw_kill_you` is not defined
+- Key `km_saw_down_you` is not defined
 - Key `region_ea` is not defined
+- Key `loot_baron` is not defined
+- Key `loot_baron_desc` is not defined
+- Key `baby_plumpkin_pie_desc` is not defined
+- Key `hollow_points` is not defined
+- Key `hollow_points_desc` is not defined
+- Key `experimental_forcefield` is not defined
+- Key `experimental_forcefield_desc` is not defined
+- Key `thermal_goggles` is not defined
+- Key `thermal_goggles_desc` is not defined
+- Key `overdrive` is not defined
+- Key `overdrive_desc` is not defined
 
-## 🇨🇳 中文（简体） (99% Complete) - zh.hjson
+## 🇨🇳 中文（简体） (100% Complete) - zh.hjson
 
 ### Invalid Keys
 
@@ -2529,10 +2878,15 @@ This file is a report of all errors and missing keys in the translation files of
 - Key `special_weapon_preset_title` is not a valid key
 - Key `time_minute` is not a valid key
 - Key `time_second` is not a valid key
-- Key `baby_plumpkin_pie_desc` is not a valid key
+- Key `545mm` is not a valid key
+- Key `power_helmet` is not a valid key
+- Key `power_vest` is not a valid key
+- Key `power_pack` is not a valid key
+- Key `bdg_marketr` is not a valid key
+- Key `emote_blindfolded_face` is not a valid key
+- Key `lobotomy` is not a valid key
 
 ### Undefined Keys
 
 - Key `interact_recorder_interactable` is not defined
-- Key `m16a4` is not defined
 

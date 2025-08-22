@@ -1,6 +1,6 @@
 import { GameConstants, InputActions, ObjectCategory, SpectateActions, TeamMode } from "@common/constants";
 import { Badges, type BadgeDefinition } from "@common/definitions/badges";
-import { EmoteCategory, Emotes, type EmoteDefinition } from "@common/definitions/emotes";
+import { EmoteCategory, Emotes, getBadgeIdString, isEmoteBadge, type EmoteDefinition } from "@common/definitions/emotes";
 import { Ammos, type AmmoDefinition } from "@common/definitions/items/ammos";
 import { type ArmorDefinition } from "@common/definitions/items/armors";
 import { HealType, HealingItems, type HealingItemDefinition } from "@common/definitions/items/healingItems";
@@ -34,6 +34,7 @@ import { html, humanDate, requestFullscreen } from "./utils/misc";
 import { spritesheetLoadPromise } from "./utils/pixi";
 import { TRANSLATIONS, getTranslatedString } from "./utils/translations/translations";
 import type { TranslationKeys } from "./utils/translations/typings";
+import type { BackpackDefinition } from "@common/definitions/items/backpacks";
 
 /*
     eslint-disable
@@ -58,6 +59,10 @@ interface RegionInfo extends Region {
 
     readonly ping?: number
     readonly retrievedTime?: number
+}
+
+enum hideUnlessPresent {
+    zh_tw = "🇹🇼"
 }
 
 let selectedRegion: RegionInfo | undefined;
@@ -278,10 +283,14 @@ export async function fetchServerData(): Promise<void> {
         updateServerSelectors();
     });
 
-    if (window.location.hash) {
-        teamID = window.location.hash.slice(1);
-        $("#btn-join-team").trigger("click");
-    }
+    const joinTeam = (): void => {
+        if (window.location.hash) {
+            teamID = window.location.hash.slice(1);
+            $("#btn-join-team").trigger("click");
+        }
+    };
+    joinTeam();
+    window.addEventListener("hashchange", joinTeam);
 }
 
 // Take the stuff that needs fetchServerData out of setUpUI and put it here
@@ -370,7 +379,7 @@ export async function setUpUI(): Promise<void> {
         const isSelected = GameConsole.getBuiltInCVar("cv_language") === language;
         languageFieldset.append(html`
            <a id="language-${language}" ${isSelected ? 'class="selected"' : ""}>
-              ${languageInfo.flag} <strong>${languageInfo.name}</strong> [${!isSelected ? TRANSLATIONS.translations[language].percentage : languageInfo.percentage}]
+              ${Object.values(hideUnlessPresent).includes(languageInfo.flag as hideUnlessPresent) && !isSelected ? "" : languageInfo.flag} <strong>${languageInfo.name}</strong> [${!isSelected ? TRANSLATIONS.translations[language].percentage : languageInfo.percentage}]
            </a>
         `);
 
@@ -396,14 +405,16 @@ export async function setUpUI(): Promise<void> {
 
     // Switch languages with the ?language="name" Search Parameter
     if (params.has("language")) {
-        const language = params.get("language");
-        params.delete("language");
-        if (
-            language === GameConsole.getBuiltInCVar("cv_language")
-            || language === null
-            || !TRANSLATIONS.translations[language]
-        ) return;
-        GameConsole.setBuiltInCVar("cv_language", language);
+        (() => {
+            const language = params.get("language");
+            params.delete("language");
+            if (
+                language === GameConsole.getBuiltInCVar("cv_language")
+                || language === null
+                || !TRANSLATIONS.translations[language]
+            ) return;
+            GameConsole.setBuiltInCVar("cv_language", language);
+        })();
     }
 
     // Load news
@@ -611,7 +622,7 @@ export async function setUpUI(): Promise<void> {
                                     ${renderSkin(skin)}
                                     <div class="create-team-player-name-container">
                                         <span class="create-team-player-name"${nameColor ? ` style="color: ${new Color(nameColor).toHex()}"` : ""}>${name}</span>
-                                        ${badge ? `<img class="create-team-player-badge" draggable="false" src="./img/game/shared/badges/${badge}.svg" />` : ""}
+                                        ${badge ? `<img class="create-team-player-badge" draggable="false" src="./img/game/shared/${isEmoteBadge(badge) ? "emotes" : "badges"}/${getBadgeIdString(badge)}.svg" />` : ""}
                                     </div>
                                 </div>
                                 `
@@ -1398,7 +1409,7 @@ export async function setUpUI(): Promise<void> {
                 const badgeItem = badgeUiCache[idString] = $<HTMLDivElement>(
                     `<div id="badge-${idString}" class="badges-list-item-container${idString === activeBadge ? " selected" : ""}">\
                         <div class="badges-list-item">\
-                            <div style="background-image: url('./img/game/shared/badges/${idString}.svg')"></div>\
+                            <div style="background-image: url('./img/game/shared/${isEmoteBadge(idString) ? "emotes" : "badges"}/${getBadgeIdString(idString)}.svg')"></div>\
                         </div>\
                         <span class="badge-name">${getTranslatedString(idString as TranslationKeys)}</span>\
                     </div>`
@@ -1762,8 +1773,15 @@ export async function setUpUI(): Promise<void> {
         GameConsole.setBuiltInCVar("mb_right_joystick_color", this.value);
     });
     addCheckboxListener("#toggle-mobile-joystick-lock", "mb_joystick_lock");
+
     addSliderListener("#slider-gyro-angle", "mb_gyro_angle");
     addCheckboxListener("#toggle-haptics", "mb_haptics");
+
+    addCheckboxListener("#toggle-shake-to-reload", "mb_shake_to_reload");
+    addSliderListener("#slider-shake-count", "mb_shake_count");
+    addSliderListener("#slider-shake-force", "mb_shake_force");
+    addSliderListener("#slider-shake-delay", "mb_shake_delay");
+
     addCheckboxListener("#toggle-high-res-mobile", "mb_high_res_textures");
     addCheckboxListener("#toggle-antialias-mobile", "mb_antialias");
 
@@ -1920,7 +1938,7 @@ export async function setUpUI(): Promise<void> {
 
     let dropTimer: number | undefined;
 
-    function mobileDropItem(button: number, condition: boolean, item?: AmmoDefinition | ArmorDefinition | ScopeDefinition | HealingItemDefinition, slot?: number): void {
+    function mobileDropItem(button: number, condition: boolean, item?: AmmoDefinition | ArmorDefinition | ScopeDefinition | HealingItemDefinition | BackpackDefinition, slot?: number): void {
         if (!InputManager.isMobile) return;
         dropTimer = window.setTimeout(() => {
             if (button === 0 && condition) {
@@ -2150,7 +2168,8 @@ export async function setUpUI(): Promise<void> {
     for (
         const [ele, type] of [
             [$<HTMLDivElement>("#helmet-slot"), "helmet"],
-            [$<HTMLDivElement>("#vest-slot"), "vest"]
+            [$<HTMLDivElement>("#vest-slot"), "vest"],
+            [$<HTMLDivElement>("#backpack-slot"), "backpack"]
         ] as const
     ) {
         ele[0].addEventListener("pointerup", () => clearTimeout(dropTimer));
@@ -2160,7 +2179,7 @@ export async function setUpUI(): Promise<void> {
             const shouldDrop = Game.activePlayer && Game.isTeamMode;
 
             if (isSecondary && shouldDrop) {
-                const item = Game.activePlayer?.getEquipment(type);
+                const item = Game.activePlayer?.equipment[type];
                 if (item) {
                     InputManager.addAction({
                         type: InputActions.DropItem,
@@ -2170,12 +2189,12 @@ export async function setUpUI(): Promise<void> {
             }
 
             if (shouldDrop !== undefined) {
-                mobileDropItem(button, shouldDrop, Game.activePlayer?.getEquipment(type));
+                mobileDropItem(button, shouldDrop, Game.activePlayer?.equipment[type]);
             }
         });
     }
 
-    for (const perkSlot of ["#perk-slot-0", "#perk-slot-1", "#perk-slot-2"]) {
+    for (const perkSlot of ["#perk-slot-0", "#perk-slot-1", "#perk-slot-2", "#perk-slot-3"]) {
         $(perkSlot)[0].addEventListener("pointerdown", function(e: PointerEvent): void {
             e.stopImmediatePropagation();
             if (e.button !== 2) return;
@@ -2295,9 +2314,21 @@ export async function setUpUI(): Promise<void> {
             )
             .siblings(".range-input-value")
             .text(
-                element.id !== "slider-joystick-size" && element.id !== "slider-gyro-angle"
-                    ? `${Math.round(value * 100)}%`
-                    : value
+                (() => {
+                    switch (element.id) {
+                        case "slider-joystick-size":
+                        case "slider-shake-count":
+                            return value;
+                        case "slider-gyro-angle":
+                            return `${value}°`;
+                        case "slider-shake-force":
+                            return `${value} m/s²`;
+                        case "slider-shake-delay":
+                            return `${value} ms`;
+                        default:
+                            return `${Math.round(value * 100)}%`;
+                    }
+                })()
             );
     }
 
@@ -2342,60 +2373,3 @@ export async function setUpUI(): Promise<void> {
 
     $("#username-input").attr("placeholder", getTranslatedString("username_placeholder"));
 }
-/*
-..........:::::::::::::::.::::.......:::---===------:::--===++++*********+++++*++++++***************
-.............::::::::::............:::::----*#----------=====++++++++==+++++++++++=+++++++++++++++++
-.................................::::-----:-++-----=====================================+++++++++++*
-................................:::::::--:::+**=------------------==+=----==================++++++++
-..................................:::::::::---:::::::-:::----------++----------==============+++++++
-...........................::...:::::::::::::::::::::::::----------------------===============++++++
-................................:::::::::::::::::::::::::::::::::::----::::--------============+++++
-....................................::::.:::::::::::::::....:::::.:::::::::::::-------=====--=======
-................::::::::::::::::::::--------:::::-----:....:.::::-=--======-----===---=++********#*+
-......::::-----------=======++++++++++++++==::..:===-:..:-----=+==+++++++++++++****##########%%#####
-........:::--------------======--=========:..::::::-==+++++++++++++**+*++********#######%%%%%%%%%%%%
-::::.............::::::::-:::::::::::....:-=========++====+++++++*********###########*##%%%%%%%%%%%%
--------::::....::::-:--:-========--:::--=====++====++++++*+++++******##################**%%%%%%%%%%%
--------==-----:::::-======+++====----==++++++++++*********#**+*##########%%%%%%%%%####%##*##%%%%%%%%
-===============------=====+++++=======+*******###*#%########***##%%%%%%%%%%%%###################%###
-=====================-=-==++++=====+++**#########%########%##*####%%%%%%%%%#########################
-+++++++++++*++++++========++++===++***############**#%%%%%####*###############################******
-***++******#***++++++===========+**###########%##***###########**#***#############*****+++**++++====
-***+*##########****+++++=======++*#########*#%%##***#########*********++++++=========---=#=--:::::::
-*++***###########****+++++++++++++====++===*%%%%###****+++++====----------::::::::::::-*#=::::::::::
-*++++******#########*****+=---:---==++***#*##%%%%%###::..:::::::::::::---=-=========-=##=--------==-
-++=++++=======---::::..:::-=++*##%%%%%%###%%%%%%%###*+-.............................+%#=::::::::::::
-::::................:--:=###%%%%%%%%%%%@@%%%%%%%%%%###*+=:.........................*%#=:.:::::::::::
-...............:=##%%%%%#%%#######%%%%%%%##%%%%%%%%%%%###*+-....::::............::*%#+::.......:::::
-...........-*#%%%###*####%%%##################%####%%%%####**-..........::::::::-*%#*::----::::.....
-........-****++*#++*#########****#####*###*###%##############**-...........:.:.-#%#%:..............:
-..........-+----=*-====-------------++-==++=*#%##############*##*=.....:+.....-%%##-..............::
-..............:::--=*%#+=--------===-=======+#%@%%###########**####*=+%#-....-%%##=..............:-+
-..................:-----=-==================+#%@@%###%##################**#%%%###+:..:::::-==+*+--:-
-.......................:---===========++======-*%@%##*=====+*###*############*++*-::::::::::::::::::
-..............::...............:-======+++++++*++#@%##*+++====+*#%#*=++++==++++++-::::::::::::::::::
-..............................::+==========+++++*+#@%#*#*+++++++*%%%#+=+*=::.:+*#=::::::::::::::::::
-...:::::::...::......:::--------=====:..:-===+++++=#%%##*+++++*##***#%+:-=:.:.:-**-:::::::::::::::::
-:::-=========------::::........+==+=:........:...::-%%%##+:.:=++:.:-+**###=:..::::.:::::::::::::::::
---=-:.........................:#*++-................*%%###=...:-....+####*+::..:::::::::::::::::::::
-............................:-*##+=-:-..............:#%%##+:......:-+###***-.:.::::::-::::::::::::::
-...........................:=*###*+***=..............=#####-......:-+****=+-:::::::::+**+===========
-........................::=***####*****...............####+:....-*#*##**++###**++******+==----------
-.......................:=****=+*++*###*:...........-+*#%#*=:....-*%%###############*#+===--:::::::::
-...................:-=+***###**+**++==-:.........-***######%#*:::-=++*############**+:::::::::::::--
-................*+******###*+++**#######+=:...::=#########%@%******#################*+=-::::::::----
-................:-+#*+++++*###########***+-:::-+**###########*######################**-::::::::::---
-..............:.:=######+=-----:--=*********+*****##########**########################*+--::--------
-.................:::::::::::::::::::::-=+*****######*+####*+*#*##########################**+--------
-::::::................::::::::::::::::::::=***######=-++==#%#*++#########################+----------
-:::::::::::::::.....:::::::::::::::::.:--=****###*##*--+#*+++++*#########################*+---------
-:::::::::::::::::::::::::::::::::.:-=++**###**########*=+++++*%%%%%%%%%%%%%################*=-------
-::::::::::::::::::::::::::::::::-##******#***######*++++*%@@%%%%%%%%%%%%%%%%%%###############+=----=
-:::::::::::::::::::::::::::::::::-##+*******++++++++*%%%%%%%%%%%%%%%%%%%%%%%%%%%#############%%%##*+
-::::::::::::::::::::::--------::::-*@@@@@%%%%%%%%%%%%%%#######%%%%%%%%%#%%%%%%####%%%%%%%%%%%%%%%%%%
--------:::::::::::-------::::::::--*%%%%%%%%%%%%%%#%##########%%%%%%%%##%%%%%%%%%%%%%%%%%%%%%%%%%%%%
--------------::::--:::::::::::::----=**#############%#######%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#****##%%
----------------------::::-----------------=+############%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%##*++====++
-=----------------------------------------=*#########%##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%##*++====++
-=-=====-=--==---------------------------=+#%####%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#*++++++++
-*/

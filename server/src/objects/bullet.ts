@@ -13,6 +13,7 @@ import { type Explosion } from "./explosion";
 import { type GameObject } from "./gameObject";
 import { Obstacle } from "./obstacle";
 import { type Player } from "./player";
+import { adjacentOrEquivLayer } from "@common/utils/layer";
 
 type Weapon = GunItem | Explosion;
 
@@ -34,7 +35,10 @@ export interface ServerBulletOptions {
     readonly rangeOverride?: number
     readonly saturate?: boolean
     readonly thin?: boolean
+    readonly split?: boolean
     readonly modifiers?: BulletOptions["modifiers"]
+    readonly shotFX?: boolean
+    readonly lastShot?: boolean
 }
 
 export class Bullet extends BaseBullet {
@@ -74,6 +78,10 @@ export class Bullet extends BaseBullet {
         this.layer = options.layer ?? shooter.layer;
 
         this.finalPosition = Vec.add(this.position, Vec.scale(this.direction, this.maxDistance));
+
+        this.shotFX = options.shotFX ?? false;
+
+        this.lastShot = options.lastShot ?? false;
     }
 
     update(): DamageRecord[] {
@@ -97,17 +105,20 @@ export class Bullet extends BaseBullet {
         const records: DamageRecord[] = [];
         const definition = this.definition;
 
-        const objects = grid.intersectsHitbox(lineRect);
+        const objects = grid.intersectsHitbox(lineRect, this.layer);
 
         const damageMod = (this.modifiers?.damage ?? 1) / (this.reflectionCount + 1);
         for (const collision of this.updateAndGetCollisions(dt, objects)) {
             const object = collision.object as DamageRecord["object"];
-            const { isObstacle } = object;
+            const { isObstacle, isProjectile } = object;
 
             if (isObstacle && object.definition.isStair) {
                 object.handleStairInteraction(this);
                 continue;
             }
+
+            // We check for projectiles first, not obstacles, otherwise stuff like tables or bushes won't be damaged by bullets.
+            if (isProjectile && !adjacentOrEquivLayer(object, this.layer)) continue;
 
             const { point, normal } = collision.intersection;
             const reflected = (
@@ -171,6 +182,8 @@ export class Bullet extends BaseBullet {
 
             this.collidedIDs.add(object.id);
 
+            // We check here for obstacles, after the collision was done, in order to damage tables and bushes.
+            // think of it as bullet penetration.
             if (isObstacle && object.definition.noCollisions) continue;
 
             if (reflected) {
@@ -180,16 +193,6 @@ export class Bullet extends BaseBullet {
 
             this.dead = true;
             break;
-        }
-
-        for (const object of objects) {
-            if (
-                object.isProjectile
-                && object.definition.health
-                && lineRect.collidesWith(object.hitbox)
-            ) {
-                object.damage({ amount: definition.damage });
-            }
         }
 
         return records;
@@ -209,7 +212,8 @@ export class Bullet extends BaseBullet {
                 modifiers: this.modifiers,
                 rangeOverride: this.clipDistance,
                 saturate: this.saturate,
-                thin: this.thin
+                thin: this.thin,
+                shotFX: false
             }
         );
     }

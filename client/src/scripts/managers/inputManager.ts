@@ -221,6 +221,7 @@ class InputManagerClass {
                 item = inventory.weapons[action.slot] as unknown as WeaponDefinition;
             }
 
+            // TODO always play sound, detect this elsewhere so the input action is never sent
             let playSound = !item.noDrop;
 
             if (playSound) {
@@ -235,10 +236,8 @@ class InputManagerClass {
                     case DefinitionType.Gun:
                     case DefinitionType.Melee:
                     case DefinitionType.Skin:
-                        playSound = true; // probably fine…?
-                        break;
                     case DefinitionType.Backpack:
-                        playSound = false; // womp womp
+                        playSound = true;
                         break;
                 }
             }
@@ -497,6 +496,40 @@ class InputManagerClass {
                     ? (b ? b : GameConsole.handleQuery("cycle_items 1", "always"), true)
                     : false;
             });
+        }
+
+        // Shake to reload feature
+        if (GameConsole.getBuiltInCVar("mb_shake_to_reload")) {
+            let lastAccel = { x: 0, y: 0, z: 0 };
+            let shakeCount = 0;
+            let lastShakeTime = 0;
+            const SHAKE_TIME_THRESHOLD = GameConsole.getBuiltInCVar("mb_shake_delay");
+            const SHAKE_FORCE_THRESHOLD = GameConsole.getBuiltInCVar("mb_shake_force"); // in m/s^2
+            const SHAKE_COUNT_THRESHOLD = GameConsole.getBuiltInCVar("mb_shake_count");
+
+            window.addEventListener("devicemotion", e => {
+                const accel = e.acceleration;
+                if (!accel) return;
+                const dX = Math.abs((accel.x ?? 0) - lastAccel.x);
+                const dY = Math.abs((accel.y ?? 0) - lastAccel.y);
+                const dZ = Math.abs((accel.z ?? 0) - lastAccel.z);
+                if (dX > SHAKE_FORCE_THRESHOLD || dY > SHAKE_FORCE_THRESHOLD || dZ > SHAKE_FORCE_THRESHOLD) {
+                    const now = Date.now();
+                    if (now - lastShakeTime < SHAKE_TIME_THRESHOLD) {
+                        shakeCount++;
+                    } else {
+                        shakeCount = 1;
+                    }
+                    lastShakeTime = now;
+                }
+                if (shakeCount >= SHAKE_COUNT_THRESHOLD) {
+                    GameConsole.handleQuery("reload");
+                    shakeCount = 0;
+                    lastShakeTime = 0;
+                }
+
+                lastAccel = { x: (accel.x ?? 0), y: (accel.y ?? 0), z: (accel.z ?? 0) };
+            }, true);
         }
 
         this.generateBindsConfigScreen();
