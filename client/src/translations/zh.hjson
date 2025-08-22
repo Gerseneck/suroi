@@ -33,6 +33,7 @@
 "msg_punishment_vpn_reason": "为了防止绕过封禁，不允许使用VPN和代理。请禁用你的VPN/代理后再进行游戏。如果你认为此消息有误，或者希望申请豁免，请联系Discord服务器（https://discord.suroi.io）上的管理员，或发送电子邮件至support@suroi.io。"
 "msg_no_reason": "未提供原因。"
 "msg_error_kicked_team": "你被踢出队伍。"
+"message_contact": "想与我们合作？"
 
 
 
@@ -73,6 +74,7 @@
 /*
     MAIN MENU LOADING - 主菜单加载
 */
+
 "loading_spritesheets": "加载图像中<progress>"
 "loading_connecting": "连接中"
 "loading_joining_game": "加入游戏中"
@@ -357,7 +359,7 @@
 
 
 /*
-    IN GAME KILLFEED - 游戏内击杀回报
+    IN GAME KILLFEED - 游戏内击杀播报
 */
 
 "kf_suicide_kill": "<player>自杀了"
