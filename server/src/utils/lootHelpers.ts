@@ -31,7 +31,7 @@ export type WeightedItem =
 
 export type SimpleLootTable = readonly WeightedItem[] | ReadonlyArray<readonly WeightedItem[]>;
 
-export type FullLootTable = {
+export interface FullLootTable {
     readonly min: number
     readonly max: number
     /**
@@ -39,7 +39,7 @@ export type FullLootTable = {
      */
     readonly noDuplicates?: boolean
     readonly loot: readonly WeightedItem[]
-};
+}
 
 export type LootTable = SimpleLootTable | FullLootTable;
 
@@ -106,7 +106,6 @@ function getLoot(modeName: ModeName, items: WeightedItem[], noDuplicates?: boole
     }
 
     if (definition.defType === DefinitionType.Gun) {
-        // eslint-disable-next-line prefer-const
         let { ammoType, ammoSpawnAmount } = definition;
 
         if (selection.spawnSeparately) {
@@ -136,7 +135,7 @@ function getLoot(modeName: ModeName, items: WeightedItem[], noDuplicates?: boole
 }
 
 // either return a reference as-is, or take all the non-null string references
-const referenceOrRandomOptions = <T extends ObjectDefinition>(obj: ReferenceOrRandom<T>): Array<ReferenceTo<T>> => {
+const referenceOrRandomOptions = <T extends ObjectDefinition>(obj: ReferenceOrRandom<T>): ReferenceTo<T>[] => {
     return typeof obj === "string"
         ? [obj]
         // well, Object.keys already filters out symbols so…
@@ -144,7 +143,7 @@ const referenceOrRandomOptions = <T extends ObjectDefinition>(obj: ReferenceOrRa
 };
 
 export type ItemRegistry = ReadonlySet<ReferenceTo<LootDefinition>> & {
-    forType<K extends ItemType>(type: K): ReadonlyArray<LootDefForType<K>>
+    forType<K extends ItemType>(type: K): readonly LootDefForType<K>[]
 };
 
 const defTypeToCollection: {
@@ -163,7 +162,7 @@ const defTypeToCollection: {
 };
 
 export type Cache = {
-    [K in ItemType]?: Array<LootDefForType<K>> | undefined;
+    [K in ItemType]?: LootDefForType<K>[] | undefined;
 };
 
 export function getSpawnableLoots(modeName: ModeName, mapDef: MapDefinition, cache: Cache): ItemRegistry {
@@ -221,7 +220,7 @@ export function getSpawnableLoots(modeName: ModeName, mapDef: MapDefinition, cac
         )
     ] satisfies readonly LootTable[];
 
-    const getAllItemsFromTable = (table: LootTable): Array<ReferenceTo<LootDefinition>> =>
+    const getAllItemsFromTable = (table: LootTable): ReferenceTo<LootDefinition>[] =>
         (
             Array.isArray(table)
                 ? table as SimpleLootTable
@@ -237,12 +236,10 @@ export function getSpawnableLoots(modeName: ModeName, mapDef: MapDefinition, cac
         = new Set<ReferenceTo<LootDefinition>>(
             reachableLootTables.map(getAllItemsFromTable).flat());
 
-    (spawnableLoots as ItemRegistry).forType = <K extends ItemType>(type: K): ReadonlyArray<LootDefForType<K>> => {
+    (spawnableLoots as ItemRegistry).forType = <K extends ItemType>(type: K): readonly LootDefForType<K>[] => {
         return (
             (
-                // without this seemingly useless assertion, assignability errors occur
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-                cache[type] as Array<LootDefForType<K>> | undefined
+                cache[type] as LootDefForType<K>[] | undefined
             ) ??= defTypeToCollection[type].definitions.filter(({ idString }) => spawnableLoots.has(idString))
         );
     };
@@ -259,11 +256,10 @@ export function getAllLoots(cache: Cache, dev?: boolean): ItemRegistry {
         ...Loots.definitions.filter(filter)
     ].map(({ idString }) => idString));
 
-    (allLoots as ItemRegistry).forType = <K extends ItemType>(type: K): ReadonlyArray<LootDefForType<K>> => {
+    (allLoots as ItemRegistry).forType = <K extends ItemType>(type: K): readonly LootDefForType<K>[] => {
         return (
             (
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-                cache[type] as Array<LootDefForType<K>> | undefined
+                cache[type] as LootDefForType<K>[] | undefined
             ) ??= defTypeToCollection[type].definitions.filter(({ idString }) => allLoots.has(idString))
         );
     };

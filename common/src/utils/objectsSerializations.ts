@@ -49,7 +49,8 @@ export interface ObjectsNetData extends BaseObjectsNetData {
             readonly teamID: number
             readonly invulnerable: boolean
             readonly activeItem: WeaponDefinition
-            readonly sizeMod?: number
+            readonly sizeMod: number
+            readonly reloadMod?: number
             readonly skin: SkinDefinition
             readonly helmet?: ArmorDefinition
             readonly vest?: ArmorDefinition
@@ -244,6 +245,7 @@ export const ObjectSerializations: { [K in ObjectCategory]: ObjectSerialization<
                 invulnerable,
                 activeItem,
                 sizeMod,
+                reloadMod,
                 skin,
                 helmet,
                 vest,
@@ -257,7 +259,7 @@ export const ObjectSerializations: { [K in ObjectCategory]: ObjectSerialization<
             } }
         ): void {
             stream.writeLayer(layer);
-            const hasSizeMod = sizeMod !== undefined;
+            const hasReloadMod = reloadMod !== undefined;
             const hasHelmet = helmet !== undefined;
             const hasVest = vest !== undefined;
             const hasDisguise = activeDisguise !== undefined;
@@ -268,7 +270,7 @@ export const ObjectSerializations: { [K in ObjectCategory]: ObjectSerialization<
                 downed,
                 beingRevived,
                 invulnerable,
-                hasSizeMod,
+                hasReloadMod,
                 halloweenThrowableSkin,
                 hasHelmet,
                 hasVest,
@@ -281,8 +283,10 @@ export const ObjectSerializations: { [K in ObjectCategory]: ObjectSerialization<
             stream.writeUint8(teamID);
             Loots.writeToStream(stream, activeItem);
 
-            if (hasSizeMod) {
-                stream.writeFloat(sizeMod, 0, 4, 1);
+            stream.writeFloat(sizeMod, 0, 4, 1);
+
+            if (hasReloadMod) {
+                stream.writeFloat(reloadMod, 0, 4, 1);
             }
 
             Skins.writeToStream(stream, skin);
@@ -329,7 +333,7 @@ export const ObjectSerializations: { [K in ObjectCategory]: ObjectSerialization<
                 downed,
                 beingRevived,
                 invulnerable,
-                hasSizeMod,
+                hasReloadMod,
                 halloweenThrowableSkin,
                 hasHelmet,
                 hasVest,
@@ -349,7 +353,8 @@ export const ObjectSerializations: { [K in ObjectCategory]: ObjectSerialization<
                 halloweenThrowableSkin,
                 teamID: stream.readUint8(),
                 activeItem: Loots.readFromStream(stream),
-                sizeMod: hasSizeMod ? stream.readFloat(0, 4, 1) : undefined,
+                sizeMod: stream.readFloat(0, 4, 1),
+                reloadMod: hasReloadMod ? stream.readFloat(0, 4, 1) : undefined,
                 skin: Skins.readFromStream(stream),
                 helmet: hasHelmet ? Armors.readFromStream(stream) : undefined,
                 vest: hasVest ? Armors.readFromStream(stream) : undefined,
@@ -751,13 +756,13 @@ export const ObjectSerializations: { [K in ObjectCategory]: ObjectSerialization<
 
             if (typeof definition.lifetime === "object") {
                 const { min, max } = definition.lifetime;
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                // biome-ignore lint/style/noNonNullAssertion: cannot be undefined here
                 stream.writeFloat(lifetime!, min, max, 1);
             }
 
             if (typeof definition.angularVelocity === "object") {
                 const { min, max } = definition.angularVelocity;
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                // biome-ignore lint/style/noNonNullAssertion: cannot be undefined here
                 stream.writeFloat(angularVelocity!, min, max, 1);
             }
 

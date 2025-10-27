@@ -23,7 +23,7 @@ import { GameConsole } from "../console/gameConsole";
 import { Game } from "../game";
 import { type GameObject } from "../objects/gameObject";
 import { Player } from "../objects/player";
-import { TEAMMATE_COLORS, UI_DEBUG_MODE } from "../utils/constants";
+import { PERK_MESSAGE_FADE_TIME, TEAMMATE_COLORS, UI_DEBUG_MODE } from "../utils/constants";
 import { formatDate, html } from "../utils/misc";
 import { SuroiSprite } from "../utils/pixi";
 import { getTranslatedString, TRANSLATIONS } from "../utils/translations/translations";
@@ -100,7 +100,7 @@ class UIManagerClass {
 
         const name = this.getRawPlayerName(id);
 
-        if (player && player.hasColor && !GameConsole.getBuiltInCVar("cv_anonymize_player_names")) {
+        if (player?.hasColor && !GameConsole.getBuiltInCVar("cv_anonymize_player_names")) {
             element.css("color", player.nameColor?.toHex() ?? "");
         }
 
@@ -177,6 +177,8 @@ class UIManagerClass {
         adrenalineBarAmount: $<HTMLSpanElement>("#adrenaline-bar-amount"),
 
         shieldBar: $<HTMLDivElement>("#shield-bar"),
+
+        infectionBar: $<HTMLDivElement>("#infection-bar"),
 
         killFeed: $<HTMLDivElement>("#kill-feed"),
 
@@ -605,6 +607,7 @@ class UIManagerClass {
             health,
             adrenaline,
             shield,
+            infection,
             zoom,
             id,
             teammates,
@@ -770,8 +773,7 @@ class UIManagerClass {
             });
 
             for (const outdated of notVisited) {
-                // the `notVisited` set is exclusively populated with keys from this map
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                // biome-ignore lint/style/noNonNullAssertion: the `notVisited` set is exclusively populated with keys from this map
                 _teammateDataCache.get(outdated)!.destroy();
                 _teammateDataCache.delete(outdated);
             }
@@ -813,6 +815,10 @@ class UIManagerClass {
             this.ui.shieldBar.css("clip-path", `inset(0 ${(1 - shield) * 100}% 0 0)`);
         }
 
+        if (infection !== undefined) {
+            this.ui.infectionBar.css("clip-path", `inset(0 ${(1 - infection) * 100}% 0 0)`);
+        }
+
         if (inventory?.weapons) {
             this.inventory.weapons = inventory.weapons;
             this.inventory.activeWeaponIndex = inventory.activeWeaponIndex;
@@ -843,10 +849,12 @@ class UIManagerClass {
             PerkManager.perks = perks;
             for (let i = 0; i < GameConstants.player.maxPerks; i++) {
                 const newPerk = perks[i];
+
                 if (newPerk === undefined) {
                     this.resetPerkSlot(i);
                     continue;
                 }
+
                 if (oldPerks[i] !== newPerk) {
                     this.updatePerkSlot(newPerk, i);
                 }
@@ -949,7 +957,7 @@ class UIManagerClass {
         this.weaponCache.length = 0;
     }
 
-    updateWeaponSlots(): void {
+    updateWeaponSlots(force = false): void {
         const inventory = this.inventory;
 
         for (let i = 0, max = GameConstants.player.maxWeapons; i < max; i++) {
@@ -978,7 +986,7 @@ class UIManagerClass {
 
             const definition = weapon?.definition;
             const idString = definition?.idString;
-            if (idString !== cache.idString || isNew) {
+            if (idString !== cache.idString || isNew || force) {
                 cache.idString = idString;
 
                 if (definition) {
@@ -1066,7 +1074,6 @@ class UIManagerClass {
 
     private _playSlotAnimation(element: JQuery): void {
         element.toggleClass("active");
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         element[0].offsetWidth; // causes browser reflow
         element.toggleClass("active");
     }
@@ -1086,14 +1093,42 @@ class UIManagerClass {
         if (index > GameConstants.player.maxPerks) index = 0; // overwrite stuff ig?
         // no, write a hud that can handle it
 
+        if (perkDef.hideInHUD) {
+            this.resetPerkSlot(index);
+            return;
+        }
+
+        const folder = perkDef.category === PerkCategories.Halloween ? "halloween" : "shared",
+            perkSrc = `./img/game/${folder}/perks/${perkDef.idString}.svg`,
+            lootBg = `./img/game/shared/loot/loot_background_${perkDef.idString === PerkIds.PlumpkinGamble ? PerkIds.PlumpkinGamble : "perk"}.svg`,
+            perkName = getTranslatedString(perkDef.idString as unknown as TranslationKeys);
+
+        const { killMsgModal, inventoryMsg, interactMsg } = this.ui;
+
+        if (!Game.spectating) {
+            clearTimeout(Game.inventoryMsgTimeout);
+            killMsgModal.fadeOut(PERK_MESSAGE_FADE_TIME);
+            interactMsg.fadeOut(PERK_MESSAGE_FADE_TIME);
+
+            inventoryMsg
+                .fadeOut(0)
+                .html(`
+                    <div id="perk" style="background-image: url(${lootBg});">
+                        <img class="perk-img" src="${perkSrc}" draggable="false"/>
+                    </div>
+                    <strong class="perk-name">${perkName}</strong>
+                `)
+                .fadeIn(PERK_MESSAGE_FADE_TIME);
+        }
+
         const container = this._perkSlots[index] ??= $<HTMLDivElement>(`#perk-slot-${index}`);
         container.attr("data-idString", perkDef.idString);
-        container.children(".item-tooltip").html(`<strong>${getTranslatedString(perkDef.idString as unknown as TranslationKeys)}</strong><br>${getTranslatedString(`${perkDef.idString}_desc` as TranslationKeys)}`);
-        container.children(".item-image").attr("src", `./img/game/${perkDef.category === PerkCategories.Halloween ? "halloween" : "shared"}/perks/${perkDef.idString}.svg`);
+        container.children(".item-tooltip").html(`<strong>${perkName}</strong><br>${getTranslatedString(`${perkDef.idString}_desc` as TranslationKeys)}`);
+        container.children(".item-image").attr("src", perkSrc);
         container.css("visibility", PerkManager.has(perkDef) ? "visible" : "hidden");
         if (container.hasClass("deactivated")) container.toggleClass("deactivated");
 
-        container.css("outline", !perkDef.noDrop ? "" : "none");
+        container.css("outline", perkDef.noDrop || PerkManager.has(PerkIds.Infected) || Game.spectating ? "none" : "");
 
         const flashAnimationDuration = 3000; // ms
 
@@ -1105,6 +1140,7 @@ class UIManagerClass {
 
         this._animationTimeouts[index] = window.setTimeout(() => {
             container.css("animation", "none");
+            if (!Game.spectating) inventoryMsg.fadeOut(PERK_MESSAGE_FADE_TIME);
         }, flashAnimationDuration);
     }
 
@@ -1130,6 +1166,8 @@ class UIManagerClass {
             const isPresent = count > 0 || UI_DEBUG_MODE;
 
             itemSlot.toggleClass("has-item", isPresent);
+
+            itemSlot.css("outline", count === 0 || itemDef.noDrop || Game.spectating ? "none" : "");
 
             if ((itemDef.defType === DefinitionType.Ammo || itemDef.defType === DefinitionType.HealingItem) && itemDef.hideUnlessPresent) {
                 itemSlot.css("visibility", isPresent ? "visible" : "hidden");

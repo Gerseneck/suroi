@@ -36,7 +36,6 @@ import { SuroiByteStream } from "@common/utils/suroiByteStream";
 import { FloorNames, FloorTypes } from "@common/utils/terrain";
 import { Vec, type Vector } from "@common/utils/vector";
 import { randomBytes } from "crypto";
-import { WebSocket } from "uWebSockets.js";
 import { type Game } from "../game";
 import { HealingAction, ReloadAction, ReviveAction, type Action } from "../inventory/action";
 import { GunItem } from "../inventory/gunItem";
@@ -46,6 +45,7 @@ import { MeleeItem } from "../inventory/meleeItem";
 import { ThrowableItem } from "../inventory/throwableItem";
 import { type Team } from "../team";
 import { Config } from "../utils/config";
+import { serverWarn } from "../utils/serverHelpers";
 import { DeathMarker } from "./deathMarker";
 import { Emote } from "./emote";
 import { Explosion } from "./explosion";
@@ -55,7 +55,6 @@ import { MapIndicator } from "./mapIndicator";
 import { Obstacle } from "./obstacle";
 import { Projectile } from "./projectile";
 import { type SyncedParticle } from "./syncedParticle";
-import { serverWarn } from "../utils/serverHelpers";
 
 export interface PlayerSocketData {
     player?: Player
@@ -174,6 +173,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         this._team?.setDirty();
         this.dirty.health = true;
         this._normalizedHealth = Numeric.remap(this.health, 0, this.maxHealth, 0, 1);
+
+        if (this.hasPerk(PerkIds.SecondWind) && !(this._health / this._maxHealth < 0.5)) this._modifiers.baseSpeed = 1;
     }
 
     private _maxAdrenaline = GameConstants.player.maxAdrenaline;
@@ -276,6 +277,62 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         this.setDirty();
     }
 
+    private _reloadMod = 1;
+    get reloadMod(): number { return this._reloadMod; }
+    set reloadMod(reload: number) {
+        if (this._reloadMod === reload) return;
+
+        this._reloadMod = reload;
+        this.dirty.reload = true;
+        this.setDirty();
+    }
+
+    private _fireRateMod = 1;
+    get fireRateMod(): number { return this._fireRateMod; }
+    set fireRateMod(fireRate: number) {
+        if (this._fireRateMod === fireRate) return;
+
+        this._fireRateMod = fireRate;
+    }
+
+    private _maxInfection = GameConstants.player.maxInfection;
+
+    private _normalizedInfection = 0;
+    get normalizedInfection(): number { return this._normalizedInfection; }
+
+    get maxInfection(): number { return this._maxInfection; }
+    set maxInfection(maxInfection: number) {
+        if (this._maxInfection === maxInfection) return;
+        this._maxInfection = maxInfection;
+        this.dirty.maxMinStats = true;
+
+        if (this._infection < this._maxInfection) {
+            this._normalizedInfection = Numeric.remap(this.infection, 0, this.maxInfection, 0, 1);
+            this.dirty.infection = true;
+        } else {
+            this.infection = this._infection;
+        }
+    }
+
+    private _infection = 0;
+    get infection(): number { return this._infection; }
+    set infection(infection: number) {
+        const clamped = Numeric.clamp(infection, 0, this._maxInfection);
+        if (this._infection === clamped || this.hasPerk(PerkIds.Immunity)) return;
+
+        this._infection = clamped;
+        this.dirty.infection = true;
+        this._normalizedInfection = Numeric.remap(this.infection, 0, this.maxInfection, 0, 1);
+
+        const infected = this.infection >= 100;
+        if (infected) {
+            this.addPerk(PerkIds.Infected);
+            this.setDirty();
+        } else if (this.infection <= 0) {
+            this.removePerk(PerkIds.Infected);
+        }
+    }
+
     private _modifiers = GameConstants.player.defaultModifiers();
 
     killedBy?: Player;
@@ -349,7 +406,9 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         maxMinStats: true,
         adrenaline: true,
         shield: true,
+        infection: true,
         size: true,
+        reload: true,
         weapons: true,
         slotLocks: true,
         items: true,
@@ -431,7 +490,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         this.dirty.zoom = true;
     }
 
-    readonly socket: WebSocket<PlayerSocketData> | undefined;
+    readonly socket: Bun.ServerWebSocket<PlayerSocketData> | undefined;
 
     private readonly _action: { type?: Action, dirty: boolean } = {
         type: undefined,
@@ -546,7 +605,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
     recentlyHitPlayers?: Map<Player, number>;
 
-    constructor(game: Game, socket: WebSocket<PlayerSocketData> | undefined, position: Vector, layer?: Layer, team?: Team) {
+    constructor(game: Game, socket: Bun.ServerWebSocket<PlayerSocketData> | undefined, position: Vector, layer?: Layer, team?: Team) {
         super(game, position);
 
         if (layer !== undefined) {
@@ -563,7 +622,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         }
 
         this.socket = socket;
-        const data = socket?.getUserData() ?? {} as Partial<PlayerSocketData>;
+        const data = socket?.data ?? {} as Partial<PlayerSocketData>;
         this.name = GameConstants.player.defaultName;
         this.ip = data.ip;
         this.role = data.role;
@@ -700,8 +759,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         inventory.items.incrementItem(idString, count ?? inventory.backpack.maxCapacity[idString]);
         inventory.useItem(idString);
 
-        // we hope `throwableItemMap` is correctly sync'd
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        // biome-ignore lint/style/noNonNullAssertion: we hope `throwableItemMap` is correctly sync'd
         inventory.throwableItemMap.get(idString)!.count = inventory.items.getItem(idString);
     }
 
@@ -744,7 +802,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         this.targetHitCountExpiration?.kill();
         this.targetHitCountExpiration = this.game.addTimeout(() => {
             this.bulletTargetHitCount = 0;
-        }, margin * item.definition.fireDelay);
+        }, margin * item.definition.fireDelay * this.fireRateMod);
 
         if (this.bulletTargetHitCount < hitsNeeded) {
             ++this.bulletTargetHitCount;
@@ -836,7 +894,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 const { idString } = chosenItem;
 
                 const count = items.hasItem(idString) ? items.getItem(idString) : 0;
-                const max = maxCapacity[idString];
+                const max = chosenItem.maxSwapCount ?? maxCapacity[idString];
 
                 const toAdd = Numeric.min(max - count, 3);
                 // toAdd is greater than 0
@@ -906,8 +964,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             items.setItem(item, maxCapacity);
 
             if (inventory.throwableItemMap.has(item)) {
-                // we hope `throwableItemMap` is correctly sync'd
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                // biome-ignore lint/style/noNonNullAssertion: we hope `throwableItemMap` is correctly sync'd
                 inventory.throwableItemMap.get(item)!.count = maxCapacity;
             }
         }
@@ -1019,6 +1076,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             ) {
                 isInsideBuilding = true;
                 scopeTarget ??= object.definition.ceilingScope;
+
+                if (object.definition.ceilingInfectionUnits) this.infection += object.definition.ceilingInfectionUnits;
             } else if (
                 object.isSyncedParticle
                 && object.hitbox?.collidesWith(this._hitbox)
@@ -1228,7 +1287,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             toRegen += adrenRegen * this.mapPerkOrDefault(
                 PerkIds.LacedStimulants,
                 ({ healDmgRate, lowerHpLimit }) => (this.health <= lowerHpLimit ? 1 : -healDmgRate),
-                (this.adrenaline > 0 || (this.normalizedHealth < 0.3 && !this.hasPerk(PerkIds.Infected))) && !this.downed ? 1 : 0
+                this.adrenaline > 0 && !this.downed ? 1 : 0
             );
 
             // Drain adrenaline
@@ -1240,6 +1299,11 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         if (this.hasBubble) {
             const _toRegen = this._modifiers.shieldRegen;
             this.shield += dt / 1000 * _toRegen;
+        }
+
+        // Infection regen
+        if (this.hasPerk(PerkIds.Infected)) {
+            this.infection += dt / 1000;
         }
 
         // Shoot gun/use item
@@ -1341,7 +1405,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 switch (perk.idString) {
                     case PerkIds.Bloodthirst: {
                         this.piercingDamage({
-                            amount: perk.healthLoss
+                            amount: perk.healthLoss,
+                            source: DamageSources.BleedOut
                         });
                         break;
                     }
@@ -1381,7 +1446,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                     case PerkIds.RottenPlumpkin: {
                         this.sendEmote(Emotes.fromStringSafe(perk.emote), true);
                         this.piercingDamage({
-                            amount: perk.healthLoss
+                            amount: perk.healthLoss,
+                            source: DamageSources.BleedOut
                         });
                         this.adrenaline -= this.adrenaline * (perk.adrenLoss / 100);
                         break;
@@ -1396,21 +1462,38 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                         );
                         break;
                     }
-                    case PerkIds.Infected: {
+                    case PerkIds.Necrosis: {
+                        // 1) Bleed health slowly*
                         if (this.health > perk.minHealth) {
                             this.health = Numeric.max(this.health - perk.dps, perk.minHealth);
                         }
+
+                        // 2) Infect nearby players
                         const detectionHitbox = new CircleHitbox(perk.infectionRadius, this.position);
                         for (const player of this.game.grid.intersectsHitbox(detectionHitbox)) {
                             if (
                                 !player.isPlayer
                                 || !player.hitbox.collidesWith(detectionHitbox)
-                                || Math.random() > perk.infectionChance
                                 || player.hasPerk(PerkIds.Immunity)
+                                || !adjacentOrEqualLayer(this.layer, player.layer)
+                                || player.dead
                             ) continue;
-                            player.addPerk(Perks.fromString(PerkIds.Infected));
-                            player.setDirty();
+                            player.infection += perk.infectionUnits;
                         }
+                        break;
+                    }
+                    case PerkIds.Infected: {
+                        // 1) Bleed health slowly* ^
+                        // 2) Infect nearby players
+                        // Used by Necrosis, a perk that does not display in HUD.
+
+                        // 3) Random perk swap, without removing the perk itself
+                        const allowedPerks = Perks.definitions.filter(perk => perk.category !== PerkCategories.Infection && !perk.infectedEffectIgnore),
+                            perkToRemove = this.perks.find(perk => perk.category !== PerkCategories.Infection && !perk.infectedEffectIgnore),
+                            randomPerk = pickRandomInArray(allowedPerks);
+
+                        if (perkToRemove !== undefined) this.removePerk(perkToRemove);
+                        this.addPerk(randomPerk);
                         break;
                     }
                 }
@@ -1628,6 +1711,10 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
         if (player.dirty.shield || forceInclude) {
             playerData.shield = player._normalizedShield;
+        }
+
+        if (player.dirty.infection || forceInclude) {
+            playerData.infection = player._normalizedInfection;
         }
 
         if (player.dirty.zoom || forceInclude) {
@@ -1896,6 +1983,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 }
                 break;
             }
+            case PerkIds.Butterfingers:
             case PerkIds.CombatExpert: {
                 if (this.action?.type === PlayerActions.Reload) this.action?.cancel();
                 break;
@@ -1915,6 +2003,15 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             case PerkIds.Overdrive: {
                 this.overdriveTimeout?.kill();
                 this.overdriveKills = 0;
+                break;
+            }
+            case PerkIds.Infected: {
+                this.infection = 100;
+                this.addPerk(PerkIds.Necrosis);
+                break;
+            }
+            case PerkIds.PriorityTarget: {
+                this.updateMapIndicator();
                 break;
             }
         }
@@ -1984,6 +2081,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 this.setDirty();
                 break;
             }
+            case PerkIds.Butterfingers:
             case PerkIds.CombatExpert: {
                 if (this.action?.type === PlayerActions.Reload) this.action?.cancel();
                 break;
@@ -1995,7 +2093,12 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 break;
             }
             case PerkIds.Infected: { // evil
+                this.removePerk(PerkIds.Necrosis);
+                const perkToRemove = this.perks.find(perk => perk.category !== PerkCategories.Infection && !perk.infectedEffectIgnore);
+                if (perkToRemove !== undefined) this.removePerk(perkToRemove);
+
                 const immunity = PerkData[PerkIds.Immunity];
+                this.infection = 0;
                 this.addPerk(immunity);
                 this.immunityTimeout?.kill();
                 this.immunityTimeout = this.game.addTimeout(() => this.removePerk(immunity), immunity.duration);
@@ -2010,6 +2113,10 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             case PerkIds.Overdrive: {
                 this.overdriveTimeout?.kill();
                 this.overdriveKills = 0;
+                break;
+            }
+            case PerkIds.PriorityTarget: {
+                this.updateMapIndicator();
                 break;
             }
         }
@@ -2063,6 +2170,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 indicator = "juggernaut_indicator";
                 break;
         }
+
+        if (this.hasPerk(PerkIds.PriorityTarget)) indicator = "priority_target";
 
         if (indicator) {
             if (this.mapIndicator) {
@@ -2228,7 +2337,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
     sendData(buffer: ArrayBuffer): void {
         try {
-            this.socket?.send(buffer, true, false);
+            this.socket?.send(buffer);
         } catch (e) {
             console.warn("Error sending packet. Details:", e);
         }
@@ -2409,8 +2518,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 {
                     item: weaponUsed,
 
-                    // canTrackStats ensures this object's existence
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    // biome-ignore lint/style/noNonNullAssertion: canTrackStats ensures this object's existence
                     oldStats: oldStats!,
                     newStats: { ...weaponUsed.stats },
                     diff: {
@@ -2444,6 +2552,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             newModifiers.maxHealth *= modifiers.maxHealth;
             newModifiers.baseSpeed *= modifiers.baseSpeed;
             newModifiers.size *= modifiers.size;
+            newModifiers.reload *= modifiers.reload;
             newModifiers.adrenDrain *= modifiers.adrenDrain;
 
             newModifiers.minAdrenaline += modifiers.minAdrenaline;
@@ -2492,14 +2601,9 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                     }
                     break;
                 }
+                case PerkIds.Overweight:
                 case PerkIds.LowProfile: {
                     newModifiers.size *= perk.sizeMod;
-                    break;
-                }
-                case PerkIds.Infected: {
-                    newModifiers.baseSpeed *= perk.speedMod;
-                    newModifiers.maxHealth *= perk.healthMod;
-                    newModifiers.adrenDrain *= perk.adrenDrainMod;
                     break;
                 }
                 case PerkIds.ExperimentalForcefield: {
@@ -2512,6 +2616,15 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                     this.overdriveTimeout = this.game.addTimeout(() => {
                         this.overdriveKills = 0;
                     }, perk.achieveTime); */
+                    break;
+                }
+                case PerkIds.Butterfingers:
+                case PerkIds.CombatExpert: {
+                    newModifiers.reload *= perk.reloadMod;
+                    break;
+                }
+                case PerkIds.Overclocked: {
+                    newModifiers.fireRate *= perk.fireRateMod;
                     break;
                 }
             }
@@ -2553,7 +2666,9 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
             maxAdrenaline,
             minAdrenaline,
             maxShield,
-            size
+            size,
+            reload,
+            fireRate
         } = this._modifiers = this._calculateModifiers();
 
         this.maxHealth = GameConstants.player.defaultHealth * maxHealth;
@@ -2561,6 +2676,8 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
         this.maxShield = GameConstants.player.maxShield * maxShield;
         this.minAdrenaline = minAdrenaline;
         this.sizeMod = size;
+        this.reloadMod = reload;
+        this.fireRateMod = fireRate;
     }
 
     updateBackEquippedMelee(): void {
@@ -2812,10 +2929,12 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
         // Drop perks
         for (const perk of this.perks) {
-            if (!perk.noDrop) {
-                this.game.addLoot(perk, position, layer);
-            } else if (perk.noDrop && perk.category === PerkCategories.Halloween) {
-                this.game.addLoot(PerkIds.PlumpkinGamble, position, layer);
+            if (!this.hasPerk(PerkIds.Infected)) {
+                if (!perk.noDrop) {
+                    this.game.addLoot(perk, position, layer);
+                } else if (perk.noDrop && perk.category === PerkCategories.Halloween) {
+                    this.game.addLoot(PerkIds.PlumpkinGamble, position, layer);
+                }
             }
         }
 
@@ -2877,8 +2996,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 });
             }
 
-            // team can't be nullish here because if it were, it would fail the conditional this code is wrapped in
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            // biome-ignore lint/style/noNonNullAssertion: team can't be nullish here because if it were, it would fail the conditional this code is wrapped in
             this.game.teams.delete(team!);
         }
     }
@@ -3046,7 +3164,6 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 case InputActions.ToggleSlotLock: {
                     const slot = action.slot;
 
-                    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                     inventory.isLocked(slot)
                         ? (this.hasPerk(PerkIds.Lycanthropy) || inventory.unlock(slot))
                         : inventory.lock(slot);
@@ -3173,6 +3290,7 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
                 teamID: this.teamID ?? 0,
                 invulnerable: this.invulnerable,
                 activeItem: this.activeItem.definition,
+                sizeMod: this.sizeMod,
                 skin: this.loadout.skin,
                 helmet: this.inventory.helmet,
                 vest: this.inventory.vest,
@@ -3188,6 +3306,10 @@ export class Player extends BaseGameObject.derive(ObjectCategory.Player) {
 
         if (this.dirty.size) {
             data.full.sizeMod = this._sizeMod;
+        }
+
+        if (this.dirty.reload) {
+            data.full.reloadMod = this._reloadMod;
         }
 
         if (this._animation.dirty) {

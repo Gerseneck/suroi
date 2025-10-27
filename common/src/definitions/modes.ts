@@ -29,7 +29,10 @@ export interface ModeDefinition {
     readonly replaceMenuMusic?: boolean
     readonly defaultScope?: ReferenceTo<ScopeDefinition>
     readonly obstacleVariants?: boolean
-    readonly darkShaders?: boolean
+    readonly canvasFilters?: {
+        readonly brightness: number
+        readonly saturation: number
+    }
     /** will be multiplied by the bullet trail color */
     readonly bulletTrailAdjust?: string
     readonly particleEffects?: {
@@ -96,10 +99,13 @@ export const Modes: Record<ModeName, ModeDefinition> = {
         },
         ambience: "wind_ambience",
         defaultScope: "2x_scope",
-        darkShaders: true,
         spriteSheets: ["shared", "fall", "halloween"],
         specialLogo: true,
-        playButtonImage: "./img/game/halloween/obstacles/jack_o_lantern.svg"
+        playButtonImage: "./img/game/halloween/obstacles/jack_o_lantern.svg",
+        canvasFilters: {
+            brightness: 0.65,
+            saturation: 0.85
+        }
     },
     infection: {
         colors: {
@@ -115,7 +121,11 @@ export const Modes: Record<ModeName, ModeDefinition> = {
         ambience: "wind_ambience",
         spriteSheets: ["shared", "normal", "infection"],
         playButtonImage: "./img/game/shared/perks/infected.svg",
-        weaponSwap: true
+        weaponSwap: true,
+        canvasFilters: {
+            brightness: 0.8,
+            saturation: 0.8
+        }
     },
     birthday: { // copy of normal
         colors: {

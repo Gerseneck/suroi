@@ -65,7 +65,7 @@ export interface MapDefinition {
         readonly maxWidth: number
         readonly maxHeight: number
         readonly count: number
-        readonly allowedObstacles: ReadonlyArray<ReferenceTo<ObstacleDefinition>>
+        readonly allowedObstacles: readonly ReferenceTo<ObstacleDefinition>[]
         readonly obstacles: ReadonlyArray<{
             readonly idString: ReferenceTo<ObstacleDefinition>
             readonly min: number
@@ -73,8 +73,8 @@ export interface MapDefinition {
         }>
     }
 
-    readonly bridges?: ReadonlyArray<ReferenceTo<BuildingDefinition>>
-    readonly majorBuildings?: ReadonlyArray<ReferenceTo<BuildingDefinition>>
+    readonly bridges?: readonly ReferenceTo<BuildingDefinition>[]
+    readonly majorBuildings?: readonly ReferenceTo<BuildingDefinition>[]
     readonly buildings?: Record<ReferenceTo<BuildingDefinition>, number>
     readonly quadBuildingLimit?: Record<ReferenceTo<BuildingDefinition>, number>
     readonly obstacles?: Record<ReferenceTo<ObstacleDefinition>, number>
@@ -89,7 +89,7 @@ export interface MapDefinition {
     readonly onGenerate?: (map: GameMap, params: string[]) => void
 }
 
-export type ObstacleClump = {
+export interface ObstacleClump {
     /**
      * How many of these clumps per map
      */
@@ -101,13 +101,13 @@ export type ObstacleClump = {
         /**
          * Id's of obstacles that may appear in the clump
          */
-        readonly obstacles: ReadonlyArray<ReferenceTo<ObstacleDefinition>>
+        readonly obstacles: readonly ReferenceTo<ObstacleDefinition>[]
         readonly minAmount: number
         readonly maxAmount: number
         readonly radius: number
         readonly jitter: number
     }
-};
+}
 
 export const enum SpawnMode {
     Normal,
@@ -609,8 +609,8 @@ const maps = {
         oceanSize: 128,
         beachSize: 32,
         rivers: {
-            minAmount: 2,
-            maxAmount: 3,
+            minAmount: 1,
+            maxAmount: 2,
             maxWideAmount: 1,
             wideChance: 0.35,
             minWidth: 12,
@@ -625,28 +625,25 @@ const maps = {
         buildings: {
             large_bridge: 2,
             small_bridge: Infinity,
-            port: 1,
+            graveyard: 1,
+            medical_camp: 1,
             river_hut_1: 2,
             river_hut_2: 2,
             river_hut_3: 2,
             lighthouse: 1,
             tugboat_red: 1,
             tugboat_white: 5,
-            armory: 1,
-            headquarters: 1,
             fulcrum_bunker: 1,
             small_bunker: 1,
-            refinery: 1,
             warehouse: 5,
-            // mini_warehouse: 1,
+            mini_warehouse: 1,
             green_house: 3,
             blue_house: 2,
             blue_house_special: 1,
             red_house: 3,
             red_house_v2: 3,
-            construction_site: 1,
-            mobile_home: 10,
-            porta_potty: 12,
+            mobile_home: 8,
+            porta_potty: 8,
             container_3: 2,
             container_4: 2,
             container_5: 2,
@@ -658,37 +655,40 @@ const maps = {
             memorial: 1,
             buoy: 12
         },
-        majorBuildings: ["armory", "refinery", "port", "headquarters"],
+        majorBuildings: [
+            "port",
+            "armory",
+            "headquarters",
+            "refinery"
+        ],
         quadBuildingLimit: {
+            warehouse: 2,
+            mobile_home: 2,
+            porta_potty: 2,
+            red_house: 2,
+            red_house_v2: 2,
+            green_house: 2,
+            blue_house: 2,
+            blue_house_special: 1,
             river_hut_1: 1,
             river_hut_2: 1,
-            river_hut_3: 1,
-            red_house: 1,
-            red_house_v2: 1,
-            warehouse: 2,
-            green_house: 1,
-            blue_house: 1,
-            mobile_home: 3,
-            porta_potty: 3,
-            construction_site: 1,
-            blue_house_special: 1
+            river_hut_3: 1
         },
         obstacles: {
             oil_tank: 12,
-            oak_tree: 110,
-            birch_tree: 20,
-            pine_tree: 10,
+            oak_tree: 90,
+            birch_tree: 15,
+            pine_tree: 12,
             loot_tree: 1,
             baby_plumpkin_infection: 200,
             regular_crate: 140,
             flint_crate: 5,
             aegis_crate: 5,
             grenade_crate: 35,
-            rock: 150,
+            rock: 180,
             river_chest: 1,
             bush: 110,
-            // birthday_cake: 100, // birthday mode
-            blueberry_bush: 30,
+            blueberry_bush: 35,
             barrel: 80,
             viking_chest: 1,
             super_barrel: 30,
@@ -699,7 +699,7 @@ const maps = {
         },
         obstacleClumps: [
             {
-                clumpAmount: 100,
+                clumpAmount: 80,
                 clump: {
                     minAmount: 2,
                     maxAmount: 3,
@@ -709,7 +709,7 @@ const maps = {
                 }
             },
             {
-                clumpAmount: 25,
+                clumpAmount: 15,
                 clump: {
                     minAmount: 2,
                     maxAmount: 3,
@@ -744,7 +744,7 @@ const maps = {
     hunted: {
         width: 1924,
         height: 1924,
-        oceanSize: 66,
+        oceanSize: 128,
         beachSize: 32,
         rivers: {
             minAmount: 1,
@@ -768,12 +768,14 @@ const maps = {
         ],
         buildings: {
             small_bridge: Infinity,
+            decayed_bridge: 3,
             docks: 8,
             outhouse: 8,
             cabin: 6,
             carport: 4,
             hunting_stand: 12,
             warehouse_hunted: 5,
+            train_station: 2,
             fox_bunker: 1,
             moose_bunker: 1,
             bear_bunker: 1,
@@ -790,13 +792,15 @@ const maps = {
             cabin: 3,
             hollow_log_1: 3,
             hollow_log_2: 3,
-            hollow_log_3: 3
+            hollow_log_3: 3,
+            decayed_bridge: 1,
+            train_station: 1
         },
         obstacles: {
             stump: 80,
             small_logs_pile: 30,
             large_logs_pile_2: 20,
-            clearing_boulder: 18,
+            clearing_boulder: 22,
             pine_tree: 100,
             spruce_tree: 92,
             dead_pine_tree: 55,
@@ -816,7 +820,8 @@ const maps = {
             gold_rock: 1,
             nsd_rock: 1,
             reinforced_crate: 1,
-            hatchet_stump: 3
+            hatchet_stump: 3,
+            small_logs_pile_hs: 1
         },
         obstacleClumps: [
             {
@@ -1086,9 +1091,10 @@ const maps = {
                         ((item.defType === DefinitionType.Melee || item.defType === DefinitionType.Scope) && item.noDrop)
                         || (item.defType === DefinitionType.Ammo && item.ephemeral)
                         || (item.defType === DefinitionType.Backpack && item.level === 0)
-                        || (item.defType === DefinitionType.Perk && item.category === PerkCategories.Halloween)
+                        || (item.defType === DefinitionType.Perk && (item.hideInHUD || item.category === PerkCategories.Halloween))
                         || item.defType === DefinitionType.Skin
                         || item.devItem
+                        || ((item.defType === DefinitionType.Armor || item.defType === DefinitionType.Backpack) && item.perk)
                     ) continue;
 
                     game.addLoot(item, itemPos, 0, { count: countMap[item.defType] ?? 1, pushVel: 0, jitterSpawn: false });
@@ -1383,12 +1389,12 @@ const maps = {
             const buildings = {
                 // seriously stfu
 
-                red_house: ~~Math.random(),
-                blue_house: ~~Math.random(),
-                green_house: ~~Math.random(),
-                red_house_v2: ~~Math.random(),
-                mobile_home: ~~(Math.random() * 5) + 3,
-                porta_potty: ~~(Math.random() * 5) + 3,
+                red_house: Math.random(),
+                blue_house: Math.random(),
+                green_house: Math.random(),
+                red_house_v2: Math.random(),
+                mobile_home: (Math.random() * 5) + 3,
+                porta_potty: (Math.random() * 5) + 3,
 
                 warehouse: 1,
                 container_3: 1,
