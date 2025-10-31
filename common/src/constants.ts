@@ -7,13 +7,13 @@ const inventorySlotTypings = Object.freeze([DefinitionType.Gun, DefinitionType.G
 export const GameConstants = {
     // !!!!! NOTE: Increase this every time a byte stream change is made between latest release and master
     // or a new item is added to a definition list
-    protocolVersion: 68,
+    protocolVersion: 70,
     tps: 40,
     gridSize: 32,
     maxPosition: 1924,
     objectMinScale: 0.15,
     objectMaxScale: 3,
-    defaultMode: "normal" satisfies ModeName as ModeName,
+    defaultMode: "halloween" satisfies ModeName as ModeName,
     player: {
         radius: 2.25,
         baseSpeed: 0.03,
@@ -37,6 +37,7 @@ export const GameConstants = {
         rateLimitPunishmentTrigger: 10,
         emotePunishmentTime: 5000, // ms
         rateLimitInterval: 1000,
+        combatLogTimeoutMs: 12000,
         defaultModifiers: (): PlayerModifiers => ({
             maxHealth: 1,
             maxAdrenaline: 1,
